@@ -1,15 +1,46 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+gitignore
+# =========================================
+# Files and directories created by Android Studio & Gradle
+# =========================================
+
+# Build output
+/build/
+/app/build/
+
+# Generated files
+.gradle/
+.externalNativeBuild/
+.cxx/
+/captures/
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# =========================================
+# Local configuration and sensitive files (DO NOT COMMIT)
+# =========================================
 local.properties
+*.keystore
+*.jks
+
+# It's often recommended not to commit the google-services.json file,
+# especially in public repositories.
+# google-services.json
+
+# =========================================
+# IDE-specific files (user settings)
+# =========================================
+*.iml
+.idea/
+
+# macOS specific files
+.DS_Store
+
+# =========================================
+# Miscellaneous temporary files
+# =========================================
+*.lock
+*.log
+*~
+*.swp
