@@ -1,0 +1,25 @@
+package com.example.go2office.data.local.entities
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.Index
+import java.time.Instant
+import java.time.LocalDate
+
+/**
+ * Room entity for storing holidays or office-not-required days.
+ * Supports both public holidays and personal vacation days.
+ */
+@Entity(
+    tableName = "holidays",
+    indices = [Index(value = ["date"], unique = true)]
+)
+data class HolidayEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val date: LocalDate,
+    val description: String,
+    val type: String = "PUBLIC_HOLIDAY", // "PUBLIC_HOLIDAY" or "VACATION"
+    val createdAt: Instant
+)
+
