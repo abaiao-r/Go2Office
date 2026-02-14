@@ -1,5 +1,4 @@
 package com.example.go2office.presentation.onboarding
-
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -23,10 +22,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
 import javax.inject.Inject
-
-/**
- * ViewModel for onboarding flow.
- */
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -37,39 +32,29 @@ class OnboardingViewModel @Inject constructor(
     private val repository: com.example.go2office.domain.repository.OfficeRepository,
     private val holidayApiService: com.example.go2office.data.remote.HolidayApiService
 ) : ViewModel() {
-
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-
     private val _uiState = MutableStateFlow(OnboardingUiState())
     val uiState: StateFlow<OnboardingUiState> = _uiState.asStateFlow()
-
     init {
-        // Check permissions on init
         checkLocationPermission()
     }
-
     fun onEvent(event: OnboardingEvent) {
         when (event) {
             is OnboardingEvent.UpdateRequiredDays -> {
                 _uiState.update { it.copy(requiredDaysPerWeek = event.days) }
             }
-
             is OnboardingEvent.UpdateHoursPerDay -> {
                 _uiState.update { it.copy(hoursPerDay = event.hours) }
             }
-
             is OnboardingEvent.UpdateWeekdayPreferences -> {
                 _uiState.update { it.copy(weekdayPreferences = event.preferences) }
             }
-
             is OnboardingEvent.ToggleAutoDetection -> {
                 _uiState.update { it.copy(enableAutoDetection = event.enabled) }
             }
-
             OnboardingEvent.UseCurrentLocation -> {
                 useCurrentLocation()
             }
-
             is OnboardingEvent.SetOfficeLocation -> {
                 _uiState.update {
                     it.copy(
@@ -79,54 +64,42 @@ class OnboardingViewModel @Inject constructor(
                     )
                 }
             }
-
             OnboardingEvent.RequestLocationPermission -> {
-                // Handled in UI
             }
-
             is OnboardingEvent.AddHoliday -> {
                 addHoliday(event.date, event.description, event.isVacation)
             }
-
             OnboardingEvent.NextStep -> {
                 val currentState = _uiState.value
                 if (currentState.canGoNext && currentState.currentStep < currentState.totalSteps - 1) {
                     _uiState.update { it.copy(currentStep = it.currentStep + 1) }
                 }
             }
-
             OnboardingEvent.PreviousStep -> {
                 val currentState = _uiState.value
                 if (currentState.currentStep > 0) {
                     _uiState.update { it.copy(currentStep = it.currentStep - 1) }
                 }
             }
-
             OnboardingEvent.Complete -> {
                 completeOnboarding()
             }
-
             OnboardingEvent.DismissError -> {
                 _uiState.update { it.copy(errorMessage = null) }
             }
         }
     }
-
     fun checkLocationPermission() {
         val hasPermission = ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
-
         _uiState.update { it.copy(hasLocationPermission = hasPermission) }
     }
-
     private fun useCurrentLocation() {
         viewModelScope.launch {
             try {
                 _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-
-                // Check permission
                 if (ContextCompat.checkSelfPermission(
                         context,
                         Manifest.permission.ACCESS_FINE_LOCATION
@@ -140,10 +113,7 @@ class OnboardingViewModel @Inject constructor(
                     }
                     return@launch
                 }
-
-                // Get current location with timeout
                 val cancellationToken = CancellationTokenSource()
-
                 try {
                     fusedLocationClient.getCurrentLocation(
                         Priority.PRIORITY_HIGH_ACCURACY,
@@ -197,20 +167,15 @@ class OnboardingViewModel @Inject constructor(
             }
         }
     }
-
     private fun completeOnboarding() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-
             val currentState = _uiState.value
-
-            // Validate settings
             val validationResult = validateSettings(
                 requiredDaysPerWeek = currentState.requiredDaysPerWeek,
                 requiredHoursPerWeek = currentState.requiredHoursPerWeek,
                 weekdayPreferences = currentState.weekdayPreferences
             )
-
             if (validationResult.isFailure) {
                 _uiState.update {
                     it.copy(
@@ -221,11 +186,8 @@ class OnboardingViewModel @Inject constructor(
                 }
                 return@launch
             }
-
-            // Save settings
             val settings = validationResult.getOrNull()!!
             val saveResult = saveSettings(settings)
-
             if (saveResult.isFailure) {
                 _uiState.update {
                     it.copy(
@@ -236,17 +198,11 @@ class OnboardingViewModel @Inject constructor(
                 }
                 return@launch
             }
-
-            // Save auto-detection settings if enabled
             if (currentState.enableAutoDetection &&
                 currentState.officeLatitude != null &&
                 currentState.officeLongitude != null) {
-
                 try {
-                    // Deactivate any existing locations first
                     officeLocationDao.deactivateAll()
-
-                    // Save office location
                     val locationEntity = OfficeLocationEntity(
                         latitude = currentState.officeLatitude,
                         longitude = currentState.officeLongitude,
@@ -256,21 +212,16 @@ class OnboardingViewModel @Inject constructor(
                         createdAt = Instant.now()
                     )
                     officeLocationDao.insert(locationEntity)
-
-                    // Start geofencing if permissions granted
                     if (currentState.hasLocationPermission) {
                         geofencingManager.startGeofencing(
                             locationEntity,
-                            onSuccess = { /* Geofencing started */ },
-                            onFailure = { /* Log but don't block */ }
+                            onSuccess = {  },
+                            onFailure = {  }
                         )
                     }
                 } catch (e: Exception) {
-                    // Log error but don't block completion
                 }
             }
-
-            // Success
             _uiState.update {
                 it.copy(
                     isLoading = false,
@@ -279,7 +230,6 @@ class OnboardingViewModel @Inject constructor(
             }
         }
     }
-
     private fun addHoliday(date: java.time.LocalDate, description: String, isVacation: Boolean) {
         viewModelScope.launch {
             try {
@@ -292,17 +242,14 @@ class OnboardingViewModel @Inject constructor(
                 repository.saveHoliday(holiday)
                 _uiState.update { it.copy(holidaysConfigured = true) }
             } catch (e: Exception) {
-                // Log but don't block
             }
         }
     }
-
     fun loadCountryHolidays(countryCode: String, countryName: String) {
         viewModelScope.launch {
             try {
                 val year = java.time.LocalDate.now().year
                 val result = holidayApiService.fetchPublicHolidays(countryCode, year)
-
                 result.onSuccess { holidayDtos ->
                     holidayDtos.forEach { dto ->
                         val holiday = com.example.go2office.domain.model.Holiday(
@@ -315,7 +262,6 @@ class OnboardingViewModel @Inject constructor(
                     _uiState.update { it.copy(holidaysConfigured = true) }
                 }
             } catch (e: Exception) {
-                // Log but don't block
             }
         }
     }

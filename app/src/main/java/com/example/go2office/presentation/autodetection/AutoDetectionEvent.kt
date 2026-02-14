@@ -1,8 +1,4 @@
 package com.example.go2office.presentation.autodetection
-
-/**
- * Events for auto-detection screen.
- */
 sealed class AutoDetectionEvent {
     object ToggleAutoDetection : AutoDetectionEvent()
     object UseCurrentLocation : AutoDetectionEvent()
@@ -11,4 +7,3 @@ sealed class AutoDetectionEvent {
     object RequestLocationPermission : AutoDetectionEvent()
     object DismissError : AutoDetectionEvent()
 }
-

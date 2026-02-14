@@ -1,5 +1,4 @@
 package com.example.go2office.presentation.dayentry
-
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,10 +13,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
-
-/**
- * ViewModel for day entry screen.
- */
 @HiltViewModel
 class DayEntryViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -25,56 +20,43 @@ class DayEntryViewModel @Inject constructor(
     private val updateDailyHours: UpdateDailyHoursUseCase,
     private val repository: OfficeRepository
 ) : ViewModel() {
-
     private val dateString: String = savedStateHandle.get<String>("date") ?: LocalDate.now().toString()
     private val date: LocalDate = LocalDate.parse(dateString)
-
     private val _uiState = MutableStateFlow(DayEntryUiState(selectedDate = date))
     val uiState: StateFlow<DayEntryUiState> = _uiState.asStateFlow()
-
     init {
         loadEntry()
     }
-
     fun onEvent(event: DayEntryEvent) {
         when (event) {
             is DayEntryEvent.SelectDate -> {
                 _uiState.update { it.copy(selectedDate = event.date) }
                 loadEntry()
             }
-
             is DayEntryEvent.ToggleWasInOffice -> {
                 _uiState.update { it.copy(wasInOffice = event.value) }
             }
-
             is DayEntryEvent.UpdateHours -> {
                 _uiState.update { it.copy(hoursWorked = event.hours) }
             }
-
             is DayEntryEvent.UpdateNotes -> {
                 _uiState.update { it.copy(notes = event.notes) }
             }
-
             DayEntryEvent.Save -> {
                 saveEntry()
             }
-
             DayEntryEvent.Delete -> {
                 deleteEntry()
             }
-
             DayEntryEvent.DismissError -> {
                 _uiState.update { it.copy(errorMessage = null) }
             }
         }
     }
-
     private fun loadEntry() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
-
             val entry = getDailyEntries.getByDate(_uiState.value.selectedDate)
-
             if (entry != null) {
                 _uiState.update {
                     it.copy(
@@ -95,11 +77,9 @@ class DayEntryViewModel @Inject constructor(
             }
         }
     }
-
     private fun saveEntry() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-
             val currentState = _uiState.value
             val result = updateDailyHours(
                 date = currentState.selectedDate,
@@ -107,7 +87,6 @@ class DayEntryViewModel @Inject constructor(
                 wasInOffice = currentState.wasInOffice,
                 notes = currentState.notes.ifBlank { null }
             )
-
             if (result.isFailure) {
                 _uiState.update {
                     it.copy(
@@ -125,13 +104,10 @@ class DayEntryViewModel @Inject constructor(
             }
         }
     }
-
     private fun deleteEntry() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-
             val result = repository.deleteDailyEntry(_uiState.value.selectedDate)
-
             if (result.isFailure) {
                 _uiState.update {
                     it.copy(
@@ -150,4 +126,3 @@ class DayEntryViewModel @Inject constructor(
         }
     }
 }
-

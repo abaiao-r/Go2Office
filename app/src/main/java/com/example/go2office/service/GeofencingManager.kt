@@ -1,5 +1,4 @@
 package com.example.go2office.service
-
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -10,17 +9,11 @@ import com.google.android.gms.location.LocationServices
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
-
-/**
- * Service to manage geofencing for office location detection.
- */
 @Singleton
 class GeofencingManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-
     private val geofencingClient = LocationServices.getGeofencingClient(context)
-
     private val geofencePendingIntent: PendingIntent by lazy {
         val intent = Intent(context, GeofenceBroadcastReceiver::class.java)
         PendingIntent.getBroadcast(
@@ -30,14 +23,9 @@ class GeofencingManager @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
     }
-
-    /**
-     * Start monitoring an office location.
-     */
     fun startGeofencing(location: OfficeLocationEntity, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
         val geofence = createGeofence(location)
         val geofencingRequest = createGeofencingRequest(geofence)
-
         try {
             geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent).run {
                 addOnSuccessListener {
@@ -51,10 +39,6 @@ class GeofencingManager @Inject constructor(
             onFailure(securityException)
         }
     }
-
-    /**
-     * Stop monitoring the office location.
-     */
     fun stopGeofencing(onSuccess: () -> Unit = {}, onFailure: (Exception) -> Unit = {}) {
         geofencingClient.removeGeofences(geofencePendingIntent).run {
             addOnSuccessListener {
@@ -65,7 +49,6 @@ class GeofencingManager @Inject constructor(
             }
         }
     }
-
     private fun createGeofence(location: OfficeLocationEntity): Geofence {
         return Geofence.Builder()
             .setRequestId(location.id.toString())
@@ -81,7 +64,6 @@ class GeofencingManager @Inject constructor(
             )
             .build()
     }
-
     private fun createGeofencingRequest(geofence: Geofence): GeofencingRequest {
         return GeofencingRequest.Builder().apply {
             setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
@@ -89,4 +71,3 @@ class GeofencingManager @Inject constructor(
         }.build()
     }
 }
-

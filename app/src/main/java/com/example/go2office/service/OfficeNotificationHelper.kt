@@ -1,5 +1,4 @@
 package com.example.go2office.service
-
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -9,16 +8,13 @@ import androidx.core.app.NotificationManagerCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
-
 @Singleton
 class OfficeNotificationHelper @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-
     init {
         createNotificationChannels()
     }
-
     fun showArrivalNotification(context: Context) {
         val notification = NotificationCompat.Builder(context, "office_detection")
             .setSmallIcon(android.R.drawable.ic_dialog_map)
@@ -27,14 +23,11 @@ class OfficeNotificationHelper @Inject constructor(
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
             .build()
-
         try {
             NotificationManagerCompat.from(context).notify(1001, notification)
         } catch (e: SecurityException) {
-            // Permission not granted
         }
     }
-
     fun showDepartureNotification(context: Context, hours: Float) {
         val notification = NotificationCompat.Builder(context, "office_detection")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
@@ -43,14 +36,11 @@ class OfficeNotificationHelper @Inject constructor(
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
             .build()
-
         try {
             NotificationManagerCompat.from(context).notify(1002, notification)
         } catch (e: SecurityException) {
-            // Permission not granted
         }
     }
-
     private fun createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -63,4 +53,3 @@ class OfficeNotificationHelper @Inject constructor(
         }
     }
 }
-

@@ -1,5 +1,4 @@
 package com.example.go2office.presentation.onboarding
-
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -21,10 +20,6 @@ import com.example.go2office.presentation.components.ErrorDialog
 import com.example.go2office.presentation.components.LoadingIndicator
 import java.time.DayOfWeek
 import java.time.LocalDate
-
-/**
- * Onboarding screen for first-time setup.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingScreen(
@@ -33,13 +28,11 @@ fun OnboardingScreen(
     onNavigateToPermissions: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
     LaunchedEffect(uiState.isComplete) {
         if (uiState.isComplete) {
             onComplete()
         }
     }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -69,27 +62,24 @@ fun OnboardingScreen(
                     modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.spacedBy(24.dp)
                 ) {
-                    // Progress indicator
                     LinearProgressIndicator(
                         progress = { (uiState.currentStep + 1).toFloat() / uiState.totalSteps },
                         modifier = Modifier.fillMaxWidth()
                     )
-
                     Text(
                         text = "Step ${uiState.currentStep + 1} of ${uiState.totalSteps}",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-
                     when (uiState.currentStep) {
                         0 -> RequiredDaysStep(
                             selectedDays = uiState.requiredDaysPerWeek,
                             onDaysSelected = { viewModel.onEvent(OnboardingEvent.UpdateRequiredDays(it)) }
                         )
                         1 -> RequiredHoursStep(
-                            selectedHours = uiState.hoursPerDay,  // Changed to hoursPerDay
-                            requiredDays = uiState.requiredDaysPerWeek,  // Pass days for calculation display
-                            onHoursChanged = { viewModel.onEvent(OnboardingEvent.UpdateHoursPerDay(it)) }  // Changed event
+                            selectedHours = uiState.hoursPerDay,  
+                            requiredDays = uiState.requiredDaysPerWeek,  
+                            onHoursChanged = { viewModel.onEvent(OnboardingEvent.UpdateHoursPerDay(it)) }  
                         )
                         2 -> WeekdayPreferencesStep(
                             preferences = uiState.weekdayPreferences,
@@ -106,8 +96,6 @@ fun OnboardingScreen(
                         )
                     }
                 }
-
-                // Navigation buttons
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -120,7 +108,6 @@ fun OnboardingScreen(
                             Text("Back")
                         }
                     }
-
                     Button(
                         onClick = {
                             if (uiState.currentStep == uiState.totalSteps - 1) {
@@ -137,8 +124,6 @@ fun OnboardingScreen(
                 }
             }
         }
-
-        // Error dialog
         if (uiState.errorMessage != null) {
             ErrorDialog(
                 message = uiState.errorMessage!!,
@@ -147,7 +132,6 @@ fun OnboardingScreen(
         }
     }
 }
-
 @Composable
 private fun RequiredDaysStep(
     selectedDays: Int,
@@ -160,13 +144,11 @@ private fun RequiredDaysStep(
             text = "Required Office Days",
             style = MaterialTheme.typography.headlineMedium
         )
-
         Text(
             text = "How many days per week do you need to work from the office?",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -180,12 +162,10 @@ private fun RequiredDaysStep(
                     style = MaterialTheme.typography.displayLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
-
                 Text(
                     text = if (selectedDays == 1) "day per week" else "days per week",
                     style = MaterialTheme.typography.titleMedium
                 )
-
                 Slider(
                     value = selectedDays.toFloat(),
                     onValueChange = { onDaysSelected(it.toInt()) },
@@ -193,7 +173,6 @@ private fun RequiredDaysStep(
                     steps = 3,
                     modifier = Modifier.fillMaxWidth()
                 )
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -205,7 +184,6 @@ private fun RequiredDaysStep(
         }
     }
 }
-
 @Composable
 private fun RequiredHoursStep(
     selectedHours: Float,
@@ -219,13 +197,11 @@ private fun RequiredHoursStep(
             text = "Hours Per Day",
             style = MaterialTheme.typography.headlineMedium
         )
-
         Text(
             text = "How many hours do you typically work at the office each day?",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -239,19 +215,16 @@ private fun RequiredHoursStep(
                     style = MaterialTheme.typography.displayLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
-
                 Text(
                     text = "hours per day",
                     style = MaterialTheme.typography.titleMedium
                 )
-
                 Slider(
                     value = selectedHours,
                     onValueChange = onHoursChanged,
-                    valueRange = 1f..12f,  // Changed range to per-day
+                    valueRange = 1f..12f,  
                     modifier = Modifier.fillMaxWidth()
                 )
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -259,10 +232,7 @@ private fun RequiredHoursStep(
                     Text("1h", style = MaterialTheme.typography.labelSmall)
                     Text("12h", style = MaterialTheme.typography.labelSmall)
                 }
-
-                // Show weekly calculation
                 HorizontalDivider()
-
                 val weeklyHours = selectedHours * requiredDays
                 Text(
                     text = "Weekly total: %.1fh (%.1fh × %d days)".format(weeklyHours, selectedHours, requiredDays),
@@ -273,7 +243,6 @@ private fun RequiredHoursStep(
         }
     }
 }
-
 @Composable
 private fun WeekdayPreferencesStep(
     preferences: List<DayOfWeek>,
@@ -286,13 +255,11 @@ private fun WeekdayPreferencesStep(
             text = "Day Preferences",
             style = MaterialTheme.typography.headlineMedium
         )
-
         Text(
             text = "Order your preferred office days from most to least preferred (drag to reorder):",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -326,7 +293,6 @@ private fun WeekdayPreferencesStep(
                 }
             }
         }
-
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -350,7 +316,6 @@ private fun WeekdayPreferencesStep(
         }
     }
 }
-
 @Composable
 private fun WeekdayPreferenceItem(
     dayOfWeek: DayOfWeek,
@@ -390,13 +355,11 @@ private fun WeekdayPreferenceItem(
                         )
                     }
                 }
-
                 Text(
                     text = dayOfWeek.name.lowercase().replaceFirstChar { it.uppercase() },
                     style = MaterialTheme.typography.titleMedium
                 )
             }
-
             Row(
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
@@ -406,7 +369,6 @@ private fun WeekdayPreferenceItem(
                 ) {
                     Text("↑")
                 }
-
                 IconButton(
                     onClick = onMoveDown,
                     enabled = canMoveDown
@@ -417,22 +379,18 @@ private fun WeekdayPreferenceItem(
         }
     }
 }
-
 @Composable
 private fun AutoDetectionStep(
     viewModel: OnboardingViewModel,
     uiState: OnboardingUiState,
     onNavigateToPermissions: () -> Unit
 ) {
-    // Effect to check permissions when step 4 is reached
     LaunchedEffect(uiState.currentStep) {
-        if (uiState.currentStep == 3) { // Step 4 (0-indexed)
+        if (uiState.currentStep == 3) { 
             viewModel.checkLocationPermission()
         }
     }
-
     var showLocationDialog by remember { mutableStateOf(false) }
-
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -440,14 +398,11 @@ private fun AutoDetectionStep(
             text = "Auto-Detection (Optional)",
             style = MaterialTheme.typography.headlineMedium
         )
-
         Text(
             text = "Automatically track when you arrive and leave the office using GPS.",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-
-        // Enable toggle
         Card(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier
@@ -473,9 +428,7 @@ private fun AutoDetectionStep(
                 )
             }
         }
-
         if (uiState.enableAutoDetection) {
-            // Navigate to dedicated permissions screen
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -524,7 +477,6 @@ private fun AutoDetectionStep(
                             )
                         }
                     }
-
                     Button(
                         onClick = onNavigateToPermissions,
                         modifier = Modifier.fillMaxWidth()
@@ -545,8 +497,6 @@ private fun AutoDetectionStep(
                     }
                 }
             }
-
-            // Location card
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(
                     modifier = Modifier.padding(16.dp),
@@ -556,7 +506,6 @@ private fun AutoDetectionStep(
                         text = "Office Location",
                         style = MaterialTheme.typography.titleMedium
                     )
-
                     if (uiState.officeLatitude != null && uiState.officeLongitude != null) {
                         Text("📍 ${uiState.officeName}")
                         Text(
@@ -570,7 +519,6 @@ private fun AutoDetectionStep(
                             color = MaterialTheme.colorScheme.error
                         )
                     }
-
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -582,7 +530,6 @@ private fun AutoDetectionStep(
                         ) {
                             Text("Use Current GPS")
                         }
-
                         Button(
                             onClick = { showLocationDialog = true },
                             modifier = Modifier.weight(1f)
@@ -590,7 +537,6 @@ private fun AutoDetectionStep(
                             Text("Enter Manually")
                         }
                     }
-
                     Text(
                         text = "💡 100% FREE - No API costs!",
                         style = MaterialTheme.typography.labelSmall,
@@ -599,8 +545,6 @@ private fun AutoDetectionStep(
                     )
                 }
             }
-
-            // Info card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -630,8 +574,6 @@ private fun AutoDetectionStep(
                 }
             }
         }
-
-        // You can skip this step
         if (!uiState.enableAutoDetection) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -650,8 +592,6 @@ private fun AutoDetectionStep(
             }
         }
     }
-
-    // Location dialog
     if (showLocationDialog) {
         SetLocationDialog(
             onDismiss = { showLocationDialog = false },
@@ -662,7 +602,6 @@ private fun AutoDetectionStep(
         )
     }
 }
-
 @Composable
 private fun SetLocationDialog(
     onDismiss: () -> Unit,
@@ -671,7 +610,6 @@ private fun SetLocationDialog(
     var latitude by remember { mutableStateOf("") }
     var longitude by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("Main Office") }
-
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Set Office Location") },
@@ -722,7 +660,6 @@ private fun SetLocationDialog(
         }
     )
 }
-
 @Composable
 private fun HolidaysSetupStep(
     viewModel: OnboardingViewModel,
@@ -730,7 +667,6 @@ private fun HolidaysSetupStep(
 ) {
     var showQuickAddDialog by remember { mutableStateOf(false) }
     var showCountryDialog by remember { mutableStateOf(false) }
-
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -738,14 +674,11 @@ private fun HolidaysSetupStep(
             text = "Holidays & Vacations (Optional)",
             style = MaterialTheme.typography.headlineMedium
         )
-
         Text(
             text = "Configure public holidays and vacation days. These will NOT count toward your required office days.",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-
-        // Info card
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -774,9 +707,7 @@ private fun HolidaysSetupStep(
                         )
                     }
                 }
-
                 HorizontalDivider()
-
                 Text("Example:", style = MaterialTheme.typography.labelLarge)
                 Text(
                     text = "• December: 23 work days\n• Holidays: 2 (Christmas, New Year)\n• Required: 13 days (instead of 14)",
@@ -785,16 +716,12 @@ private fun HolidaysSetupStep(
                 )
             }
         }
-
-        // Quick Actions
         Text(
             text = "Quick Setup:",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(top = 8.dp)
         )
-
-        // Load Country button - NOW WORKING!
         Button(
             onClick = { showCountryDialog = true },
             modifier = Modifier.fillMaxWidth(),
@@ -806,8 +733,6 @@ private fun HolidaysSetupStep(
             Spacer(Modifier.width(8.dp))
             Text("🌍 Load Country Holidays (100+ countries)")
         }
-
-        // Quick add button
         OutlinedButton(
             onClick = { showQuickAddDialog = true },
             modifier = Modifier.fillMaxWidth()
@@ -816,8 +741,6 @@ private fun HolidaysSetupStep(
             Spacer(Modifier.width(8.dp))
             Text("Add Single Holiday or Vacation")
         }
-
-        // Skip note
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -850,16 +773,12 @@ private fun HolidaysSetupStep(
             }
         }
     }
-
-    // Country dialog - NOW INCLUDED!
     if (showCountryDialog) {
         SimpleCountryDialog(
             viewModel = viewModel,
             onDismiss = { showCountryDialog = false }
         )
     }
-
-    // Quick add dialog
     if (showQuickAddDialog) {
         QuickAddHolidayDialog(
             onDismiss = { showQuickAddDialog = false },
@@ -870,7 +789,6 @@ private fun HolidaysSetupStep(
         )
     }
 }
-
 @Composable
 private fun QuickAddHolidayDialog(
     onDismiss: () -> Unit,
@@ -879,13 +797,11 @@ private fun QuickAddHolidayDialog(
     var date by remember { mutableStateOf(LocalDate.now()) }
     var description by remember { mutableStateOf("") }
     var isVacation by remember { mutableStateOf(false) }
-
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Add ${if (isVacation) "Vacation" else "Holiday"}") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                // Date picker with arrows
                 Text("Date:", style = MaterialTheme.typography.labelMedium)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -904,8 +820,6 @@ private fun QuickAddHolidayDialog(
                         Icon(Icons.Default.KeyboardArrowRight, "Next")
                     }
                 }
-
-                // Quick buttons
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -919,7 +833,6 @@ private fun QuickAddHolidayDialog(
                         modifier = Modifier.weight(1f)
                     ) { Text("Tomorrow") }
                 }
-
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
@@ -927,7 +840,6 @@ private fun QuickAddHolidayDialog(
                     placeholder = { Text(if (isVacation) "e.g., Summer Vacation" else "e.g., Christmas") },
                     modifier = Modifier.fillMaxWidth()
                 )
-
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Switch(checked = isVacation, onCheckedChange = { isVacation = it })
                     Spacer(Modifier.width(8.dp))
@@ -946,13 +858,11 @@ private fun QuickAddHolidayDialog(
         }
     )
 }
-
 @Composable
 private fun SimpleCountryDialog(
     viewModel: OnboardingViewModel,
     onDismiss: () -> Unit
 ) {
-    // Popular countries for quick selection
     val popularCountries = listOf(
         "PT" to "🇵🇹 Portugal",
         "ES" to "🇪🇸 Spain",
@@ -963,7 +873,6 @@ private fun SimpleCountryDialog(
         "DE" to "🇩🇪 Germany",
         "IT" to "🇮🇹 Italy"
     )
-
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Load Country Holidays") },
@@ -979,7 +888,6 @@ private fun SimpleCountryDialog(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                 }
-
                 items(popularCountries) { (code, name) ->
                     OutlinedButton(
                         onClick = {

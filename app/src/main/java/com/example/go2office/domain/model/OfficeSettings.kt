@@ -1,14 +1,9 @@
 package com.example.go2office.domain.model
-
 import java.time.DayOfWeek
-
-/**
- * Domain model representing user office settings.
- */
 data class OfficeSettings(
     val requiredDaysPerWeek: Int,
     val requiredHoursPerWeek: Float,
-    val weekdayPreferences: List<DayOfWeek> // Ordered Mon-Fri by user preference
+    val weekdayPreferences: List<DayOfWeek> 
 ) {
     init {
         require(requiredDaysPerWeek in 1..5) { "Required days per week must be between 1 and 5" }
@@ -20,4 +15,3 @@ data class OfficeSettings(
         require(weekdayPreferences.distinct().size == 5) { "Weekday preferences must be unique" }
     }
 }
-

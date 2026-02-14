@@ -1,14 +1,9 @@
 package com.example.go2office.presentation.onboarding
-
 import java.time.DayOfWeek
-
-/**
- * UI state for onboarding flow.
- */
 data class OnboardingUiState(
     val currentStep: Int = 0,
     val requiredDaysPerWeek: Int = 3,
-    val hoursPerDay: Float = 8f,  // NEW: Hours per day at office (clearer for user)
+    val hoursPerDay: Float = 8f,  
     val weekdayPreferences: List<DayOfWeek> = listOf(
         DayOfWeek.MONDAY,
         DayOfWeek.TUESDAY,
@@ -27,19 +22,15 @@ data class OnboardingUiState(
     val isComplete: Boolean = false
 ) {
     val totalSteps = 5
-
-    // Calculate hours per week automatically: days × hours/day
     val requiredHoursPerWeek: Float
         get() = requiredDaysPerWeek * hoursPerDay
-
     val canGoNext: Boolean
         get() = when (currentStep) {
             0 -> requiredDaysPerWeek in 1..5
-            1 -> hoursPerDay > 0  // Changed from requiredHoursPerWeek
+            1 -> hoursPerDay > 0  
             2 -> weekdayPreferences.size == 5
             3 -> !enableAutoDetection || (officeLatitude != null && officeLongitude != null)
             4 -> true
             else -> false
         }
 }
-

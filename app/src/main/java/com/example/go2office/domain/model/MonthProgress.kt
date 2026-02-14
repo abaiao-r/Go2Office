@@ -1,10 +1,5 @@
 package com.example.go2office.domain.model
-
 import java.time.YearMonth
-
-/**
- * Domain model representing monthly progress summary.
- */
 data class MonthProgress(
     val yearMonth: YearMonth,
     val requiredDays: Int,
@@ -18,4 +13,3 @@ data class MonthProgress(
     val hoursPercentComplete: Float get() = if (requiredHours > 0) (completedHours / requiredHours * 100f).coerceAtMost(100f) else 0f
     val isComplete: Boolean get() = completedDays >= requiredDays && completedHours >= requiredHours
 }
-

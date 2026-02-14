@@ -1,5 +1,4 @@
 package com.example.go2office.presentation.settings
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -13,10 +12,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.go2office.presentation.components.ErrorDialog
 import com.example.go2office.presentation.components.LoadingIndicator
-
-/**
- * Settings screen for editing office requirements.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -26,13 +21,11 @@ fun SettingsScreen(
     onNavigateToAnnualCalendar: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
     LaunchedEffect(uiState.isSaved) {
         if (uiState.isSaved) {
             onNavigateBack()
         }
     }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -50,11 +43,9 @@ fun SettingsScreen(
         } else if (uiState.settings != null) {
             val settings = uiState.settings!!
             var requiredDays by remember { mutableStateOf(settings.requiredDaysPerWeek) }
-            // Calculate hours per day from weekly hours
             var hoursPerDay by remember {
                 mutableStateOf(settings.requiredHoursPerWeek / settings.requiredDaysPerWeek)
             }
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -67,8 +58,6 @@ fun SettingsScreen(
                     text = "Office Requirements",
                     style = MaterialTheme.typography.headlineSmall
                 )
-
-                // Auto-Detection Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(
@@ -96,8 +85,6 @@ fun SettingsScreen(
                         Text("›", style = MaterialTheme.typography.headlineMedium)
                     }
                 }
-
-                // Annual Calendar Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(
@@ -125,7 +112,6 @@ fun SettingsScreen(
                         Text("›", style = MaterialTheme.typography.headlineMedium)
                     }
                 }
-
                 Card(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -137,13 +123,11 @@ fun SettingsScreen(
                             text = "Required Days Per Week",
                             style = MaterialTheme.typography.titleMedium
                         )
-
                         Text(
                             text = "$requiredDays days",
                             style = MaterialTheme.typography.displaySmall,
                             color = MaterialTheme.colorScheme.primary
                         )
-
                         Slider(
                             value = requiredDays.toFloat(),
                             onValueChange = { requiredDays = it.toInt() },
@@ -153,7 +137,6 @@ fun SettingsScreen(
                         )
                     }
                 }
-
                 Card(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -165,23 +148,18 @@ fun SettingsScreen(
                             text = "Hours Per Day",
                             style = MaterialTheme.typography.titleMedium
                         )
-
                         Text(
                             text = "%.1f hours".format(hoursPerDay),
                             style = MaterialTheme.typography.displaySmall,
                             color = MaterialTheme.colorScheme.primary
                         )
-
                         Slider(
                             value = hoursPerDay,
                             onValueChange = { hoursPerDay = it },
-                            valueRange = 1f..12f,  // Changed from 40 to 12 (per day)
+                            valueRange = 1f..12f,  
                             modifier = Modifier.fillMaxWidth()
                         )
-
                         HorizontalDivider()
-
-                        // Show weekly calculation
                         val weeklyHours = hoursPerDay * requiredDays
                         Text(
                             text = "Weekly total: %.1fh (%.1fh × %d days)".format(weeklyHours, hoursPerDay, requiredDays),
@@ -190,7 +168,6 @@ fun SettingsScreen(
                         )
                     }
                 }
-
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(
@@ -205,7 +182,6 @@ fun SettingsScreen(
                             text = "Current Preferences",
                             style = MaterialTheme.typography.titleMedium
                         )
-
                         settings.weekdayPreferences.forEachIndexed { index, day ->
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -232,17 +208,14 @@ fun SettingsScreen(
                         }
                     }
                 }
-
                 Button(
                     onClick = {
-                        // Calculate weekly hours from hours per day
                         val weeklyHours = hoursPerDay * requiredDays
-
                         viewModel.onEvent(
                             SettingsEvent.UpdateSettings(
                                 settings.copy(
                                     requiredDaysPerWeek = requiredDays,
-                                    requiredHoursPerWeek = weeklyHours  // Calculated automatically
+                                    requiredHoursPerWeek = weeklyHours  
                                 )
                             )
                         )
@@ -254,7 +227,6 @@ fun SettingsScreen(
                 }
             }
         }
-
         if (uiState.errorMessage != null) {
             ErrorDialog(
                 message = uiState.errorMessage!!,
@@ -263,4 +235,3 @@ fun SettingsScreen(
         }
     }
 }
-

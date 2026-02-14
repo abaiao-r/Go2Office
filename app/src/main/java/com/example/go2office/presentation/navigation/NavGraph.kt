@@ -1,5 +1,4 @@
 package com.example.go2office.presentation.navigation
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,10 +17,6 @@ import com.example.go2office.presentation.onboarding.OnboardingScreen
 import com.example.go2office.presentation.permissions.PermissionsSetupScreen
 import com.example.go2office.presentation.settings.SettingsScreen
 import java.time.LocalDate
-
-/**
- * Navigation graph for the app.
- */
 @Composable
 fun NavGraph(
     navController: NavHostController,
@@ -43,7 +38,6 @@ fun NavGraph(
                 }
             )
         }
-
         composable(Screen.Dashboard.route) {
             DashboardScreen(
                 onNavigateToDayEntry = { date ->
@@ -54,7 +48,6 @@ fun NavGraph(
                 }
             )
         }
-
         composable(
             route = Screen.DayEntry.route,
             arguments = listOf(
@@ -63,7 +56,6 @@ fun NavGraph(
         ) { backStackEntry ->
             val dateString = backStackEntry.arguments?.getString("date")
             val date = dateString?.let { LocalDate.parse(it) } ?: LocalDate.now()
-
             DayEntryScreen(
                 date = date,
                 onNavigateBack = {
@@ -71,7 +63,6 @@ fun NavGraph(
                 }
             )
         }
-
         composable(Screen.Settings.route) {
             SettingsScreen(
                 onNavigateBack = {
@@ -85,7 +76,6 @@ fun NavGraph(
                 }
             )
         }
-
         composable(Screen.AutoDetection.route) {
             AutoDetectionScreen(
                 onNavigateBack = {
@@ -93,7 +83,6 @@ fun NavGraph(
                 }
             )
         }
-
         composable(Screen.AnnualCalendar.route) {
             AnnualCalendarScreen(
                 onNavigateBack = {
@@ -101,7 +90,6 @@ fun NavGraph(
                 }
             )
         }
-
         composable(Screen.PermissionsSetup.route) {
             PermissionsSetupScreen(
                 onNavigateBack = {
@@ -114,13 +102,8 @@ fun NavGraph(
         }
     }
 }
-
-/**
- * Determine the start destination based on whether settings are configured.
- */
 @Composable
 fun getStartDestination(getSettings: GetOfficeSettingsUseCase): String {
     val settings by getSettings().collectAsState(initial = null)
     return if (settings == null) Screen.Onboarding.route else Screen.Dashboard.route
 }
-

@@ -1,14 +1,9 @@
 package com.example.go2office.data.local.entities
-
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Index
 import java.time.Instant
 import java.time.LocalDateTime
-
-/**
- * Room entity for office location.
- */
 @Entity(tableName = "office_locations")
 data class OfficeLocationEntity(
     @PrimaryKey(autoGenerate = true)
@@ -20,10 +15,6 @@ data class OfficeLocationEntity(
     val isActive: Boolean = true,
     val createdAt: Instant
 )
-
-/**
- * Room entity for tracking office presence sessions.
- */
 @Entity(
     tableName = "office_presence",
     indices = [Index(value = ["entryTime"], unique = false)]
@@ -37,4 +28,3 @@ data class OfficePresenceEntity(
     val confidence: Float,
     val createdAt: Instant
 )
-

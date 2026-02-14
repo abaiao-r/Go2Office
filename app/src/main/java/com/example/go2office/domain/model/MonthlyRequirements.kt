@@ -1,10 +1,5 @@
 package com.example.go2office.domain.model
-
 import java.time.YearMonth
-
-/**
- * Domain model representing calculated monthly requirements.
- */
 data class MonthlyRequirements(
     val yearMonth: YearMonth,
     val requiredDays: Int,
@@ -17,4 +12,3 @@ data class MonthlyRequirements(
         require(requiredHours >= 0) { "Required hours cannot be negative" }
     }
 }
-

@@ -1,13 +1,8 @@
 package com.example.go2office.presentation.components
-
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-
-/**
- * Error dialog component.
- */
 @Composable
 fun ErrorDialog(
     message: String,
@@ -25,10 +20,6 @@ fun ErrorDialog(
         }
     )
 }
-
-/**
- * Confirmation dialog component.
- */
 @Composable
 fun ConfirmationDialog(
     title: String,
@@ -54,4 +45,3 @@ fun ConfirmationDialog(
         }
     )
 }
-

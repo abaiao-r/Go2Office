@@ -1,14 +1,9 @@
 package com.example.go2office.presentation.onboarding
-
 import java.time.DayOfWeek
 import java.time.LocalDate
-
-/**
- * Events for onboarding screen.
- */
 sealed class OnboardingEvent {
     data class UpdateRequiredDays(val days: Int) : OnboardingEvent()
-    data class UpdateHoursPerDay(val hours: Float) : OnboardingEvent()  // Changed from UpdateRequiredHours
+    data class UpdateHoursPerDay(val hours: Float) : OnboardingEvent()  
     data class UpdateWeekdayPreferences(val preferences: List<DayOfWeek>) : OnboardingEvent()
     data class ToggleAutoDetection(val enabled: Boolean) : OnboardingEvent()
     object UseCurrentLocation : OnboardingEvent()
@@ -20,4 +15,3 @@ sealed class OnboardingEvent {
     object Complete : OnboardingEvent()
     object DismissError : OnboardingEvent()
 }
-

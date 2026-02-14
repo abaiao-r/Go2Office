@@ -1,5 +1,4 @@
 package com.example.go2office.presentation.permissions
-
 import android.Manifest
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -18,10 +17,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-
-/**
- * Dedicated screen for granting permissions one by one.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PermissionsSetupScreen(
@@ -29,62 +24,47 @@ fun PermissionsSetupScreen(
     onAllPermissionsGranted: () -> Unit
 ) {
     val context = LocalContext.current
-
-    // Track each permission state
     var hasForegroundLocation by remember { mutableStateOf(false) }
     var hasBackgroundLocation by remember { mutableStateOf(false) }
     var hasNotifications by remember { mutableStateOf(false) }
-
-    // Check permissions on load
     LaunchedEffect(Unit) {
         hasForegroundLocation = ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.ACCESS_FINE_LOCATION
         ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-
         hasBackgroundLocation = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
             ) == android.content.pm.PackageManager.PERMISSION_GRANTED
         } else {
-            true // Not needed on older Android
+            true 
         }
-
         hasNotifications = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.POST_NOTIFICATIONS
             ) == android.content.pm.PackageManager.PERMISSION_GRANTED
         } else {
-            true // Not needed on older Android
+            true 
         }
     }
-
-    // Permission launcher for foreground location
     val foregroundLocationLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         hasForegroundLocation = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true
     }
-
-    // Permission launcher for background location
     val backgroundLocationLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
         hasBackgroundLocation = granted
     }
-
-    // Permission launcher for notifications
     val notificationsLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { granted ->
         hasNotifications = granted
     }
-
-    // Check if all required permissions are granted
     val allGranted = hasForegroundLocation && hasBackgroundLocation && hasNotifications
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -104,22 +84,17 @@ fun PermissionsSetupScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Header
             Text(
                 text = "Grant Permissions",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
-
             Text(
                 text = "To enable automatic office detection, we need the following permissions. Grant them one by one below.",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-
             Spacer(modifier = Modifier.height(8.dp))
-
-            // Permission 1: Foreground Location
             PermissionCard(
                 title = "Location Access",
                 description = "Required to detect when you arrive at the office.",
@@ -136,8 +111,6 @@ fun PermissionsSetupScreen(
                 },
                 instruction = "In the next dialog, choose 'While using the app' or 'Allow'"
             )
-
-            // Permission 2: Background Location (only if foreground is granted)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 PermissionCard(
                     title = "Background Location",
@@ -156,8 +129,6 @@ fun PermissionsSetupScreen(
                     note = if (!hasForegroundLocation) "Grant Location Access first" else null
                 )
             }
-
-            // Permission 3: Notifications
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 PermissionCard(
                     title = "Notifications",
@@ -175,10 +146,7 @@ fun PermissionsSetupScreen(
                     instruction = "Choose 'Allow' to receive notifications"
                 )
             }
-
             Spacer(modifier = Modifier.weight(1f))
-
-            // Continue button (only enabled when all granted)
             if (allGranted) {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -212,7 +180,6 @@ fun PermissionsSetupScreen(
                     }
                 }
             }
-
             Button(
                 onClick = onAllPermissionsGranted,
                 modifier = Modifier.fillMaxWidth(),
@@ -223,7 +190,6 @@ fun PermissionsSetupScreen(
         }
     }
 }
-
 @Composable
 private fun PermissionCard(
     title: String,
@@ -265,7 +231,6 @@ private fun PermissionCard(
                         MaterialTheme.colorScheme.onSurfaceVariant
                     }
                 )
-
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = title,
@@ -278,7 +243,6 @@ private fun PermissionCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-
                 if (isGranted) {
                     Icon(
                         imageVector = Icons.Default.Check,
@@ -288,7 +252,6 @@ private fun PermissionCard(
                     )
                 }
             }
-
             if (!isGranted) {
                 Text(
                     text = "💡 $instruction",
@@ -296,7 +259,6 @@ private fun PermissionCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(start = 44.dp)
                 )
-
                 if (note != null) {
                     Text(
                         text = "⚠️ $note",
@@ -305,7 +267,6 @@ private fun PermissionCard(
                         modifier = Modifier.padding(start = 44.dp)
                     )
                 }
-
                 Button(
                     onClick = onGrantClick,
                     modifier = Modifier
@@ -319,4 +280,3 @@ private fun PermissionCard(
         }
     }
 }
-

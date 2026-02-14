@@ -1,5 +1,4 @@
 package com.example.go2office
-
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,13 +17,10 @@ import com.example.go2office.presentation.navigation.Screen
 import com.example.go2office.ui.theme.Go2OfficeTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     @Inject
     lateinit var getSettings: GetOfficeSettingsUseCase
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -35,15 +31,12 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-
-                    // Check if settings exist to determine start destination
                     val settings by getSettings().collectAsState(initial = null)
                     val startDestination = if (settings == null) {
                         Screen.Onboarding.route
                     } else {
                         Screen.Dashboard.route
                     }
-
                     NavGraph(
                         navController = navController,
                         startDestination = startDestination

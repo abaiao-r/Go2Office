@@ -1,5 +1,4 @@
 package com.example.go2office.presentation.autodetection
-
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -24,10 +23,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Instant
 import javax.inject.Inject
-
-/**
- * ViewModel for auto-detection settings.
- */
 @HiltViewModel
 class AutoDetectionViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -35,40 +30,32 @@ class AutoDetectionViewModel @Inject constructor(
     private val officePresenceDao: OfficePresenceDao,
     private val geofencingManager: GeofencingManager
 ) : ViewModel() {
-
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-
     private val _uiState = MutableStateFlow(AutoDetectionUiState())
     val uiState: StateFlow<AutoDetectionUiState> = _uiState.asStateFlow()
-
     init {
-        // Check permissions and load settings on init
         checkPermissions()
         loadSettings()
     }
-
     init {
         loadSettings()
         checkPermissions()
     }
-
     fun onEvent(event: AutoDetectionEvent) {
         when (event) {
             AutoDetectionEvent.ToggleAutoDetection -> toggleAutoDetection()
             AutoDetectionEvent.UseCurrentLocation -> useCurrentLocation()
             is AutoDetectionEvent.SetCustomLocation -> setCustomLocation(event.latitude, event.longitude, event.name)
             is AutoDetectionEvent.UpdateGeofenceRadius -> updateGeofenceRadius(event.radiusMeters)
-            AutoDetectionEvent.RequestLocationPermission -> {} // Handled in UI
+            AutoDetectionEvent.RequestLocationPermission -> {} 
             AutoDetectionEvent.DismissError -> _uiState.update { it.copy(errorMessage = null) }
         }
     }
-
     private fun loadSettings() {
         viewModelScope.launch {
             try {
                 val location = officeLocationDao.getActiveLocation()
                 val activeSession = officePresenceDao.getCurrentActiveSession()
-
                 _uiState.update {
                     it.copy(
                         officeLocation = location?.let { entity ->
@@ -90,23 +77,19 @@ class AutoDetectionViewModel @Inject constructor(
             }
         }
     }
-
     fun checkPermissions() {
         val hasLocation = ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
-
         val hasBackground = ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.ACCESS_BACKGROUND_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
-
         val hasNotification = ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.POST_NOTIFICATIONS
         ) == PackageManager.PERMISSION_GRANTED
-
         _uiState.update {
             it.copy(
                 hasLocationPermission = hasLocation,
@@ -115,37 +98,28 @@ class AutoDetectionViewModel @Inject constructor(
             )
         }
     }
-
     private fun toggleAutoDetection() {
         viewModelScope.launch {
             val currentState = _uiState.value
-
             if (currentState.isEnabled) {
-                // Disable - stop geofencing
                 stopGeofencing()
             } else {
-                // Enable - start geofencing
                 if (currentState.officeLocation == null) {
                     _uiState.update { it.copy(errorMessage = "Please set office location first") }
                     return@launch
                 }
-
                 if (!currentState.hasLocationPermission || !currentState.hasBackgroundPermission) {
                     _uiState.update { it.copy(errorMessage = "Location permissions required") }
                     return@launch
                 }
-
                 startGeofencing()
             }
         }
     }
-
     private fun useCurrentLocation() {
         viewModelScope.launch {
             try {
                 _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-
-                // Check permission first
                 if (ContextCompat.checkSelfPermission(
                         context,
                         Manifest.permission.ACCESS_FINE_LOCATION
@@ -159,8 +133,6 @@ class AutoDetectionViewModel @Inject constructor(
                     }
                     return@launch
                 }
-
-                // Get current location
                 val cancellationToken = CancellationTokenSource()
                 fusedLocationClient.getCurrentLocation(
                     Priority.PRIORITY_HIGH_ACCURACY,
@@ -201,16 +173,11 @@ class AutoDetectionViewModel @Inject constructor(
             }
         }
     }
-
     private fun setCustomLocation(latitude: Double, longitude: Double, name: String) {
         viewModelScope.launch {
             try {
                 _uiState.update { it.copy(isLoading = true) }
-
-                // Deactivate all existing locations
                 officeLocationDao.deactivateAll()
-
-                // Insert new location
                 val entity = OfficeLocationEntity(
                     latitude = latitude,
                     longitude = longitude,
@@ -219,9 +186,7 @@ class AutoDetectionViewModel @Inject constructor(
                     isActive = true,
                     createdAt = Instant.now()
                 )
-
                 officeLocationDao.insert(entity)
-
                 _uiState.update {
                     it.copy(
                         officeLocation = OfficeLocation(latitude, longitude, entity.radiusMeters, name),
@@ -238,18 +203,13 @@ class AutoDetectionViewModel @Inject constructor(
             }
         }
     }
-
     private fun updateGeofenceRadius(radiusMeters: Float) {
         viewModelScope.launch {
             _uiState.update { it.copy(geofenceRadiusMeters = radiusMeters) }
-
-            // Update existing location if present
             val location = officeLocationDao.getActiveLocation()
             if (location != null) {
                 val updated = location.copy(radiusMeters = radiusMeters)
                 officeLocationDao.update(updated)
-
-                // Restart geofencing if active
                 if (_uiState.value.isEnabled) {
                     stopGeofencing()
                     startGeofencing()
@@ -257,7 +217,6 @@ class AutoDetectionViewModel @Inject constructor(
             }
         }
     }
-
     private suspend fun startGeofencing() {
         try {
             val location = officeLocationDao.getActiveLocation()
@@ -265,7 +224,6 @@ class AutoDetectionViewModel @Inject constructor(
                 _uiState.update { it.copy(errorMessage = "No office location configured") }
                 return
             }
-
             geofencingManager.startGeofencing(
                 location = location,
                 onSuccess = {
@@ -296,7 +254,6 @@ class AutoDetectionViewModel @Inject constructor(
             }
         }
     }
-
     private fun stopGeofencing() {
         geofencingManager.stopGeofencing(
             onSuccess = {
@@ -315,4 +272,3 @@ class AutoDetectionViewModel @Inject constructor(
         )
     }
 }
-

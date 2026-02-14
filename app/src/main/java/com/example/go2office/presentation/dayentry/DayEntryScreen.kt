@@ -1,5 +1,4 @@
 package com.example.go2office.presentation.dayentry
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -18,10 +17,6 @@ import com.example.go2office.presentation.components.LoadingIndicator
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
-
-/**
- * Day entry screen for marking attendance and entering hours.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DayEntryScreen(
@@ -31,13 +26,11 @@ fun DayEntryScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showDeleteDialog by remember { mutableStateOf(false) }
-
     LaunchedEffect(uiState.isSaved) {
         if (uiState.isSaved) {
             onNavigateBack()
         }
     }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -72,7 +65,6 @@ fun DayEntryScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                // Was in office toggle
                 Card(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -94,7 +86,6 @@ fun DayEntryScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-
                         Switch(
                             checked = uiState.wasInOffice,
                             onCheckedChange = {
@@ -103,8 +94,6 @@ fun DayEntryScreen(
                         )
                     }
                 }
-
-                // Hours worked slider
                 if (uiState.wasInOffice) {
                     Card(
                         modifier = Modifier.fillMaxWidth()
@@ -117,23 +106,20 @@ fun DayEntryScreen(
                                 text = "Hours Worked",
                                 style = MaterialTheme.typography.titleMedium
                             )
-
                             Text(
                                 text = "%.1f hours".format(uiState.hoursWorked),
                                 style = MaterialTheme.typography.displayMedium,
                                 color = MaterialTheme.colorScheme.primary
                             )
-
                             Slider(
                                 value = uiState.hoursWorked,
                                 onValueChange = {
                                     viewModel.onEvent(DayEntryEvent.UpdateHours(it))
                                 },
                                 valueRange = 0f..24f,
-                                steps = 47, // 0.5 hour increments
+                                steps = 47, 
                                 modifier = Modifier.fillMaxWidth()
                             )
-
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
@@ -141,8 +127,6 @@ fun DayEntryScreen(
                                 Text("0h", style = MaterialTheme.typography.labelSmall)
                                 Text("24h", style = MaterialTheme.typography.labelSmall)
                             }
-
-                            // Quick select buttons
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -160,8 +144,6 @@ fun DayEntryScreen(
                             }
                         }
                     }
-
-                    // Notes field
                     Card(
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -173,7 +155,6 @@ fun DayEntryScreen(
                                 text = "Notes (optional)",
                                 style = MaterialTheme.typography.titleMedium
                             )
-
                             OutlinedTextField(
                                 value = uiState.notes,
                                 onValueChange = {
@@ -187,8 +168,6 @@ fun DayEntryScreen(
                         }
                     }
                 }
-
-                // Save button
                 Button(
                     onClick = { viewModel.onEvent(DayEntryEvent.Save) },
                     modifier = Modifier.fillMaxWidth(),
@@ -198,8 +177,6 @@ fun DayEntryScreen(
                 }
             }
         }
-
-        // Delete confirmation dialog
         if (showDeleteDialog) {
             ConfirmationDialog(
                 title = "Delete Entry",
@@ -213,8 +190,6 @@ fun DayEntryScreen(
                 dismissText = "Cancel"
             )
         }
-
-        // Error dialog
         if (uiState.errorMessage != null) {
             ErrorDialog(
                 message = uiState.errorMessage!!,
@@ -223,4 +198,3 @@ fun DayEntryScreen(
         }
     }
 }
-

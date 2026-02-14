@@ -1,5 +1,4 @@
 package com.example.go2office.presentation.dashboard
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -32,10 +31,6 @@ import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.time.temporal.ChronoUnit
 import java.util.*
-
-/**
- * Dashboard screen showing monthly progress and suggestions.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
@@ -44,7 +39,6 @@ fun DashboardScreen(
     onNavigateToSettings: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -68,7 +62,6 @@ fun DashboardScreen(
             uiState.isLoading -> {
                 LoadingIndicator()
             }
-
             uiState.monthProgress == null -> {
                 EmptyState(
                     message = "No data available for this month",
@@ -76,7 +69,6 @@ fun DashboardScreen(
                     onAction = { viewModel.onEvent(DashboardEvent.Refresh) }
                 )
             }
-
             else -> {
                 LazyColumn(
                     modifier = Modifier
@@ -85,27 +77,20 @@ fun DashboardScreen(
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Month selector
                     item {
                         MonthSelectorCard(
                             selectedMonth = uiState.selectedMonth,
                             onMonthChanged = { viewModel.onEvent(DashboardEvent.SelectMonth(it)) }
                         )
                     }
-
-                    // Progress overview
                     item {
                         ProgressOverviewCard(progress = uiState.monthProgress!!)
                     }
-
-                    // Currently at office timer (shows if there's an active session)
                     if (uiState.activeSession != null) {
                         item {
                             CurrentlyAtOfficeCard(session = uiState.activeSession!!)
                         }
                     }
-
-                    // Suggested days
                     if (uiState.suggestedDays.isNotEmpty()) {
                         item {
                             SuggestedDaysSection(
@@ -114,8 +99,6 @@ fun DashboardScreen(
                             )
                         }
                     }
-
-                    // Recent entries
                     if (uiState.recentEntries.isNotEmpty()) {
                         item {
                             RecentEntriesSection(
@@ -127,8 +110,6 @@ fun DashboardScreen(
                 }
             }
         }
-
-        // Error dialog
         if (uiState.errorMessage != null) {
             ErrorDialog(
                 message = uiState.errorMessage!!,
@@ -137,7 +118,6 @@ fun DashboardScreen(
         }
     }
 }
-
 @Composable
 private fun MonthSelectorCard(
     selectedMonth: YearMonth,
@@ -156,12 +136,10 @@ private fun MonthSelectorCard(
             IconButton(onClick = { onMonthChanged(selectedMonth.minusMonths(1)) }) {
                 Text("◀")
             }
-
             Text(
                 text = selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
                 style = MaterialTheme.typography.titleLarge
             )
-
             IconButton(
                 onClick = { onMonthChanged(selectedMonth.plusMonths(1)) },
                 enabled = !selectedMonth.isAfter(YearMonth.now())
@@ -171,7 +149,6 @@ private fun MonthSelectorCard(
         }
     }
 }
-
 @Composable
 private fun ProgressOverviewCard(progress: MonthProgress) {
     Card(
@@ -189,8 +166,6 @@ private fun ProgressOverviewCard(progress: MonthProgress) {
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
-
-            // Days progress
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -207,22 +182,17 @@ private fun ProgressOverviewCard(progress: MonthProgress) {
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
-
                 LinearProgressIndicator(
                     progress = { progress.daysPercentComplete / 100f },
                     modifier = Modifier.fillMaxWidth()
                 )
-
                 Text(
                     text = "${progress.remainingDays} days remaining",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
-
             Divider()
-
-            // Hours progress
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -239,19 +209,16 @@ private fun ProgressOverviewCard(progress: MonthProgress) {
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
-
                 LinearProgressIndicator(
                     progress = { progress.hoursPercentComplete / 100f },
                     modifier = Modifier.fillMaxWidth()
                 )
-
                 Text(
                     text = "%.1fh remaining".format(progress.remainingHours),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
-
             if (progress.isComplete) {
                 Card(
                     colors = CardDefaults.cardColors(
@@ -275,7 +242,6 @@ private fun ProgressOverviewCard(progress: MonthProgress) {
         }
     }
 }
-
 @Composable
 private fun SuggestedDaysSection(
     suggestions: List<SuggestedDay>,
@@ -306,8 +272,6 @@ private fun SuggestedDaysSection(
                 )
             }
         }
-
-        // Show ALL suggestions in a vertical list (not just horizontal scroll)
         if (suggestions.isNotEmpty()) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -334,7 +298,6 @@ private fun SuggestedDaysSection(
         }
     }
 }
-
 @Composable
 private fun SuggestedDayRow(
     suggestion: SuggestedDay,
@@ -359,7 +322,6 @@ private fun SuggestedDayRow(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Number badge
             Surface(
                 shape = MaterialTheme.shapes.medium,
                 color = MaterialTheme.colorScheme.primary,
@@ -374,8 +336,6 @@ private fun SuggestedDayRow(
                     )
                 }
             }
-
-            // Date info
             Column(modifier = Modifier.weight(1f)) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -386,7 +346,6 @@ private fun SuggestedDayRow(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
-
                     if (suggestion.priority == 0) {
                         Surface(
                             shape = MaterialTheme.shapes.extraSmall,
@@ -401,15 +360,12 @@ private fun SuggestedDayRow(
                         }
                     }
                 }
-
                 Text(
                     text = suggestion.reason,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-
-            // Arrow
             Text(
                 text = "›",
                 style = MaterialTheme.typography.headlineLarge,
@@ -418,7 +374,6 @@ private fun SuggestedDayRow(
         }
     }
 }
-
 @Composable
 private fun RecentEntriesSection(
     entries: List<DailyEntry>,
@@ -431,7 +386,6 @@ private fun RecentEntriesSection(
             text = "Recent Entries",
             style = MaterialTheme.typography.titleLarge
         )
-
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -444,7 +398,6 @@ private fun RecentEntriesSection(
         }
     }
 }
-
 @Composable
 private fun RecentEntryCard(
     entry: DailyEntry,
@@ -468,7 +421,6 @@ private fun RecentEntryCard(
                     text = entry.date.format(DateTimeFormatter.ofPattern("EEE, MMM d")),
                     style = MaterialTheme.typography.titleMedium
                 )
-
                 if (entry.wasInOffice) {
                     Text(
                         text = "%.1fh in office".format(entry.hoursWorked),
@@ -483,7 +435,6 @@ private fun RecentEntryCard(
                     )
                 }
             }
-
             if (entry.wasInOffice) {
                 Surface(
                     shape = MaterialTheme.shapes.small,
@@ -500,21 +451,15 @@ private fun RecentEntryCard(
         }
     }
 }
-
 @Composable
 private fun CurrentlyAtOfficeCard(session: OfficePresence) {
-    // State to force recomposition every minute
     var currentTime by remember { mutableStateOf(LocalDateTime.now()) }
-
-    // Update every minute
     LaunchedEffect(Unit) {
         while (true) {
-            delay(60_000) // 60 seconds
+            delay(60_000) 
             currentTime = LocalDateTime.now()
         }
     }
-
-    // Calculate duration
     val entryTime = LocalDateTime.parse(session.entryTime)
     val duration = ChronoUnit.MINUTES.between(entryTime, currentTime)
     val hours = duration / 60
@@ -524,14 +469,11 @@ private fun CurrentlyAtOfficeCard(session: OfficePresence) {
     } else {
         "${minutes}m"
     }
-
-    // Format entry time (extract HH:mm from ISO string)
     val entryTimeFormatted = try {
         entryTime.format(DateTimeFormatter.ofPattern("HH:mm"))
     } catch (e: Exception) {
         "00:00"
     }
-
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
@@ -569,7 +511,6 @@ private fun CurrentlyAtOfficeCard(session: OfficePresence) {
                     )
                 }
             }
-
             Column(
                 horizontalAlignment = Alignment.End
             ) {

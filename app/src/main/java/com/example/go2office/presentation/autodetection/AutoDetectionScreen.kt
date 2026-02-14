@@ -1,5 +1,4 @@
 package com.example.go2office.presentation.autodetection
-
 import android.Manifest
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,10 +16,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.go2office.presentation.components.ErrorDialog
 import com.example.go2office.presentation.components.LoadingIndicator
 import com.example.go2office.util.Constants
-
-/**
- * Auto-detection settings screen.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AutoDetectionScreen(
@@ -28,14 +23,11 @@ fun AutoDetectionScreen(
     onNavigateBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
-    // Permission launcher
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         viewModel.checkPermissions()
     }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -59,40 +51,29 @@ fun AutoDetectionScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Enable/Disable Toggle
                 EnableToggleCard(
                     isEnabled = uiState.isEnabled,
                     isActive = uiState.isGeofencingActive,
                     onToggle = { viewModel.onEvent(AutoDetectionEvent.ToggleAutoDetection) }
                 )
-
-                // Permissions Card
                 PermissionsCard(
                     hasLocation = uiState.hasLocationPermission,
                     hasBackground = uiState.hasBackgroundPermission,
                     hasNotification = uiState.hasNotificationPermission,
                     onRequestPermissions = {
-                        // Request ALL permissions at once
                         val permissions = mutableListOf(
                             Manifest.permission.ACCESS_FINE_LOCATION,
                             Manifest.permission.ACCESS_COARSE_LOCATION
                         )
-
-                        // Add background location if API 29+
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                             permissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
                         }
-
-                        // Add notification permission if API 33+
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                             permissions.add(Manifest.permission.POST_NOTIFICATIONS)
                         }
-
                         permissionLauncher.launch(permissions.toTypedArray())
                     }
                 )
-
-                // Office Location Card
                 OfficeLocationCard(
                     location = uiState.officeLocation,
                     onUseCurrentLocation = { viewModel.onEvent(AutoDetectionEvent.UseCurrentLocation) },
@@ -100,24 +81,16 @@ fun AutoDetectionScreen(
                         viewModel.onEvent(AutoDetectionEvent.SetCustomLocation(lat, lon, name))
                     }
                 )
-
-                // Geofence Radius Card
                 GeofenceRadiusCard(
                     radiusMeters = uiState.geofenceRadiusMeters,
                     onRadiusChange = { viewModel.onEvent(AutoDetectionEvent.UpdateGeofenceRadius(it)) }
                 )
-
-                // Work Hours Info Card
                 WorkHoursInfoCard()
-
-                // Current Session (if active)
                 if (uiState.currentSessionStartTime != null) {
                     CurrentSessionCard(startTime = uiState.currentSessionStartTime!!)
                 }
             }
         }
-
-        // Error dialog
         if (uiState.errorMessage != null) {
             ErrorDialog(
                 message = uiState.errorMessage!!,
@@ -126,7 +99,6 @@ fun AutoDetectionScreen(
         }
     }
 }
-
 @Composable
 private fun EnableToggleCard(
     isEnabled: Boolean,
@@ -154,7 +126,6 @@ private fun EnableToggleCard(
                     color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-
             Switch(
                 checked = isEnabled,
                 onCheckedChange = { onToggle() }
@@ -162,7 +133,6 @@ private fun EnableToggleCard(
         }
     }
 }
-
 @Composable
 private fun PermissionsCard(
     hasLocation: Boolean,
@@ -187,11 +157,9 @@ private fun PermissionsCard(
                 text = "Permissions",
                 style = MaterialTheme.typography.titleMedium
             )
-
             PermissionItem("Location", hasLocation)
             PermissionItem("Background Location", hasBackground)
             PermissionItem("Notifications", hasNotification)
-
             if (!hasLocation || !hasBackground || !hasNotification) {
                 Button(
                     onClick = onRequestPermissions,
@@ -203,7 +171,6 @@ private fun PermissionsCard(
         }
     }
 }
-
 @Composable
 private fun PermissionItem(name: String, granted: Boolean) {
     Row(
@@ -220,7 +187,6 @@ private fun PermissionItem(name: String, granted: Boolean) {
         )
     }
 }
-
 @Composable
 private fun OfficeLocationCard(
     location: com.example.go2office.domain.model.OfficeLocation?,
@@ -228,7 +194,6 @@ private fun OfficeLocationCard(
     onSetCustomLocation: (Double, Double, String) -> Unit
 ) {
     var showLocationDialog by remember { mutableStateOf(false) }
-
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -240,7 +205,6 @@ private fun OfficeLocationCard(
                 text = "Office Location",
                 style = MaterialTheme.typography.titleMedium
             )
-
             if (location != null) {
                 Text(
                     text = "📍 ${location.name}",
@@ -258,7 +222,6 @@ private fun OfficeLocationCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -269,7 +232,6 @@ private fun OfficeLocationCard(
                 ) {
                     Text("Use Current GPS")
                 }
-
                 Button(
                     onClick = { showLocationDialog = true },
                     modifier = Modifier.weight(1f)
@@ -277,7 +239,6 @@ private fun OfficeLocationCard(
                     Text("Enter Manually")
                 }
             }
-
             Text(
                 text = "💡 100% FREE - No API costs!",
                 style = MaterialTheme.typography.labelSmall,
@@ -286,7 +247,6 @@ private fun OfficeLocationCard(
             )
         }
     }
-
     if (showLocationDialog) {
         SetLocationDialog(
             onDismiss = { showLocationDialog = false },
@@ -297,7 +257,6 @@ private fun OfficeLocationCard(
         )
     }
 }
-
 @Composable
 private fun SetLocationDialog(
     onDismiss: () -> Unit,
@@ -306,7 +265,6 @@ private fun SetLocationDialog(
     var latitude by remember { mutableStateOf("") }
     var longitude by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("Main Office") }
-
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Set Office Location") },
@@ -352,7 +310,6 @@ private fun SetLocationDialog(
         }
     )
 }
-
 @Composable
 private fun GeofenceRadiusCard(
     radiusMeters: Float,
@@ -369,20 +326,17 @@ private fun GeofenceRadiusCard(
                 text = "Geofence Radius",
                 style = MaterialTheme.typography.titleMedium
             )
-
             Text(
                 text = "${radiusMeters.toInt()} meters",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary
             )
-
             Slider(
                 value = radiusMeters,
                 onValueChange = onRadiusChange,
                 valueRange = Constants.MIN_GEOFENCE_RADIUS_METERS..Constants.MAX_GEOFENCE_RADIUS_METERS,
                 modifier = Modifier.fillMaxWidth()
             )
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -393,7 +347,6 @@ private fun GeofenceRadiusCard(
         }
     }
 }
-
 @Composable
 private fun WorkHoursInfoCard() {
     Card(
@@ -426,7 +379,6 @@ private fun WorkHoursInfoCard() {
         }
     }
 }
-
 @Composable
 private fun CurrentSessionCard(startTime: String) {
     Card(
@@ -450,4 +402,3 @@ private fun CurrentSessionCard(startTime: String) {
         }
     }
 }
-

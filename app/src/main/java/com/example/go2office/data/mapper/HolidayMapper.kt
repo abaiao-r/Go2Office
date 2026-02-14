@@ -1,15 +1,9 @@
 package com.example.go2office.data.mapper
-
 import com.example.go2office.data.local.entities.HolidayEntity
 import com.example.go2office.domain.model.Holiday
 import com.example.go2office.domain.model.HolidayType
 import java.time.Instant
-
-/**
- * Mapper for converting between HolidayEntity and Holiday domain model.
- */
 object HolidayMapper {
-
     fun toDomain(entity: HolidayEntity): Holiday {
         return Holiday(
             id = entity.id,
@@ -21,7 +15,6 @@ object HolidayMapper {
             }
         )
     }
-
     fun toEntity(domain: Holiday): HolidayEntity {
         return HolidayEntity(
             id = domain.id,
@@ -34,9 +27,7 @@ object HolidayMapper {
             createdAt = Instant.now()
         )
     }
-
     fun toDomainList(entities: List<HolidayEntity>): List<Holiday> {
         return entities.map { toDomain(it) }
     }
 }
-

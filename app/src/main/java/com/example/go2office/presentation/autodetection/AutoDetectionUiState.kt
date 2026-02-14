@@ -1,10 +1,5 @@
 package com.example.go2office.presentation.autodetection
-
 import com.example.go2office.domain.model.OfficeLocation
-
-/**
- * UI state for auto-detection settings.
- */
 data class AutoDetectionUiState(
     val isEnabled: Boolean = false,
     val officeLocation: OfficeLocation? = null,
@@ -17,4 +12,3 @@ data class AutoDetectionUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 )
-

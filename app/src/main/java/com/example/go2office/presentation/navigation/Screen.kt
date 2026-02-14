@@ -1,10 +1,5 @@
 package com.example.go2office.presentation.navigation
-
 import java.time.LocalDate
-
-/**
- * Navigation routes for the app.
- */
 sealed class Screen(val route: String) {
     object Onboarding : Screen("onboarding")
     object Dashboard : Screen("dashboard")
@@ -16,4 +11,3 @@ sealed class Screen(val route: String) {
     object PermissionsSetup : Screen("permissionsSetup")
     object AnnualCalendar : Screen("annualCalendar")
 }
-

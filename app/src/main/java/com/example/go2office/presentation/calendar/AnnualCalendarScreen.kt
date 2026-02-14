@@ -1,5 +1,4 @@
 package com.example.go2office.presentation.calendar
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,7 +18,6 @@ import com.example.go2office.domain.model.HolidayType
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnnualCalendarScreen(
@@ -31,7 +29,6 @@ fun AnnualCalendarScreen(
     var showAddDialog by remember { mutableStateOf(false) }
     var showAddVacationDialog by remember { mutableStateOf(false) }
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -57,7 +54,6 @@ fun AnnualCalendarScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalAlignment = Alignment.End
             ) {
-                // Add Vacation button - CLEAR
                 ExtendedFloatingActionButton(
                     onClick = { showAddVacationDialog = true },
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
@@ -67,8 +63,6 @@ fun AnnualCalendarScreen(
                     Spacer(Modifier.width(8.dp))
                     Text("Add Vacation")
                 }
-
-                // Add Holiday button - CLEAR
                 ExtendedFloatingActionButton(
                     onClick = { showAddDialog = true },
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -78,8 +72,6 @@ fun AnnualCalendarScreen(
                     Spacer(Modifier.width(8.dp))
                     Text("Add Holiday")
                 }
-
-                // Load Country button - CLEAR
                 ExtendedFloatingActionButton(
                     onClick = { showCountryDialog = true },
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -104,7 +96,6 @@ fun AnnualCalendarScreen(
                     onUnloadCountry = { viewModel.unloadCountryHolidays() }
                 )
             }
-
             items((1..12).toList()) { month ->
                 MonthCard(
                     yearMonth = YearMonth.of(uiState.selectedYear, month),
@@ -122,7 +113,6 @@ fun AnnualCalendarScreen(
             }
         }
     }
-
     if (showCountryDialog) {
         AlertDialog(
             onDismissRequest = { showCountryDialog = false },
@@ -134,11 +124,9 @@ fun AnnualCalendarScreen(
                             CircularProgressIndicator()
                         }
                     } else if (uiState.availableCountries.isNotEmpty()) {
-                        // Popular countries at top
                         val popularCodes = setOf("PT", "ES", "BR", "US", "GB", "FR", "DE", "IT")
                         val popularCountries = uiState.availableCountries.filter { it.countryCode in popularCodes }
                         val otherCountries = uiState.availableCountries.filter { it.countryCode !in popularCodes }
-
                         if (popularCountries.isNotEmpty()) {
                             Text("Popular:", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(vertical = 8.dp))
                             popularCountries.forEach { country ->
@@ -155,13 +143,11 @@ fun AnnualCalendarScreen(
                                     }
                                 }
                             }
-
                             if (otherCountries.isNotEmpty()) {
                                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                                 Text("All countries:", style = MaterialTheme.typography.labelMedium)
                             }
                         }
-
                         LazyColumn(modifier = Modifier.heightIn(max = 300.dp)) {
                             items(otherCountries) { country ->
                                 TextButton(
@@ -187,8 +173,6 @@ fun AnnualCalendarScreen(
             dismissButton = { TextButton(onClick = { showCountryDialog = false }) { Text("Cancel") } }
         )
     }
-
-    // Show loading indicator when loading holidays
     if (uiState.isLoadingHolidays) {
         AlertDialog(
             onDismissRequest = {},
@@ -201,8 +185,6 @@ fun AnnualCalendarScreen(
             confirmButton = {}
         )
     }
-
-    // Show error if any
     uiState.error?.let { error ->
         AlertDialog(
             onDismissRequest = { viewModel.clearError() },
@@ -211,18 +193,15 @@ fun AnnualCalendarScreen(
             confirmButton = { TextButton(onClick = { viewModel.clearError() }) { Text("OK") } }
         )
     }
-
     if (showAddDialog) {
         var description by remember { mutableStateOf("") }
         var isVacation by remember { mutableStateOf(false) }
         var pickedDate by remember { mutableStateOf(selectedDate ?: LocalDate.now()) }
-
         AlertDialog(
             onDismissRequest = { showAddDialog = false },
             title = { Text("Add ${if (isVacation) "Vacation" else "Holiday"}") },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    // Date picker with arrows - WORKING!
                     Text("Date:", style = MaterialTheme.typography.labelMedium)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -241,8 +220,6 @@ fun AnnualCalendarScreen(
                             Icon(Icons.Default.KeyboardArrowRight, "Next day")
                         }
                     }
-
-                    // Quick date buttons
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -251,15 +228,12 @@ fun AnnualCalendarScreen(
                             onClick = { pickedDate = LocalDate.now() },
                             modifier = Modifier.weight(1f)
                         ) { Text("Today", style = MaterialTheme.typography.labelSmall) }
-
                         OutlinedButton(
                             onClick = { pickedDate = LocalDate.now().plusDays(1) },
                             modifier = Modifier.weight(1f)
                         ) { Text("Tomorrow", style = MaterialTheme.typography.labelSmall) }
                     }
-
                     HorizontalDivider()
-
                     OutlinedTextField(
                         value = description,
                         onValueChange = { description = it },
@@ -267,7 +241,6 @@ fun AnnualCalendarScreen(
                         placeholder = { Text(if (isVacation) "e.g., Summer Vacation" else "e.g., Christmas") },
                         modifier = Modifier.fillMaxWidth()
                     )
-
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Switch(checked = isVacation, onCheckedChange = { isVacation = it })
                         Spacer(Modifier.width(8.dp))
@@ -288,13 +261,10 @@ fun AnnualCalendarScreen(
             dismissButton = { TextButton(onClick = { showAddDialog = false; selectedDate = null }) { Text("Cancel") } }
         )
     }
-
-    // Add vacation range dialog
     if (showAddVacationDialog) {
         var startDate by remember { mutableStateOf(LocalDate.now()) }
         var endDate by remember { mutableStateOf(LocalDate.now().plusDays(4)) }
         var description by remember { mutableStateOf("Vacation") }
-
         AlertDialog(
             onDismissRequest = { showAddVacationDialog = false },
             title = { Text("Add Vacation Period") },
@@ -307,8 +277,6 @@ fun AnnualCalendarScreen(
                         placeholder = { Text("e.g., Summer Vacation") },
                         modifier = Modifier.fillMaxWidth()
                     )
-
-                    // Start date picker with arrows
                     Text("Start Date:", style = MaterialTheme.typography.labelMedium)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -327,8 +295,6 @@ fun AnnualCalendarScreen(
                             Icon(Icons.Default.KeyboardArrowRight, "Next")
                         }
                     }
-
-                    // End date picker with arrows
                     Text("End Date:", style = MaterialTheme.typography.labelMedium)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -347,14 +313,11 @@ fun AnnualCalendarScreen(
                             Icon(Icons.Default.KeyboardArrowRight, "Next")
                         }
                     }
-
                     HorizontalDivider()
-
                     val days = java.time.temporal.ChronoUnit.DAYS.between(startDate, endDate).toInt() + 1
                     val workDays = (0 until days).count {
                         startDate.plusDays(it.toLong()).dayOfWeek.value <= 5
                     }
-
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer,
                         shape = MaterialTheme.shapes.small
@@ -387,7 +350,6 @@ fun AnnualCalendarScreen(
         )
     }
 }
-
 @Composable
 private fun SummaryCard(publicHolidays: Int, vacationDays: Int, country: String, onUnloadCountry: () -> Unit) {
     Card(
@@ -436,7 +398,6 @@ private fun SummaryCard(publicHolidays: Int, vacationDays: Int, country: String,
         }
     }
 }
-
 @Composable
 private fun MonthCard(yearMonth: YearMonth, holidays: List<Holiday>, onDateClick: (LocalDate) -> Unit) {
     Card(modifier = Modifier.fillMaxWidth()) {
@@ -450,7 +411,6 @@ private fun MonthCard(yearMonth: YearMonth, holidays: List<Holiday>, onDateClick
                 }
             }
             Spacer(Modifier.height(8.dp))
-
             if (holidays.isNotEmpty()) {
                 holidays.sortedBy { it.date }.forEach { holiday ->
                     Row(modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -469,4 +429,3 @@ private fun MonthCard(yearMonth: YearMonth, holidays: List<Holiday>, onDateClick
         }
     }
 }
-
