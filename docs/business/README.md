@@ -1,6 +1,6 @@
 # 📊 Business Logic Documentation
 
-> **📊 Viewing Diagrams**: This document uses **Mermaid diagrams** that render automatically on GitHub. Detailed PlantUML versions are in collapsible sections. See [diagrams/README.md](../diagrams/README.md) for more viewing options.
+> **📊 Diagrams**: All diagrams are PNG images generated from PlantUML. See [DIAGRAM_INDEX](../diagrams/DIAGRAM_INDEX.md) for the complete catalog.
 
 ## Overview
 

@@ -1,6 +1,6 @@
 # 🏗️ Architecture Documentation
 
-> **📊 Viewing Diagrams**: This document contains both **Mermaid diagrams** (render automatically on GitHub) and **PlantUML diagrams** (in collapsible sections). For PlantUML viewing options, see [diagrams/README.md](../diagrams/README.md).
+> **📊 Diagrams**: All diagrams are PNG images generated from PlantUML. See [DIAGRAM_INDEX](../diagrams/DIAGRAM_INDEX.md) for the complete catalog.
 
 ## Overview
 
@@ -10,7 +10,6 @@ Go2Office implements **Clean Architecture** with **MVVM** pattern, ensuring sepa
 
 ## System Architecture
 
-### High-Level Layers
 
 ![System Architecture](../diagrams/images/system-architecture.png)
 
