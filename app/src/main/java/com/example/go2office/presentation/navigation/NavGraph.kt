@@ -17,16 +17,32 @@ import com.example.go2office.presentation.history.MonthlyHistoryScreen
 import com.example.go2office.presentation.onboarding.OnboardingScreen
 import com.example.go2office.presentation.permissions.PermissionsSetupScreen
 import com.example.go2office.presentation.settings.SettingsScreen
+import com.example.go2office.presentation.splash.SplashScreen
 import java.time.LocalDate
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    startDestination: String
+    startDestination: String,
+    onboardingComplete: Boolean = false
 ) {
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = Screen.Splash.route
     ) {
+        composable(Screen.Splash.route) {
+            SplashScreen(
+                onSplashComplete = {
+                    val destination = if (onboardingComplete) {
+                        Screen.Dashboard.route
+                    } else {
+                        startDestination
+                    }
+                    navController.navigate(destination) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    }
+                }
+            )
+        }
         composable(Screen.Onboarding.route) {
             OnboardingScreen(
                 onComplete = {

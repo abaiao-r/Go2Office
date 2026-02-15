@@ -4,48 +4,41 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Location Pin Shape (outer) -->
+    <!-- Modern Office Building -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M54,20 C40,20 29,31 29,45 C29,62 54,85 54,85 C54,85 79,62 79,45 C79,31 68,20 54,20 Z" />
+        android:pathData="M34,75 L34,35 L74,35 L74,75 Z" />
 
-    <!-- Building inside pin -->
-    <path
-        android:fillColor="#1565C0"
-        android:pathData="M42,38 L42,60 L66,60 L66,38 L54,32 Z" />
-
-    <!-- Windows row 1 -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M46,42 L50,42 L50,46 L46,46 Z" />
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M58,42 L62,42 L62,46 L58,46 Z" />
-
-    <!-- Windows row 2 -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M46,50 L50,50 L50,54 L46,54 Z" />
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M58,50 L62,50 L62,54 L58,54 Z" />
-
-    <!-- Door -->
+    <!-- Roof accent -->
     <path
         android:fillColor="#BBDEFB"
-        android:pathData="M52,54 L56,54 L56,60 L52,60 Z" />
+        android:pathData="M34,35 L74,35 L74,40 L34,40 Z" />
 
-    <!-- Checkmark badge circle -->
+    <!-- Windows grid - row 1 -->
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M39,44 L47,44 L47,52 L39,52 Z" />
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M51,44 L59,44 L59,52 L51,52 Z" />
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M63,44 L71,44 L71,52 L63,52 Z" />
+
+    <!-- Windows grid - row 2 -->
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M39,56 L47,56 L47,64 L39,64 Z" />
+    <path
+        android:fillColor="#0D47A1"
+        android:pathData="M51,56 L59,56 L59,75 L51,75 Z" />
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M63,56 L71,56 L71,64 L63,64 Z" />
+
+    <!-- Arrow pointing right (Go!) -->
     <path
         android:fillColor="#4CAF50"
-        android:pathData="M72,72 m-14,0 a14,14 0,1 1,28 0 a14,14 0,1 1,-28 0" />
-
-    <!-- Checkmark -->
-    <path
-        android:pathData="M65,72 L70,77 L80,66"
-        android:strokeWidth="3.5"
-        android:strokeColor="#FFFFFF"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round" />
+        android:pathData="M70,70 L82,70 L82,65 L92,75 L82,85 L82,80 L70,80 Z" />
 
 </vector>

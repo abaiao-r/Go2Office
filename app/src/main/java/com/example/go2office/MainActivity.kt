@@ -40,7 +40,8 @@ class MainActivity : ComponentActivity() {
                     }
                     NavGraph(
                         navController = navController,
-                        startDestination = startDestination
+                        startDestination = startDestination,
+                        onboardingComplete = settings != null
                     )
                 }
             }
