@@ -1,17 +1,42 @@
-# Go2Office
+# 🏢 Go2Office
 
-Android app to track and plan required office days per month.
+**Never Miss Your Office Requirements Again**
 
-## Why This App?
+An Android app that helps you meet hybrid work requirements by automatically tracking office attendance and suggesting optimal days to work on-site.
 
-Many companies require employees to be in the office a certain number of days per week (e.g., 3 out of 5). Tracking this manually is tedious. Go2Office:
+---
 
-- **Calculates** monthly requirements automatically
-- **Suggests** optimal office days based on your preferences
-- **Tracks** hours automatically via geofencing (optional)
-- **Adjusts** for holidays and vacations
+## 🎯 Why Go2Office?
 
-## Quick Start
+### The Problem
+
+Modern hybrid work policies require employees to work from the office a certain number of days per month. Managing this manually is difficult:
+
+- ❌ **Forgetting to track** office days leads to scrambling at month-end
+- ❌ **Poor planning** causes awkward schedules and missed requirements
+- ❌ **Manual logging** is tedious and error-prone
+- ❌ **No visibility** into monthly progress until it's too late
+
+### The Solution
+
+Go2Office solves this by:
+
+- ✅ **Automatic tracking** via GPS geofencing - set it and forget it
+- ✅ **Smart suggestions** that respect your preferences and holidays
+- ✅ **Real-time progress** so you always know where you stand
+- ✅ **Intelligent planning** that adapts to your schedule changes
+
+---
+
+## 🚀 Quick Start
+
+### Requirements
+
+- Android 8.0+ (API 26)
+- Location permissions
+- ~10MB storage
+
+### Installation
 
 ```bash
 # Clone and build
@@ -20,53 +45,108 @@ cd Go2Office
 ./gradlew installDebug
 ```
 
-## Setup (30 seconds)
+### First Time Setup (30 seconds)
 
-1. Set requirements: "3 days/week, 8 hours/day"
-2. Order preferred weekdays: Mon > Tue > Wed > Thu > Fri
-3. (Optional) Enable auto-detection and set office location
-4. Done!
+1. **Set your requirements** - e.g., "3 days per week"
+2. **Choose preferred days** - e.g., "Monday > Tuesday > Wednesday..."
+3. **Enable auto-detection** (optional) - Set your office location
+4. **Done!** The app handles the rest
 
-## How It Works
+---
 
-### Monthly Calculation
-```
-Required days = ceil((days per week × weekdays in month) / 5)
-Required hours = required days × hours per day
+## 📱 How It Works
 
-Example: 3 days/week in March (22 weekdays)
-= ceil((3 × 22) / 5) = 14 days
-= 14 × 8 = 112 hours
-```
+### 1. Configure Your Requirements
 
-### Smart Suggestions
-- Distributes days evenly across weeks
-- Respects your weekday preferences  
-- Avoids holidays and vacations
-- Updates as you complete days
+Tell the app what your company requires:
+- Days per week (1-5)
+- Hours per day (1-12)
 
-### Auto-Tracking (Optional)
-- Detects office entry/exit via geofence
-- Counts hours between 7 AM - 7 PM only
-- Max 10 hours per day
-- Works in background
+### 2. Get Smart Suggestions
 
-## Tech Stack
+The app suggests optimal days based on:
+- Your weekday preferences
+- Public holidays
+- Your vacation plans
+- Fair distribution across the month
 
-- **UI**: Jetpack Compose + Material 3
-- **Architecture**: MVVM + Clean Architecture
-- **DI**: Hilt
-- **Database**: Room
-- **Background**: WorkManager + Geofencing API
-- **API**: Nager.Date (free public holidays)
+### 3. Automatic Tracking (Optional)
 
-## Documentation
+Enable geofencing to automatically detect when you're at the office:
+- Tracks entry/exit times
+- Calculates hours (7am-7pm only, max 10h/day)
+- Works in background - no manual logging needed
 
-- [Architecture](docs/ARCHITECTURE.md) - System design and patterns
-- [Business Logic](docs/BUSINESS.md) - Calculations and algorithms
-- [Flows](docs/FLOWS.md) - Key sequence diagrams
+### 4. Monitor Progress
 
-## License
+Dashboard shows at a glance:
+- Days completed vs. required
+- Hours completed vs. required
+- Suggested upcoming days
+- Real-time alerts if you're falling behind
 
-MIT License - See [LICENSE](LICENSE) file
+---
 
+## ✨ Key Features
+
+| Feature | Description |
+|---------|-------------|
+| 🤖 **Auto-Detection** | Geofencing automatically tracks office presence |
+| 📊 **Smart Planning** | AI suggests optimal days based on your preferences |
+| 📅 **Holiday Support** | Loads 100+ countries' holidays automatically |
+| 🎯 **Progress Tracking** | Real-time dashboard with visual indicators |
+| 🔔 **Reminders** | Notifications when you need to plan office days |
+| 🌙 **Dark Mode** | Full dark theme support |
+| 🔒 **Privacy First** | All data stored locally, no cloud sync |
+| 💯 **100% Free** | No subscriptions, no ads, no hidden costs |
+
+---
+
+## 📊 Business Value
+
+- **Save Time** - No manual tracking or calculations
+- **Reduce Stress** - Never worry about missing requirements
+- **Better Planning** - Know your schedule weeks in advance
+- **Work-Life Balance** - Optimize your office days around your life
+
+---
+
+## 🏗️ Technical Overview
+
+**Architecture**: Clean Architecture + MVVM  
+**Language**: Kotlin  
+**UI**: Jetpack Compose (Material 3)  
+**Database**: Room (SQLite)  
+**Dependency Injection**: Hilt
+
+**Key Technologies**:
+- Geofencing API for automatic detection
+- Coroutines & Flow for reactive data
+- Room for local persistence
+- Compose for modern, declarative UI
+
+---
+
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Architecture](docs/architecture) | System design, layers, patterns |
+| [Business Logic](docs/business) | Calculations, algorithms, rules |
+| [User Guide](docs/user-guide) | Features, screens, workflows |
+| [Technical Guide](docs/technical) | Setup, build, deployment |
+| [API Reference](docs/api) | Code documentation |
+
+---
+
+## Author
+
+**André Francisco** - [GitHub](https://github.com/abaiao-r)
+
+---
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE)
+
+---
