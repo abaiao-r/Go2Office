@@ -1,0 +1,24 @@
+@startuml auto-detection
+!theme plain
+
+actor User
+participant "Geofence" as Geo
+participant "BroadcastReceiver" as Receiver
+participant "Database" as DB
+
+User -> Geo: Arrives at office
+Geo -> Receiver: ENTER event
+Receiver -> DB: Save entry time
+Receiver -> User: Show "Arrived" notification
+
+...User works...
+
+User -> Geo: Leaves office
+Geo -> Receiver: EXIT event
+Receiver -> DB: Save exit time
+Receiver -> Receiver: Calculate hours
+Receiver -> DB: Save daily entry
+Receiver -> User: Show "Left - 9h" notification
+
+@enduml
+

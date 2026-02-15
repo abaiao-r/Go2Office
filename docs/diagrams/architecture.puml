@@ -1,0 +1,32 @@
+@startuml architecture
+!theme plain
+skinparam componentStyle rectangle
+
+package "Presentation" {
+    [Compose UI]
+    [ViewModel]
+    [UI State]
+}
+
+package "Domain" {
+    [Use Cases]
+    [Domain Models]
+}
+
+package "Data" {
+    [Repository]
+    database "Room DB" as DB
+    [Geofence API]
+    [Holiday API]
+}
+
+[Compose UI] --> [ViewModel]
+[ViewModel] --> [Use Cases]
+[Use Cases] --> [Domain Models]
+[Use Cases] --> [Repository]
+[Repository] --> DB
+[Repository] --> [Geofence API]
+[Repository] --> [Holiday API]
+
+@enduml
+
