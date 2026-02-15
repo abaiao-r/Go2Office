@@ -1,0 +1,33 @@
+@startuml onboarding-flow
+!theme plain
+skinparam backgroundColor #FEFEFE
+title Onboarding Flow
+actor User
+participant "OnboardingScreen" as UI
+participant "OnboardingViewModel" as VM
+participant "Repository" as Repo
+database "Room DB" as DB
+User -> UI: First launch
+UI --> User: Welcome
+User -> UI: Get Started
+UI --> User: Days per week?
+User -> UI: 3 days
+UI -> VM: setDaysPerWeek(3)
+UI --> User: Hours per day?
+User -> UI: 8 hours
+UI -> VM: setHoursPerDay(8)
+UI --> User: Order preferred days
+User -> UI: Mon Tue Wed Thu Fri
+UI -> VM: setPreferences([...])
+UI --> User: Enable auto-detection?
+User -> UI: Enable
+UI -> VM: setOfficeLocation(lat, lng)
+UI --> User: Load holidays?
+User -> UI: Portugal
+UI -> VM: loadCountry(PT)
+User -> UI: Finish
+UI -> VM: completeOnboarding()
+VM -> Repo: saveSettings()
+Repo -> DB: INSERT
+VM --> UI: Navigate Dashboard
+@enduml

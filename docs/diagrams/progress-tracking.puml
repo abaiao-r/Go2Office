@@ -1,0 +1,23 @@
+@startuml progress-tracking
+!theme plain
+title Progress Status Determination
+start
+:Get progress: required=14d/112h, completed=10d/85h;
+:Calculate percentages;
+note right
+  days = 71.4%
+  hours = 75.9%
+  overall = min(71.4%, 75.9%) = 71.4%
+end note
+if (days >= 100% AND hours >= 100%) then (yes)
+  #90EE90:Status = COMPLETE;
+elseif (overall >= 80%) then (yes)
+  #98FB98:Status = ON_TRACK;
+elseif (overall >= 50%) then (yes)
+  #FFFFE0:Status = BEHIND;
+else (no)
+  #FFB6C1:Status = CRITICAL;
+endif
+:Return status = BEHIND;
+stop
+@enduml

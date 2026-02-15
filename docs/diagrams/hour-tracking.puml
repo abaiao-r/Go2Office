@@ -1,0 +1,32 @@
+@startuml hour-tracking
+!theme plain
+skinparam backgroundColor #FEFEFE
+title Work Hours Calculation (7AM-7PM Window)
+start
+:Receive entry/exit times;
+note right
+  entry = 6:00 AM
+  exit = 8:30 PM
+end note
+if (entry < 7AM?) then (yes)
+  :Clamp entry to 7:00 AM;
+else (no)
+  :Keep original entry;
+endif
+if (exit > 7PM?) then (yes)
+  :Clamp exit to 7:00 PM;
+else (no)
+  :Keep original exit;
+endif
+:Calculate duration;
+note right
+  7AM to 7PM = 12 hours
+end note
+if (duration > 10h?) then (yes)
+  :Cap at 10 hours;
+else (no)
+  :Keep calculated hours;
+endif
+:Return hours = 10.0;
+stop
+@enduml

@@ -1,0 +1,30 @@
+@startuml auto-detection-flow
+!theme plain
+skinparam backgroundColor #FEFEFE
+title Auto-Detection Flow (Geofencing)
+actor User
+participant "Geofence API" as Geo
+participant "BroadcastReceiver" as Receiver
+participant "Repository" as Repo
+database "Room DB" as DB
+== User Arrives ==
+User -> Geo: Enters geofence
+Geo -> Receiver: ENTER event
+activate Receiver
+Receiver -> Repo: savePresence(entry=8:30AM)
+Repo -> DB: INSERT
+Receiver --> User: Notification Arrived
+deactivate Receiver
+note over User, DB: User works (app in background)
+== User Leaves ==
+User -> Geo: Exits geofence
+Geo -> Receiver: EXIT event
+activate Receiver
+Receiver -> Repo: savePresence(exit=5:45PM)
+Repo -> DB: INSERT
+Receiver -> Repo: aggregateSessions(today)
+Repo -> Repo: Calculate 9.25h
+Repo -> DB: Save DailyEntry
+Receiver --> User: Notification 9.25h
+deactivate Receiver
+@enduml

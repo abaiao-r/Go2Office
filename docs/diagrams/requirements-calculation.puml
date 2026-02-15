@@ -1,0 +1,62 @@
+@startuml requirements-calculation
+!theme plain
+skinparam backgroundColor #FEFEFE
+
+title Monthly Requirements Calculation
+
+start
+
+:Get user settings;
+note right
+  daysPerWeek = 3
+  hoursPerDay = 8
+end note
+
+:Get current month;
+note right
+  March 2026
+end note
+
+:Count total weekdays\n(exclude Sat & Sun);
+note right
+  March 2026 = 22 weekdays
+end note
+
+:Get holidays for month;
+note right
+  1 public holiday
+end note
+
+:Get vacations for month;
+note right
+  5 vacation days
+end note
+
+:Calculate available weekdays;
+note right
+  22 - 1 - 5 = 16 weekdays
+end note
+
+:Calculate required days;
+note right
+  formula: ceil((daysPerWeek × availableWeekdays) / 5)
+  ceil((3 × 16) / 5) = ceil(9.6) = **10 days**
+end note
+
+:Calculate required hours;
+note right
+  requiredDays × hoursPerDay
+  10 × 8 = **80 hours**
+end note
+
+:Return MonthlyRequirements;
+note right
+  requiredDays = 10
+  requiredHours = 80.0
+  availableWeekdays = 16
+end note
+
+stop
+
+@enduml
+

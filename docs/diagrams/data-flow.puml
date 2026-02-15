@@ -1,0 +1,57 @@
+@startuml data-flow
+!theme plain
+skinparam backgroundColor #FEFEFE
+
+title Go2Office - Unidirectional Data Flow
+
+participant "User" as U
+participant "Compose UI" as UI
+participant "ViewModel" as VM
+participant "UseCase" as UC
+participant "Repository" as Repo
+database "Room DB" as DB
+
+U -> UI: User interaction\n(click, swipe, input)
+activate UI
+
+UI -> VM: onEvent(UserAction)
+activate VM
+
+VM -> UC: execute(params)
+activate UC
+
+UC -> Repo: getData() / saveData()
+activate Repo
+
+Repo -> DB: query() / insert()
+activate DB
+DB --> Repo: Result
+deactivate DB
+
+Repo --> UC: Flow<Data> / Result
+deactivate Repo
+
+UC --> VM: Success / Error
+deactivate UC
+
+VM -> VM: _uiState.update { }
+VM --> UI: StateFlow<UiState> emits
+deactivate VM
+
+UI -> UI: Recomposition
+UI --> U: Updated UI
+deactivate UI
+
+note over VM
+  ViewModel holds:
+  - _uiState: MutableStateFlow
+  - uiState: StateFlow (public)
+end note
+
+note over Repo
+  Repository exposes:
+  - suspend functions
+  - Flow<T> for reactive data
+end note
+@enduml
+

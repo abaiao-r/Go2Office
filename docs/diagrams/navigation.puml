@@ -1,0 +1,57 @@
+@startuml navigation
+!theme plain
+skinparam backgroundColor #FEFEFE
+
+title Go2Office - Navigation Flow
+
+state "App Launch" as launch
+state "Onboarding" as onboard {
+    state "Welcome" as welcome
+    state "Requirements" as req
+    state "Weekday Preferences" as prefs
+    state "Auto-Detection Setup" as autoSetup
+    state "Permissions" as perms
+    state "Calendar Setup" as calSetup
+}
+state "Dashboard" as dash
+state "Settings" as settings
+state "Annual Calendar" as calendar
+state "Day Entry" as dayentry
+state "Auto-Detection" as autodetect
+state "Permissions Setup" as permSetup
+
+[*] --> launch
+
+launch --> onboard : First launch\n(no settings)
+launch --> dash : Has settings
+
+welcome --> req
+req --> prefs
+prefs --> autoSetup
+autoSetup --> perms
+perms --> calSetup
+calSetup --> dash : Complete
+
+dash --> settings : Settings icon
+dash --> calendar : Calendar icon
+dash --> dayentry : Click day
+dash --> autodetect : Auto-detect icon
+dash --> permSetup : Permissions
+
+settings --> dash : Back
+calendar --> dash : Back
+dayentry --> dash : Save / Back
+autodetect --> dash : Back
+permSetup --> dash : Back
+
+note right of onboard
+  First-time setup flow
+  Collects user preferences
+end note
+
+note right of dash
+  Main screen
+  Shows progress & suggestions
+end note
+@enduml
+

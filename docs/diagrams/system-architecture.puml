@@ -1,0 +1,94 @@
+@startuml system-architecture
+!theme plain
+skinparam backgroundColor #FEFEFE
+
+title Go2Office - System Architecture
+
+package "Presentation Layer" #E3F2FD {
+    [DashboardScreen] as dash
+    [SettingsScreen] as settings
+    [OnboardingScreen] as onboard
+    [CalendarScreen] as calendar
+    [DayEntryScreen] as dayentry
+    [AutoDetectionScreen] as autodetect
+    
+    [DashboardViewModel] as dashVM
+    [SettingsViewModel] as settingsVM
+    [OnboardingViewModel] as onboardVM
+    [CalendarViewModel] as calVM
+    [DayEntryViewModel] as dayVM
+    [AutoDetectionViewModel] as autoVM
+}
+
+package "Domain Layer" #E8F5E9 {
+    [GetMonthProgressUseCase] as progress
+    [GetSuggestedDaysUseCase] as suggest
+    [CalculateRequirementsUseCase] as calc
+    [AggregateSessionsUseCase] as aggregate
+    [SaveOfficeSettingsUseCase] as saveSettings
+    [MarkDayAsOfficeUseCase] as markDay
+    [AddHolidayUseCase] as addHoliday
+}
+
+package "Data Layer" #FFF9C4 {
+    [OfficeRepository] as repo
+    
+    package "Local Storage" {
+        database "Room Database" as db {
+            [OfficeSettingsDao]
+            [DailyEntryDao]
+            [OfficePresenceDao]
+            [HolidayDao]
+        }
+    }
+    
+    package "External Services" {
+        [GeofencingManager] as geo
+        [HolidayApiService] as api
+    }
+}
+
+dash --> dashVM
+settings --> settingsVM
+onboard --> onboardVM
+calendar --> calVM
+dayentry --> dayVM
+autodetect --> autoVM
+
+dashVM --> progress
+dashVM --> suggest
+settingsVM --> saveSettings
+calVM --> addHoliday
+dayVM --> markDay
+autoVM --> aggregate
+
+progress --> repo
+suggest --> repo
+calc --> repo
+aggregate --> repo
+saveSettings --> repo
+markDay --> repo
+addHoliday --> repo
+
+repo --> db
+repo --> geo
+repo --> api
+
+note right of "Presentation Layer"
+  Jetpack Compose UI
+  StateFlow for state
+  One ViewModel per screen
+end note
+
+note right of "Domain Layer"
+  Pure Kotlin
+  No Android dependencies
+  Single responsibility
+end note
+
+note right of "Data Layer"
+  Repository pattern
+  Single source of truth
+  Reactive with Flow
+end note
+@enduml

@@ -1,0 +1,41 @@
+@startuml suggestion-algorithm
+!theme plain
+skinparam backgroundColor #FEFEFE
+title Smart Day Suggestion Algorithm
+start
+:Get inputs;
+note right
+  requiredDays = 12
+  completedDays = 4
+  preferences = [Mon, Tue, Wed, Thu, Fri]
+end note
+:Calculate remaining;
+note right
+  remaining = 12 - 4 = **8 days**
+end note
+:Get available weekdays;
+note right
+  Exclude weekends,
+  holidays, vacations,
+  past dates, completed
+end note
+:Group by week number;
+:weeksLeft = 4;
+while (remaining > 0?) is (yes)
+  :daysForWeek = ceil(remaining / weeksLeft);
+  :Sort available days by preference;
+  :Select top N days;
+  :remaining -= N;
+  :weeksLeft -= 1;
+endwhile (no)
+:Sort chronologically;
+:Return suggestions;
+note right
+  Result:
+  Mon 2, Tue 3
+  Mon 9, Wed 11
+  Mon 16, Wed 18
+  Mon 23, Tue 24
+end note
+stop
+@enduml

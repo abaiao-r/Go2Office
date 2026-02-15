@@ -1,0 +1,52 @@
+@startuml database-schema
+!theme plain
+skinparam backgroundColor #FEFEFE
+
+title Go2Office - Database Schema
+
+entity "office_settings" as settings {
+    * id : INTEGER <<PK>>
+    --
+    days_per_week : INTEGER
+    hours_per_day : REAL
+    weekday_preferences : TEXT
+    auto_detection_enabled : INTEGER
+    office_latitude : REAL
+    office_longitude : REAL
+    is_onboarding_complete : INTEGER
+}
+
+entity "daily_entry" as daily {
+    * id : INTEGER <<PK>>
+    --
+    date : TEXT
+    hours : REAL
+    is_manual : INTEGER
+}
+
+entity "office_presence" as presence {
+    * id : INTEGER <<PK>>
+    --
+    date : TEXT
+    entry_time : TEXT
+    exit_time : TEXT
+}
+
+entity "holiday" as holiday {
+    * id : INTEGER <<PK>>
+    --
+    date : TEXT
+    name : TEXT
+    country_code : TEXT
+    type : TEXT
+}
+
+presence }o--|| daily : aggregates
+
+note right of settings : Singleton row
+note right of daily : One per day
+note right of presence : Multiple per day
+note right of holiday : Holidays and vacations
+
+@enduml
+

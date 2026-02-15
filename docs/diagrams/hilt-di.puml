@@ -1,0 +1,54 @@
+@startuml hilt-di
+!theme plain
+skinparam backgroundColor #FEFEFE
+title Hilt Dependency Injection
+package "@SingletonComponent" #E3F2FD {
+    [OfficeDatabase] as db
+    [OfficeRepository] as repo
+    [GeofencingManager] as geo
+    [HolidayApiService] as api
+    [OfficeSettingsDao] as settingsDao
+    [DailyEntryDao] as dailyDao
+    [OfficePresenceDao] as presenceDao
+    [HolidayDao] as holidayDao
+}
+package "@ViewModelComponent" #E8F5E9 {
+    [GetMonthProgressUseCase] as progress
+    [GetSuggestedDaysUseCase] as suggest
+    [CalculateRequirementsUseCase] as calc
+    [AggregateSessionsUseCase] as aggregate
+    [SaveOfficeSettingsUseCase] as saveSettings
+}
+package "@ActivityRetainedComponent" #FFF9C4 {
+    [DashboardViewModel] as dashVM
+    [SettingsViewModel] as settingsVM
+    [OnboardingViewModel] as onboardVM
+    [CalendarViewModel] as calVM
+}
+db --> settingsDao
+db --> dailyDao
+db --> presenceDao
+db --> holidayDao
+repo --> settingsDao
+repo --> dailyDao
+repo --> presenceDao
+repo --> holidayDao
+repo --> api
+progress --> repo
+suggest --> repo
+calc --> repo
+aggregate --> repo
+saveSettings --> repo
+dashVM --> progress
+dashVM --> suggest
+settingsVM --> saveSettings
+calVM --> calc
+note bottom of "@SingletonComponent"
+  Singleton Scope
+  Lives for app lifetime
+end note
+note bottom of "@ViewModelComponent"
+  ViewModel Scope
+  New instance per ViewModel
+end note
+@enduml
