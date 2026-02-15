@@ -34,10 +34,6 @@ class AutoDetectionViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AutoDetectionUiState())
     val uiState: StateFlow<AutoDetectionUiState> = _uiState.asStateFlow()
     init {
-        checkPermissions()
-        loadSettings()
-    }
-    init {
         loadSettings()
         checkPermissions()
     }
@@ -177,6 +173,22 @@ class AutoDetectionViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _uiState.update { it.copy(isLoading = true) }
+
+                val wasGeofencingEnabled = _uiState.value.isEnabled
+
+                if (wasGeofencingEnabled) {
+                    stopGeofencing()
+                }
+
+                val activeSession = officePresenceDao.getCurrentActiveSession()
+                if (activeSession != null) {
+                    val updatedSession = activeSession.copy(
+                        exitTime = java.time.LocalDateTime.now()
+                    )
+                    officePresenceDao.update(updatedSession)
+                    _uiState.update { it.copy(currentSessionStartTime = null) }
+                }
+
                 officeLocationDao.deactivateAll()
                 val entity = OfficeLocationEntity(
                     latitude = latitude,
@@ -192,6 +204,10 @@ class AutoDetectionViewModel @Inject constructor(
                         officeLocation = OfficeLocation(latitude, longitude, entity.radiusMeters, name),
                         isLoading = false
                     )
+                }
+
+                if (wasGeofencingEnabled) {
+                    startGeofencing()
                 }
             } catch (e: Exception) {
                 _uiState.update {

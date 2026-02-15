@@ -154,4 +154,19 @@ class OfficeRepositoryImpl @Inject constructor(
             sessions.firstOrNull()?.let { OfficePresenceMapper.toDomain(it) }
         }
     }
+
+    override fun getTodayTotalHours(): Flow<Float> {
+        val today = java.time.LocalDate.now()
+        val startOfDay = today.atStartOfDay().toString()
+        val endOfDay = today.plusDays(1).atStartOfDay().toString()
+        return officePresenceDao.getSessionsInRange(startOfDay, endOfDay).map { sessions ->
+            sessions.sumOf { session ->
+                if (session.exitTime != null) {
+                    java.time.temporal.ChronoUnit.MINUTES.between(session.entryTime, session.exitTime).toDouble() / 60.0
+                } else {
+                    0.0
+                }
+            }.toFloat()
+        }
+    }
 }

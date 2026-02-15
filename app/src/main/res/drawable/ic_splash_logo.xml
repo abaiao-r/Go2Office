@@ -1,0 +1,48 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Office Building -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M40,160 L40,60 L100,40 L160,60 L160,160 L40,160 Z" />
+
+    <!-- Building windows - left column -->
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M55,75 L75,75 L75,95 L55,95 Z" />
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M55,105 L75,105 L75,125 L55,125 Z" />
+
+    <!-- Building windows - right column -->
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M125,75 L145,75 L145,95 L125,95 Z" />
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M125,105 L145,105 L145,125 L125,125 Z" />
+
+    <!-- Building door -->
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M85,115 L115,115 L115,160 L85,160 Z" />
+
+    <!-- Checkmark circle background -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M140,140 m-28,0 a28,28 0,1 1,56 0 a28,28 0,1 1,-56 0" />
+
+    <!-- Checkmark -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M125,140 L135,150 L158,125"
+        android:strokeWidth="6"
+        android:strokeColor="#FFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+</vector>
+

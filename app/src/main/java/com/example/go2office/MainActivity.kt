@@ -9,7 +9,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.go2office.domain.usecase.GetOfficeSettingsUseCase
 import com.example.go2office.presentation.navigation.NavGraph
@@ -21,6 +20,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var getSettings: GetOfficeSettingsUseCase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -32,6 +32,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val navController = rememberNavController()
                     val settings by getSettings().collectAsState(initial = null)
+
                     val startDestination = if (settings == null) {
                         Screen.Onboarding.route
                     } else {

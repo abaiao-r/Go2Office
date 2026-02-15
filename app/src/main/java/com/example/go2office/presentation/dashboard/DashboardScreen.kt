@@ -36,7 +36,8 @@ import java.util.*
 fun DashboardScreen(
     viewModel: DashboardViewModel = hiltViewModel(),
     onNavigateToDayEntry: (LocalDate) -> Unit,
-    onNavigateToSettings: () -> Unit
+    onNavigateToSettings: () -> Unit,
+    onNavigateToHistory: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     Scaffold(
@@ -78,6 +79,13 @@ fun DashboardScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     item {
+                        TodayStatusCard(
+                            isAtOffice = uiState.isAtOffice,
+                            activeSession = uiState.activeSession,
+                            todayTotalHours = uiState.todayTotalHours
+                        )
+                    }
+                    item {
                         MonthSelectorCard(
                             selectedMonth = uiState.selectedMonth,
                             onMonthChanged = { viewModel.onEvent(DashboardEvent.SelectMonth(it)) }
@@ -86,10 +94,8 @@ fun DashboardScreen(
                     item {
                         ProgressOverviewCard(progress = uiState.monthProgress!!)
                     }
-                    if (uiState.activeSession != null) {
-                        item {
-                            CurrentlyAtOfficeCard(session = uiState.activeSession!!)
-                        }
+                    item {
+                        HistoryButton(onClick = onNavigateToHistory)
                     }
                     if (uiState.suggestedDays.isNotEmpty()) {
                         item {
@@ -149,6 +155,142 @@ private fun MonthSelectorCard(
         }
     }
 }
+
+@Composable
+private fun HistoryButton(
+    onClick: () -> Unit
+) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text("📊", style = MaterialTheme.typography.headlineSmall)
+                Column {
+                    Text(
+                        text = "Monthly History",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "View daily breakdown and totals",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+            }
+            Text("›", style = MaterialTheme.typography.headlineMedium)
+        }
+    }
+}
+
+@Composable
+private fun TodayStatusCard(
+    isAtOffice: Boolean,
+    activeSession: OfficePresence?,
+    todayTotalHours: Float
+) {
+    var currentTime by remember { mutableStateOf(LocalDateTime.now()) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(30_000)
+            currentTime = LocalDateTime.now()
+        }
+    }
+
+    val currentSessionMinutes = if (activeSession != null) {
+        try {
+            val entryTime = LocalDateTime.parse(activeSession.entryTime)
+            ChronoUnit.MINUTES.between(entryTime, currentTime).coerceAtLeast(0)
+        } catch (e: Exception) { 0L }
+    } else 0L
+
+    val totalMinutesCompleted = (todayTotalHours * 60).toLong()
+    val totalMinutesToday = totalMinutesCompleted + currentSessionMinutes
+    val totalHours = totalMinutesToday / 60
+    val totalMins = totalMinutesToday % 60
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isAtOffice) {
+                MaterialTheme.colorScheme.tertiaryContainer
+            } else {
+                MaterialTheme.colorScheme.surfaceVariant
+            }
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.LocationOn,
+                    contentDescription = null,
+                    tint = if (isAtOffice) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                    modifier = Modifier.size(32.dp)
+                )
+                Column {
+                    Text(
+                        text = if (isAtOffice) "🟢 At Office" else "⚪ Not at Office",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (isAtOffice && activeSession != null) {
+                        val sessionHours = currentSessionMinutes / 60
+                        val sessionMins = currentSessionMinutes % 60
+                        Text(
+                            text = "Current session: ${sessionHours}h ${sessionMins}m",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+            Column(
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(
+                    text = "${totalHours}h ${totalMins}m",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = "today",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
 @Composable
 private fun ProgressOverviewCard(progress: MonthProgress) {
     Card(

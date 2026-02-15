@@ -13,6 +13,7 @@ import com.example.go2office.presentation.autodetection.AutoDetectionScreen
 import com.example.go2office.presentation.calendar.AnnualCalendarScreen
 import com.example.go2office.presentation.dashboard.DashboardScreen
 import com.example.go2office.presentation.dayentry.DayEntryScreen
+import com.example.go2office.presentation.history.MonthlyHistoryScreen
 import com.example.go2office.presentation.onboarding.OnboardingScreen
 import com.example.go2office.presentation.permissions.PermissionsSetupScreen
 import com.example.go2office.presentation.settings.SettingsScreen
@@ -45,6 +46,9 @@ fun NavGraph(
                 },
                 onNavigateToSettings = {
                     navController.navigate(Screen.Settings.route)
+                },
+                onNavigateToHistory = {
+                    navController.navigate(Screen.MonthlyHistory.route)
                 }
             )
         }
@@ -103,6 +107,16 @@ fun NavGraph(
                 },
                 onAllPermissionsGranted = {
                     navController.popBackStack()
+                }
+            )
+        }
+        composable(Screen.MonthlyHistory.route) {
+            MonthlyHistoryScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onNavigateToDayEntry = { date ->
+                    navController.navigate(Screen.DayEntry.createRoute(date))
                 }
             )
         }

@@ -10,4 +10,5 @@ sealed class Screen(val route: String) {
     object AutoDetection : Screen("autoDetection")
     object PermissionsSetup : Screen("permissionsSetup")
     object AnnualCalendar : Screen("annualCalendar")
+    object MonthlyHistory : Screen("monthlyHistory")
 }

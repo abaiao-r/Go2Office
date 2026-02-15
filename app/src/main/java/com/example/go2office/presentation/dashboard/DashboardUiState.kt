@@ -10,7 +10,9 @@ data class DashboardUiState(
     val monthProgress: MonthProgress? = null,
     val suggestedDays: List<SuggestedDay> = emptyList(),
     val recentEntries: List<DailyEntry> = emptyList(),
-    val activeSession: OfficePresence? = null, 
+    val activeSession: OfficePresence? = null,
+    val todayTotalHours: Float = 0f,
+    val isAtOffice: Boolean = false,
     val isLoading: Boolean = true,
     val errorMessage: String? = null
 )

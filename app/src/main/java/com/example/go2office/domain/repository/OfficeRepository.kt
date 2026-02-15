@@ -26,4 +26,5 @@ interface OfficeRepository {
     suspend fun saveHoliday(holiday: Holiday): Result<Unit>
     suspend fun deleteHoliday(date: LocalDate): Result<Unit>
     fun getActiveOfficeSession(): Flow<OfficePresence?>
+    fun getTodayTotalHours(): Flow<Float>
 }

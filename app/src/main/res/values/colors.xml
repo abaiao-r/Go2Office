@@ -7,4 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Go2Office Brand Colors -->
+    <color name="go2office_primary">#1565C0</color>
+    <color name="go2office_primary_dark">#0D47A1</color>
+    <color name="go2office_accent">#4CAF50</color>
+    <color name="go2office_background">#F5F5F5</color>
+    <color name="splash_background">#1565C0</color>
 </resources>

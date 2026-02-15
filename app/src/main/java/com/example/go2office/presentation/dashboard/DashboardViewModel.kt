@@ -35,7 +35,17 @@ class DashboardViewModel @Inject constructor(
     private fun observeActiveSession() {
         viewModelScope.launch {
             getActiveSession().collect { session ->
-                _uiState.update { it.copy(activeSession = session) }
+                _uiState.update {
+                    it.copy(
+                        activeSession = session,
+                        isAtOffice = session != null
+                    )
+                }
+            }
+        }
+        viewModelScope.launch {
+            repository.getTodayTotalHours().collect { hours ->
+                _uiState.update { it.copy(todayTotalHours = hours) }
             }
         }
     }

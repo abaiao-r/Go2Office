@@ -20,6 +20,7 @@ turbine = "1.1.0"
 robolectric = "4.12.2"
 ksp = "2.0.21-1.0.25"
 playServicesLocation = "21.1.0"
+splashScreen = "1.0.1"
 # Google Maps removed - 100% FREE version
 # playServicesMaps = "18.2.0"
 # mapsCompose = "4.3.3"
@@ -76,6 +77,10 @@ hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testi
 
 # Google Play Services (GPS only - 100% FREE)
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+
+# Splash Screen
+androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashScreen" }
+
 # Google Maps removed - 100% FREE version (only GPS location, no maps)
 # play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
 # maps-compose = { group = "com.google.maps.android", name = "maps-compose", version.ref = "mapsCompose" }

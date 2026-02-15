@@ -2,4 +2,11 @@
 <resources>
 
     <style name="Theme.Go2Office" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <!-- Splash Screen Theme - simple version -->
+    <style name="Theme.Go2Office.Splash" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:statusBarColor">@color/splash_background</item>
+        <item name="android:navigationBarColor">@color/splash_background</item>
+    </style>
 </resources>
