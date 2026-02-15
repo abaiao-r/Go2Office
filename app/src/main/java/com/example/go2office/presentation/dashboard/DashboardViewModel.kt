@@ -1,13 +1,20 @@
 package com.example.go2office.presentation.dashboard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.go2office.domain.usecase.*
+import com.example.go2office.domain.usecase.GetActiveOfficeSessionUseCase
+import com.example.go2office.domain.usecase.GetDailyEntriesUseCase
+import com.example.go2office.domain.usecase.GetMonthProgressUseCase
+import com.example.go2office.domain.usecase.GetSuggestedOfficeDaysUseCase
+import com.example.go2office.domain.usecase.MarkDayAsOfficeUseCase
 import com.example.go2office.util.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.YearMonth
 import javax.inject.Inject
+
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val getMonthProgress: GetMonthProgressUseCase,
