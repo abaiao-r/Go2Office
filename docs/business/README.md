@@ -1,5 +1,7 @@
 # 📊 Business Logic Documentation
 
+> **📊 Viewing Diagrams**: This document uses **Mermaid diagrams** that render automatically on GitHub. Detailed PlantUML versions are in collapsible sections. See [diagrams/README.md](../diagrams/README.md) for more viewing options.
+
 ## Overview
 
 This document explains the core business rules, calculations, and algorithms that power Go2Office.

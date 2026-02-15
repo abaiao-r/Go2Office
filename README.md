@@ -136,6 +136,38 @@ Dashboard shows at a glance:
 **Database**: Room (SQLite)  
 **Dependency Injection**: Hilt  
 
+### Quick Architecture Overview
+
+```mermaid
+graph TB
+    subgraph UI["📱 Presentation"]
+        Compose[Jetpack Compose UI]
+        VM[ViewModels]
+    end
+    
+    subgraph Logic["💼 Business Logic"]
+        UC[Use Cases]
+        Models[Domain Models]
+    end
+    
+    subgraph Storage["💾 Data"]
+        Room[(Room DB)]
+        API[Nager.Date API]
+        Geo[Geofencing]
+    end
+    
+    Compose <-->|State/Events| VM
+    VM --> UC
+    UC --> Models
+    UC --> Room
+    UC --> API
+    UC --> Geo
+    
+    style UI fill:#E3F2FD
+    style Logic fill:#E8F5E9
+    style Storage fill:#FFF9C4
+```
+
 **Key Technologies**:
 - Geofencing API for automatic detection
 - Coroutines & Flow for reactive data

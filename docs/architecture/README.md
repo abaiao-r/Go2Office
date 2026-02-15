@@ -1,5 +1,7 @@
 # 🏗️ Architecture Documentation
 
+> **📊 Viewing Diagrams**: This document contains both **Mermaid diagrams** (render automatically on GitHub) and **PlantUML diagrams** (in collapsible sections). For PlantUML viewing options, see [diagrams/README.md](../diagrams/README.md).
+
 ## Overview
 
 Go2Office implements **Clean Architecture** with **MVVM** pattern, ensuring separation of concerns, testability, and maintainability.
@@ -8,9 +10,14 @@ Go2Office implements **Clean Architecture** with **MVVM** pattern, ensuring sepa
 
 ## System Architecture
 
-![System Architecture](../diagrams/system-architecture.png)
-
 ### High-Level Layers
+
+![System Architecture](../diagrams/images/system-architecture.png)
+
+*Three-layer Clean Architecture with MVVM pattern*
+
+<details>
+<summary>📄 View PlantUML source code</summary>
 
 ```plantuml
 @startuml system-architecture
@@ -60,6 +67,8 @@ end note
 
 @enduml
 ```
+
+</details>
 
 ---
 

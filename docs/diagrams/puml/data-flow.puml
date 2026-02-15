@@ -1,0 +1,35 @@
+@startuml data-flow
+!theme plain
+
+actor User
+participant "Compose\nScreen" as UI
+participant ViewModel
+participant "Use\nCase" as UC
+participant Repository
+database "Room\nDatabase" as DB
+
+User -> UI : Click/Input
+activate UI
+UI -> ViewModel : Send Event
+activate ViewModel
+ViewModel -> UC : Execute
+activate UC
+UC -> Repository : Query Data
+activate Repository
+Repository -> DB : SQL Query
+activate DB
+DB --> Repository : Entities
+deactivate DB
+Repository --> UC : Domain Models
+deactivate Repository
+UC --> ViewModel : Result
+deactivate UC
+ViewModel -> ViewModel : Update State
+ViewModel --> UI : StateFlow
+deactivate ViewModel
+UI -> UI : Recompose
+UI --> User : Display
+deactivate UI
+
+@enduml
+

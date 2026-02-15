@@ -1,0 +1,59 @@
+@startuml components
+!theme plain
+
+package "App" {
+    [MainActivity] <<Activity>>
+    [Go2OfficeApp] <<Application>>
+}
+
+package "Presentation" {
+    [DashboardScreen]
+    [OnboardingScreen]
+    [SettingsScreen]
+    [CalendarScreen]
+
+    [DashboardViewModel]
+    [OnboardingViewModel]
+    [SettingsViewModel]
+    [CalendarViewModel]
+}
+
+package "Domain" {
+    [GetMonthProgressUseCase]
+    [GetSuggestedDaysUseCase]
+    [CalculateRequirementsUseCase]
+    [AggregateSessionsUseCase]
+
+    interface "OfficeRepository" as IRepo
+}
+
+package "Data" {
+    [OfficeRepositoryImpl]
+    [OfficeDatabase]
+    [GeofencingManager]
+    [HolidayApiService]
+}
+
+package "DI (Hilt)" {
+    [AppModule]
+    [DatabaseModule]
+    [RepositoryModule]
+}
+
+[MainActivity] --> [DashboardScreen]
+[DashboardScreen] --> [DashboardViewModel]
+[DashboardViewModel] --> [GetMonthProgressUseCase]
+[DashboardViewModel] --> [GetSuggestedDaysUseCase]
+[GetMonthProgressUseCase] --> IRepo
+[GetSuggestedDaysUseCase] --> IRepo
+[OfficeRepositoryImpl] ..|> IRepo
+[OfficeRepositoryImpl] --> [OfficeDatabase]
+[OfficeRepositoryImpl] --> [GeofencingManager]
+[OfficeRepositoryImpl] --> [HolidayApiService]
+
+[AppModule] ..> [Go2OfficeApp] : provides
+[DatabaseModule] ..> [OfficeDatabase] : provides
+[RepositoryModule] ..> [OfficeRepositoryImpl] : binds
+
+@enduml
+

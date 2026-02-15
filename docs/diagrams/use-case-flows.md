@@ -1,5 +1,7 @@
 # 🔄 Sequence Diagrams
 
+> **📊 Viewing Diagrams**: This document uses **Mermaid sequence diagrams** that render automatically on GitHub! Detailed PlantUML versions with more detail are in collapsible sections. See [README.md](README.md) for other viewing options.
+
 This document contains detailed sequence diagrams for key user flows and system interactions.
 
 ---
