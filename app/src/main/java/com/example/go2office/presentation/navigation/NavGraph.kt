@@ -83,6 +83,9 @@ fun NavGraph(
             AutoDetectionScreen(
                 onNavigateBack = {
                     navController.popBackStack()
+                },
+                onNavigateToPermissions = {
+                    navController.navigate(Screen.PermissionsSetup.route)
                 }
             )
         }

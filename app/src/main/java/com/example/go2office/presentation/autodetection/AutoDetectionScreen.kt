@@ -20,7 +20,8 @@ import com.example.go2office.util.Constants
 @Composable
 fun AutoDetectionScreen(
     viewModel: AutoDetectionViewModel = hiltViewModel(),
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToPermissions: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -72,7 +73,8 @@ fun AutoDetectionScreen(
                             permissions.add(Manifest.permission.POST_NOTIFICATIONS)
                         }
                         permissionLauncher.launch(permissions.toTypedArray())
-                    }
+                    },
+                    onManagePermissions = onNavigateToPermissions
                 )
                 OfficeLocationCard(
                     location = uiState.officeLocation,
@@ -138,12 +140,14 @@ private fun PermissionsCard(
     hasLocation: Boolean,
     hasBackground: Boolean,
     hasNotification: Boolean,
-    onRequestPermissions: () -> Unit
+    onRequestPermissions: () -> Unit,
+    onManagePermissions: () -> Unit
 ) {
+    val allGranted = hasLocation && hasBackground && hasNotification
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = if (hasLocation && hasBackground && hasNotification)
+            containerColor = if (allGranted)
                 MaterialTheme.colorScheme.primaryContainer
             else
                 MaterialTheme.colorScheme.errorContainer
@@ -153,14 +157,23 @@ private fun PermissionsCard(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(
-                text = "Permissions",
-                style = MaterialTheme.typography.titleMedium
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Permissions",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                TextButton(onClick = onManagePermissions) {
+                    Text("Manage")
+                }
+            }
             PermissionItem("Location", hasLocation)
             PermissionItem("Background Location", hasBackground)
             PermissionItem("Notifications", hasNotification)
-            if (!hasLocation || !hasBackground || !hasNotification) {
+            if (!allGranted) {
                 Button(
                     onClick = onRequestPermissions,
                     modifier = Modifier.fillMaxWidth()
