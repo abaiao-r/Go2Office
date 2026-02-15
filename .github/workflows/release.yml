@@ -1,0 +1,76 @@
+name: Build & Release APK
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version name (e.g., 1.0.0)'
+        required: true
+        default: '1.0.0'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build Debug APK
+      run: ./gradlew assembleDebug
+
+    - name: Get version name
+      id: version
+      run: |
+        if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+          echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+        else
+          echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Rename APK
+      run: |
+        mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/Go2Office-${{ steps.version.outputs.VERSION }}.apk
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ steps.version.outputs.VERSION }}
+        name: Go2Office v${{ steps.version.outputs.VERSION }}
+        body: |
+          ## 📱 Go2Office v${{ steps.version.outputs.VERSION }}
+          
+          ### Installation
+          1. Download `Go2Office-${{ steps.version.outputs.VERSION }}.apk` below
+          2. On your Android phone, enable "Install from unknown sources"
+          3. Open the APK file to install
+          
+          ### What's New
+          - Office attendance tracking
+          - Auto-detection via geofencing
+          - Smart day suggestions
+          - Holiday & vacation management
+          
+          ### Requirements
+          - Android 8.0 (API 26) or higher
+          - Location permissions for auto-detection
+        files: |
+          app/build/outputs/apk/debug/Go2Office-${{ steps.version.outputs.VERSION }}.apk
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

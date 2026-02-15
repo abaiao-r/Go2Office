@@ -38,9 +38,17 @@ Go2Office solves this by:
 
 ### Installation
 
+#### Option 1: Download from GitHub Releases (Easiest)
+
+1. Go to [**Releases**](https://github.com/abaiao-r/Go2Office/releases)
+2. Download the latest `Go2Office-x.x.x.apk`
+3. On your phone, enable "Install from unknown sources" in Settings
+4. Open the APK file to install
+
+#### Option 2: Build from Source
+
 ```bash
-# Clone and build
-git clone https://github.com/yourusername/Go2Office.git
+git clone https://github.com/abaiao-r/Go2Office.git
 cd Go2Office
 ./gradlew installDebug
 ```
