@@ -18,7 +18,8 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
     onNavigateToAutoDetection: () -> Unit = {},
-    onNavigateToAnnualCalendar: () -> Unit = {}
+    onNavigateToAnnualCalendar: () -> Unit = {},
+    onNavigateToPermissions: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(uiState.isSaved) {
@@ -106,6 +107,33 @@ fun SettingsScreen(
                             )
                             Text(
                                 text = "Manage holidays and vacations",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                        Text("›", style = MaterialTheme.typography.headlineMedium)
+                    }
+                }
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    ),
+                    onClick = onNavigateToPermissions
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                text = "🔐 Permissions",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                text = "Manage location and notification permissions",
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }

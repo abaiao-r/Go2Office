@@ -73,6 +73,9 @@ fun NavGraph(
                 },
                 onNavigateToAnnualCalendar = {
                     navController.navigate(Screen.AnnualCalendar.route)
+                },
+                onNavigateToPermissions = {
+                    navController.navigate(Screen.PermissionsSetup.route)
                 }
             )
         }
