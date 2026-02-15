@@ -1,6 +1,9 @@
 package com.example.go2office.presentation.permissions
 import android.Manifest
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -9,14 +12,18 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PermissionsSetupScreen(
@@ -24,10 +31,12 @@ fun PermissionsSetupScreen(
     onAllPermissionsGranted: () -> Unit
 ) {
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     var hasForegroundLocation by remember { mutableStateOf(false) }
     var hasBackgroundLocation by remember { mutableStateOf(false) }
     var hasNotifications by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
+
+    fun checkPermissions() {
         hasForegroundLocation = ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -48,6 +57,29 @@ fun PermissionsSetupScreen(
         } else {
             true 
         }
+    }
+
+    fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.fromParts("package", context.packageName, null)
+        }
+        context.startActivity(intent)
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                checkPermissions()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        checkPermissions()
     }
     val foregroundLocationLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
@@ -109,6 +141,7 @@ fun PermissionsSetupScreen(
                         )
                     )
                 },
+                onOpenSettings = { openAppSettings() },
                 instruction = "In the next dialog, choose 'While using the app' or 'Allow'"
             )
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -125,6 +158,7 @@ fun PermissionsSetupScreen(
                             )
                         }
                     },
+                    onOpenSettings = { openAppSettings() },
                     instruction = "Choose 'Allow all the time' for best results",
                     note = if (!hasForegroundLocation) "Grant Location Access first" else null
                 )
@@ -143,6 +177,7 @@ fun PermissionsSetupScreen(
                             )
                         }
                     },
+                    onOpenSettings = { openAppSettings() },
                     instruction = "Choose 'Allow' to receive notifications"
                 )
             }
@@ -181,11 +216,10 @@ fun PermissionsSetupScreen(
                 }
             }
             Button(
-                onClick = onAllPermissionsGranted,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = allGranted
+                onClick = { if (allGranted) onAllPermissionsGranted() else onNavigateBack() },
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(if (allGranted) "Continue" else "Grant all permissions above to continue")
+                Text(if (allGranted) "Done" else "Back to Settings")
             }
         }
     }
@@ -198,6 +232,7 @@ private fun PermissionCard(
     isGranted: Boolean,
     isEnabled: Boolean,
     onGrantClick: () -> Unit,
+    onOpenSettings: () -> Unit,
     instruction: String,
     note: String? = null
 ) {
@@ -252,7 +287,22 @@ private fun PermissionCard(
                     )
                 }
             }
-            if (!isGranted) {
+            if (isGranted) {
+                OutlinedButton(
+                    onClick = onOpenSettings,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 44.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Change in Settings")
+                }
+            } else {
                 Text(
                     text = "💡 $instruction",
                     style = MaterialTheme.typography.labelSmall,
