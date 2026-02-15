@@ -1,0 +1,65 @@
+@startuml manual-entry
+!theme plain
+title Manual Day Entry Flow
+
+actor User
+participant "Day Entry\nScreen" as Screen
+participant "Day Entry\nViewModel" as VM
+participant "Update Daily\nHours UseCase" as UC
+participant "Repository" as Repo
+participant "Room\nDatabase" as DB
+
+User -> Screen : Click day on Dashboard
+activate Screen
+Screen -> VM : Load entry for date
+activate VM
+VM -> Repo : getDailyEntry(date)
+activate Repo
+Repo -> DB : Query by date
+DB --> Repo : DailyEntry or null
+Repo --> VM : Domain model
+deactivate Repo
+VM --> Screen : Update state\n(existing hours)
+deactivate VM
+Screen --> User : Show form
+deactivate Screen
+
+User -> Screen : Enter hours: 8.5
+activate Screen
+User -> Screen : Tap "Save"
+Screen -> VM : onEvent(SaveHours(8.5))
+activate VM
+
+VM -> VM : Validate input\n(0-10 hours)
+
+VM -> UC : execute(date, 8.5)
+activate UC
+UC -> Repo : saveDailyEntry\n(date, 8.5, true)
+activate Repo
+Repo -> DB : INSERT OR REPLACE
+activate DB
+DB --> Repo : Success
+deactivate DB
+Repo --> UC : Result.success
+deactivate Repo
+UC --> VM : Success
+deactivate UC
+
+VM -> VM : Update state\n(saved = true)
+VM --> Screen : State: Success
+deactivate VM
+
+Screen --> User : Show "Saved ✓"\nNavigate back
+deactivate Screen
+
+== Dashboard Auto-Updates ==
+
+note over Screen
+Dashboard observes
+Flow<DailyEntry>
+and automatically
+shows new hours
+end note
+
+@enduml
+

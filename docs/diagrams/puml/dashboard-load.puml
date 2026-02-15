@@ -1,0 +1,77 @@
+@startuml dashboard-load
+!theme plain
+title Dashboard: Load Monthly Progress
+
+actor User
+participant "Dashboard\nScreen" as Screen
+participant "Dashboard\nViewModel" as VM
+participant "Get Month\nProgress UC" as ProgressUC
+participant "Get Suggested\nDays UC" as SuggestUC
+participant "Repository" as Repo
+participant "Room\nDatabase" as DB
+
+User -> Screen : Open app
+activate Screen
+Screen -> VM : Observe uiState
+activate VM
+
+VM -> VM : init() {\n  loadDashboardData()\n}
+
+VM -> ProgressUC : invoke(currentMonth)
+activate ProgressUC
+
+ProgressUC -> Repo : getSettings()
+activate Repo
+Repo -> DB : SELECT settings
+DB --> Repo : SettingsEntity
+Repo --> ProgressUC : OfficeSettings\n(3 days/week, 8h/day)
+deactivate Repo
+
+ProgressUC -> ProgressUC : Calculate requirements\nfor month
+
+ProgressUC -> Repo : getDailyEntries(month)
+activate Repo
+Repo -> DB : SELECT WHERE month
+DB --> Repo : List<DailyEntryEntity>
+Repo --> ProgressUC : List<DailyEntry>
+deactivate Repo
+
+ProgressUC -> ProgressUC : Sum completed\ndays and hours
+
+ProgressUC --> VM : MonthProgress\n(required: 14d/112h,\ncompleted: 6d/48h)
+deactivate ProgressUC
+
+VM -> SuggestUC : invoke(currentMonth)
+activate SuggestUC
+
+SuggestUC -> Repo : getHolidays(month)
+activate Repo
+Repo -> DB : SELECT holidays
+DB --> Repo : List<Holiday>
+Repo --> SuggestUC : Holidays
+deactivate Repo
+
+SuggestUC -> Repo : getSettings()
+activate Repo
+Repo -> DB : SELECT settings
+DB --> Repo : Preferences
+Repo --> SuggestUC : WeekdayPreferences
+deactivate Repo
+
+SuggestUC -> SuggestUC : Run suggestion\nalgorithm
+
+SuggestUC --> VM : List<SuggestedDay>\n[Mon 9, Tue 10, Mon 16...]
+deactivate SuggestUC
+
+VM -> VM : Update state:\n- monthProgress\n- suggestedDays\n- isLoading = false
+
+VM --> Screen : StateFlow emits\nnew state
+deactivate VM
+
+Screen -> Screen : Compose recomposes
+
+Screen --> User : Display:\n- Progress: 6/14 days\n- Next: Mon Mar 9
+deactivate Screen
+
+@enduml
+

@@ -1,0 +1,39 @@
+@startuml progress-tracking
+!theme plain
+
+start
+:Get required\ndays & hours;
+:Get completed\ndays & hours;
+
+:Calculate\ndays progress:;
+note right
+    daysProgress = (completed / required) × 100
+end note
+
+:Calculate\nhours progress:;
+note right
+    hoursProgress = (completed / required) × 100
+end note
+
+:Overall progress =\nmin(days%, hours%);
+
+if (Days >= required\nAND hours >= required?) then (yes)
+    :Status: COMPLETE ✅;
+    stop
+else (no)
+    :Calculate days\nremaining;
+    :Calculate hours\nremaining;
+endif
+
+if (Progress >= 80%?) then (yes)
+    :Status: ON TRACK 🟢;
+else if (Progress >= 50%?) then (yes)
+    :Status: BEHIND 🟡;
+else (no)
+    :Status: CRITICAL 🔴;
+endif
+
+stop
+
+@enduml
+

@@ -1,0 +1,23 @@
+@startuml month-end
+!theme plain
+
+start
+:Last week of month;
+:Open Dashboard;
+if (Requirement met?) then (yes)
+    :Celebrate! 🎉;
+    stop
+else (no)
+    :Check days remaining;
+    if (Enough days?) then (yes)
+        :Work suggested days;
+        stop
+    else (no)
+        :Work ALL remaining days;
+        :Talk to manager\nabout shortage;
+        stop
+    endif
+endif
+
+@enduml
+

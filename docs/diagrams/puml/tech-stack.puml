@@ -1,0 +1,37 @@
+@startuml tech-stack
+!theme plain
+
+package "Presentation" {
+    [Jetpack Compose]
+    [Material 3]
+    [Navigation Compose]
+}
+
+package "Business Logic" {
+    [ViewModels]
+    [Use Cases]
+    [Domain Models]
+}
+
+package "Data" {
+    [Room Database]
+    [Retrofit]
+    [Geofencing API]
+}
+
+package "Framework" {
+    [Hilt DI]
+    [Coroutines]
+    [Flow]
+}
+
+[Jetpack Compose] --> [ViewModels]
+[ViewModels] --> [Use Cases]
+[Use Cases] --> [Room Database]
+[Use Cases] --> [Retrofit]
+[ViewModels] ..> [Hilt DI]
+[Use Cases] ..> [Coroutines]
+[Room Database] ..> [Flow]
+
+@enduml
+

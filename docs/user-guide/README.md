@@ -14,6 +14,13 @@ Complete guide to using Go2Office effectively.
 
 ### First-Time Setup
 
+![Onboarding Flow](../diagrams/images/onboarding-flow.png)
+
+*First-time setup workflow with optional auto-detection*
+
+<details>
+<summary>📄 View PlantUML source</summary>
+
 ```plantuml
 @startuml onboarding-flow
 !theme plain
@@ -139,8 +146,10 @@ Suggestions:
 **How**:
 1. Dashboard → Tap any day
 2. Enter hours (0-10)
-3. Add notes (optional)
-4. Save
+@enduml
+```
+
+</details>
 
 ---
 
@@ -148,7 +157,12 @@ Suggestions:
 
 ### Scenario 1: New Month Planning
 
-```plantuml
+![New Month Workflow](../diagrams/images/new-month.png)
+
+*Simple workflow for planning office days at start of month*
+
+<details>
+<parameter name="summary">📄 View PlantUML source
 @startuml new-month
 !theme plain
 
@@ -164,11 +178,18 @@ stop
 @enduml
 ```
 
+</details>
+
 ---
 
 ### Scenario 2: Mid-Month Check-In
 
-```plantuml
+![Mid-Month Check](../diagrams/images/mid-month.png)
+
+*Quick check-in workflow to adjust if behind schedule*
+
+<details>
+<parameter name="summary">📄 View PlantUML source
 @startuml mid-month
 !theme plain
 
@@ -187,11 +208,18 @@ endif
 @enduml
 ```
 
+</details>
+
 ---
 
 ### Scenario 3: Month-End Rush
 
-```plantuml
+![Month-End Workflow](../diagrams/images/month-end.png)
+
+*Last-minute workflow to complete requirements before month ends*
+
+<details>
+<parameter name="summary">📄 View PlantUML source
 @startuml month-end
 !theme plain
 
@@ -215,6 +243,8 @@ endif
 
 @enduml
 ```
+
+</details>
 
 ---
 

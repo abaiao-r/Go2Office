@@ -1,0 +1,69 @@
+@startuml geofence-processing
+!theme plain
+title Background Geofence Processing
+
+participant "Android\nSystem" as System
+participant "Geofence\nBroadcast\nReceiver" as Receiver
+participant "Hilt" as Hilt
+participant "Coroutine\nScope" as Scope
+participant "DAOs" as DAO
+participant "Database" as DB
+
+System -> Receiver : onReceive(Intent)
+activate Receiver
+
+Receiver -> Receiver : Parse GeofencingEvent
+
+alt Geofence ENTER
+    Receiver -> Hilt : Inject dependencies
+    activate Hilt
+    Hilt --> Receiver : OfficePresenceDao,\nNotificationHelper
+    deactivate Hilt
+
+    Receiver -> Scope : launch(Dispatchers.IO)
+    activate Scope
+
+    Scope -> DAO : insert(PresenceEntity(\n  entryTime = now\n))
+    activate DAO
+    DAO -> DB : INSERT
+    DB --> DAO : Success
+    deactivate DAO
+
+    Scope -> Receiver : Show notification
+    deactivate Scope
+
+else Geofence EXIT
+    Receiver -> Scope : launch(Dispatchers.IO)
+    activate Scope
+
+    Scope -> DAO : insert(PresenceEntity(\n  exitTime = now\n))
+    activate DAO
+    DAO -> DB : INSERT
+    DB --> DAO : Success
+    deactivate DAO
+
+    Scope -> DAO : Get today's sessions
+    DAO -> DB : SELECT WHERE date
+    DB --> DAO : Sessions
+
+    Scope -> Scope : Calculate total hours
+
+    Scope -> DAO : Save daily entry
+    DAO -> DB : INSERT daily_entry
+    DB --> DAO : Success
+
+    Scope -> Receiver : Show notification\nwith hours
+    deactivate Scope
+end
+
+Receiver --> System : Complete\n(receiver exits)
+deactivate Receiver
+
+note right of Receiver
+Receiver completes in <1s
+App goes back to sleep
+Battery impact: minimal
+end note
+
+@enduml
+

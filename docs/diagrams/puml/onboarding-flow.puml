@@ -1,0 +1,24 @@
+@startuml onboarding-flow
+!theme plain
+title First-Time Setup Flow
+
+(*) --> "Welcome Screen"
+"Welcome Screen" --> "Set Requirements"
+note right: Days per week: 1-5\nHours per day: 1-12
+
+"Set Requirements" --> "Order Weekdays"
+note right: Drag to order:\nMon > Tue > Wed...
+
+"Order Weekdays" --> "Enable Auto-Detection?"
+if "Auto?" then
+    -->[Yes] "Grant Permissions"
+    "Grant Permissions" --> "Set Office Location"
+    "Set Office Location" --> "Complete"
+else
+    -->[No] "Complete"
+endif
+
+"Complete" --> (*)
+
+@enduml
+

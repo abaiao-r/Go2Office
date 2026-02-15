@@ -20,6 +20,13 @@ This document contains detailed sequence diagrams for key user flows and system 
 
 ### Complete Office Visit Cycle
 
+![Auto-Detection Complete Flow](images/auto-detection-complete.png)
+
+*Complete geofence-based auto-detection cycle from entry to exit with hour calculation*
+
+<details>
+<summary>📄 View PlantUML source code</summary>
+
 ```plantuml
 @startuml auto-detection-complete
 !theme plain
@@ -118,11 +125,20 @@ note right: Dashboard shows\nyesterday's 9.2h\nautomatically
 @enduml
 ```
 
+</details>
+
 ---
 
 ## Manual Day Entry
 
 ### User Manually Logs Office Day
+
+![Manual Entry Flow](images/manual-entry.png)
+
+*User flow for manually entering office hours for a specific day*
+
+<details>
+<summary>📄 View PlantUML source code</summary>
 
 ```plantuml
 @startuml manual-entry
@@ -191,11 +207,20 @@ end note
 @enduml
 ```
 
+</details>
+
 ---
 
 ## Monthly Dashboard Load
 
 ### Dashboard Screen Initialization
+
+![Dashboard Load Flow](images/dashboard-load.png)
+
+*Dashboard initialization sequence showing data loading and state updates*
+
+<details>
+<summary>📄 View PlantUML source code</summary>
 
 ```plantuml
 @startuml dashboard-load
@@ -276,11 +301,20 @@ deactivate Screen
 @enduml
 ```
 
+</details>
+
 ---
 
 ## Holiday Management
 
 ### Load Country Holidays
+
+![Load Holidays Flow](images/load-holidays.png)
+
+*Sequence for fetching and storing public holidays from API*
+
+<details>
+<summary>📄 View PlantUML source code</summary>
 
 ```plantuml
 @startuml load-holidays
@@ -347,11 +381,20 @@ end note
 @enduml
 ```
 
+</details>
+
 ---
 
 ## Settings Update
 
 ### Change Requirements Mid-Month
+
+![Settings Update Flow](images/settings-update.png)
+
+*Settings change sequence with automatic dashboard recalculation*
+
+<details>
+<summary>📄 View PlantUML source code</summary>
 
 ```plantuml
 @startuml settings-update
@@ -436,11 +479,20 @@ deactivate Screen
 @enduml
 ```
 
+</details>
+
 ---
 
 ## Background Processing
 
 ### Geofence Event Handling
+
+![Geofence Processing](images/geofence-processing.png)
+
+*Background geofence processing with minimal battery impact*
+
+<details>
+<summary>📄 View PlantUML source code</summary>
 
 ```plantuml
 @startuml geofence-processing
@@ -513,11 +565,20 @@ end note
 @enduml
 ```
 
+</details>
+
 ---
 
 ## Error Handling
 
 ### Failed API Call Recovery
+
+![Error Handling Flow](images/error-handling.png)
+
+*Error handling with cache fallback for network failures*
+
+<details>
+<summary>📄 View PlantUML source code</summary>
 
 ```plantuml
 @startuml error-handling
@@ -559,6 +620,8 @@ deactivate Repo
 
 @enduml
 ```
+
+</details>
 
 ---
 

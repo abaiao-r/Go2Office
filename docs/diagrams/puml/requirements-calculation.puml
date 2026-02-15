@@ -1,0 +1,23 @@
+@startuml requirements-calculation
+!theme plain
+
+start
+:User sets\ndays per week;
+:Count weekdays\nin month;
+:Calculate:\nrequired = (days/week × weekdays) / 5;
+:Round up\n(ceiling);
+:Subtract holidays\nand vacations;
+:Display\nfinal requirement;
+stop
+
+note right
+  Example:
+  3 days/week
+  March: 22 weekdays
+  = ceil((3 × 22) / 5)
+  = ceil(13.2)
+  = 14 days required
+end note
+
+@enduml
+

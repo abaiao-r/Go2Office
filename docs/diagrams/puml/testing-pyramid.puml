@@ -1,0 +1,31 @@
+@startuml testing-pyramid
+!theme plain
+
+rectangle "UI Tests\n(Compose Testing)" as UI #LightBlue
+rectangle "Integration Tests\n(Repository + Room)" as Integration #LightGreen
+rectangle "Unit Tests\n(ViewModels + Use Cases)" as Unit #LightYellow
+
+UI -[hidden]down-> Integration
+Integration -[hidden]down-> Unit
+
+note right of UI
+  10% - Slow
+  End-to-end flows
+  User interactions
+end note
+
+note right of Integration
+  20% - Medium
+  Data layer
+  Database operations
+end note
+
+note right of Unit
+  70% - Fast
+  Business logic
+  State changes
+  No dependencies
+end note
+
+@enduml
+

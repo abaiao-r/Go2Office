@@ -1,0 +1,40 @@
+@startuml work-hours-window
+!theme plain
+
+start
+:Office entry\ndetected;
+
+if (Entry before 7 AM?) then (yes)
+    :Clamp to 7:00 AM;
+else (no)
+    :Use actual entry time;
+endif
+
+if (Entry after 7 PM?) then (yes)
+    :Count 0 hours;
+    stop
+endif
+
+:User works...;
+
+:Office exit\ndetected;
+
+if (Exit after 7 PM?) then (yes)
+    :Clamp to 7:00 PM;
+else (no)
+    :Use actual exit time;
+endif
+
+:Calculate duration\nbetween entry and exit;
+
+if (Duration > 10 hours?) then (yes)
+    :Cap at 10 hours;
+else (no)
+    :Use actual duration;
+endif
+
+:Record hours\nfor the day;
+stop
+
+@enduml
+

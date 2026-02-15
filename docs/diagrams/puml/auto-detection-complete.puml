@@ -1,0 +1,96 @@
+@startuml auto-detection-complete
+!theme plain
+title Auto-Detection: Complete Office Visit
+
+actor User
+participant "Android\nSystem" as System
+participant "Geofence\nBroadcast\nReceiver" as Receiver
+participant "Presence\nDAO" as DAO
+participant "Room\nDatabase" as DB
+participant "Notification\nHelper" as Notif
+participant "Aggregate\nUseCase" as Aggregate
+
+== User Arrives at Office ==
+
+User -> System : Enters geofence area
+activate System
+System -> System : Detect ENTER event
+System -> Receiver : onReceive(ENTER)
+activate Receiver
+
+Receiver -> DAO : insert(PresenceEntity\nwith entryTime)
+activate DAO
+DAO -> DB : INSERT entry
+activate DB
+DB --> DAO : Success
+deactivate DB
+DAO --> Receiver : Saved
+deactivate DAO
+
+Receiver -> Notif : showNotification\n("Arrived at office")
+activate Notif
+Notif --> User : 🔔 "Arrived at office\n8:30 AM"
+deactivate Notif
+
+Receiver --> System : Complete
+deactivate Receiver
+deactivate System
+
+== User Works (App Sleeps) ==
+
+User -> User : Works for several hours
+note right: No app activity\nNo battery drain
+
+== User Leaves Office ==
+
+User -> System : Exits geofence area
+activate System
+System -> System : Detect EXIT event
+System -> Receiver : onReceive(EXIT)
+activate Receiver
+
+Receiver -> DAO : insert(PresenceEntity\nwith exitTime)
+activate DAO
+DAO -> DB : INSERT exit
+activate DB
+DB --> DAO : Success
+deactivate DB
+DAO --> Receiver : Saved
+deactivate DAO
+
+Receiver -> Aggregate : aggregateSessions(date)
+activate Aggregate
+Aggregate -> DAO : getSessionsForDate(date)
+activate DAO
+DAO -> DB : SELECT * WHERE date
+DB --> DAO : [entry, exit]
+DAO --> Aggregate : List<PresenceEntity>
+deactivate DAO
+
+Aggregate -> Aggregate : Calculate hours\n(7 AM - 7 PM window)
+Aggregate -> Aggregate : Apply 10h daily cap
+
+Aggregate -> DAO : saveDailyEntry(date, hours)
+activate DAO
+DAO -> DB : INSERT daily_entry
+DB --> DAO : Success
+deactivate DAO
+Aggregate --> Receiver : Hours: 9.25
+deactivate Aggregate
+
+Receiver -> Notif : showNotification\n("Left office - 9.2h")
+activate Notif
+Notif --> User : 🔔 "Left office\n9.2 hours worked"
+deactivate Notif
+
+Receiver --> System : Complete
+deactivate Receiver
+deactivate System
+
+== Next Day Dashboard Check ==
+
+User -> User : Opens app
+note right: Dashboard shows\nyesterday's 9.2h\nautomatically
+
+@enduml
+

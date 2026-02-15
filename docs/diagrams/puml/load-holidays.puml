@@ -1,0 +1,63 @@
+@startuml load-holidays
+!theme plain
+title Load Country Holidays from API
+
+actor User
+participant "Calendar\nScreen" as Screen
+participant "Calendar\nViewModel" as VM
+participant "Add Holiday\nUseCase" as AddUC
+participant "Repository" as Repo
+participant "Holiday\nAPI Service" as API
+participant "Room\nDatabase" as DB
+
+User -> Screen : Tap "Load Country"
+activate Screen
+Screen --> User : Show country picker
+User -> Screen : Select "Portugal"
+Screen -> VM : onEvent(LoadCountry("PT"))
+activate VM
+
+VM -> VM : Update state\n(loading = true)
+VM --> Screen : Show loading
+Screen --> User : 🔄 Loading...
+
+VM -> Repo : fetchPublicHolidays("PT", 2026)
+activate Repo
+
+Repo -> API : GET /PublicHolidays/2026/PT
+activate API
+API --> Repo : JSON response\n[{date, name}...]
+deactivate API
+
+Repo -> Repo : Map DTOs to\nHolidayEntity
+
+loop For each holiday
+    Repo -> DB : INSERT holiday
+    activate DB
+    DB --> Repo : Saved
+    deactivate DB
+end
+
+Repo --> VM : Result.success\n(10 holidays loaded)
+deactivate Repo
+
+VM -> VM : Update state:\n- loading = false\n- success message
+
+VM --> Screen : State updated
+deactivate VM
+
+Screen -> Screen : Recompose calendar
+
+Screen --> User : Show holidays\nmarked with 🎉
+deactivate Screen
+
+note over User
+Calendar now shows:
+- 1 Jan: New Year
+- 25 Apr: Freedom Day
+- 10 Jun: Portugal Day
+etc.
+end note
+
+@enduml
+

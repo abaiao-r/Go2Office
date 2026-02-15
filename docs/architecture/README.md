@@ -123,6 +123,13 @@ User Interaction → Event → ViewModel → Use Case → Update State → UI Re
 
 ## Component Diagram
 
+![Component Diagram](../diagrams/images/components.png)
+
+*Main application components showing screens, ViewModels, use cases, and data layer*
+
+<details>
+<summary>📄 View PlantUML source code</summary>
+
 ```plantuml
 @startuml components
 !theme plain
@@ -184,9 +191,18 @@ package "DI (Hilt)" {
 @enduml
 ```
 
+</details>
+
 ---
 
 ## Data Flow
+
+![Data Flow](../diagrams/images/data-flow.png)
+
+*Unidirectional data flow from user interaction to UI update*
+
+<details>
+<summary>📄 View PlantUML source code</summary>
 
 ```plantuml
 @startuml data-flow
@@ -225,9 +241,18 @@ deactivate UI
 @enduml
 ```
 
+</details>
+
 ---
 
 ## State Management
+
+![State Management](../diagrams/images/state-management.png)
+
+*Unidirectional data flow pattern with StateFlow*
+
+<details>
+<summary>📄 View PlantUML source code</summary>
 
 ```plantuml
 @startuml state-management
@@ -260,9 +285,18 @@ end note
 @enduml
 ```
 
+</details>
+
 ---
 
 ## Dependency Injection
+
+![Dependency Injection](../diagrams/images/dependency-injection.png)
+
+*Hilt DI module structure and scopes*
+
+<details>
+<summary>📄 View PlantUML source code</summary>
 
 ```plantuml
 @startuml dependency-injection
@@ -307,9 +341,18 @@ end note
 @enduml
 ```
 
+</details>
+
 ---
 
 ## Database Schema
+
+![Database Schema](../diagrams/images/database-schema.png)
+
+*Room database entities and relationships*
+
+<details>
+<summary>📄 View PlantUML source code</summary>
 
 ```plantuml
 @startuml database-schema
@@ -363,9 +406,18 @@ office_location ||--o{ office_presence : tracks at
 @enduml
 ```
 
+</details>
+
 ---
 
 ## Navigation Flow
+
+![Navigation Flow](../diagrams/images/navigation.png)
+
+*App navigation state machine showing screen transitions*
+
+<details>
+<summary>📄 View PlantUML source code</summary>
 
 ```plantuml
 @startuml navigation
@@ -406,9 +458,11 @@ end note
 @enduml
 ```
 
+</details>
+
 ---
 
-## Key Design Patterns
+## Performance Considerations
 
 ### 1. Repository Pattern
 - Abstracts data sources
@@ -472,11 +526,20 @@ end note
 @enduml
 ```
 
+</details>
+
 ---
 
-## Performance Considerations
+## Testing Strategy
 
-### Caching Strategy
+![Testing Pyramid](../diagrams/images/testing-pyramid.png)
+
+*Testing strategy with 70% unit, 20% integration, 10% UI tests*
+
+<details>
+<summary>📄 View PlantUML source code</summary>
+
+```plantuml
 - Room as single source of truth
 - In-memory caching for calculations
 - Flow-based reactive updates

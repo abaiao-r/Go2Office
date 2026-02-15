@@ -19,7 +19,14 @@ This document explains the core business rules, calculations, and algorithms tha
 requiredDays = ceil((daysPerWeek × weekdaysInMonth) / 5)
 ```
 
-**PlantUML Diagram**:
+**Flowchart**:
+
+![Requirements Calculation](../diagrams/images/requirements-calculation.png)
+
+*Example: 3 days/week in March (22 weekdays) = 14 days required*
+
+<details>
+<summary>📄 View PlantUML source</summary>
 
 ```plantuml
 @startuml requirements-calculation
@@ -45,6 +52,8 @@ end note
 
 @enduml
 ```
+
+</details>
 
 **Example Calculations**:
 
@@ -88,6 +97,13 @@ Suggest optimal office days that:
 
 ### Algorithm Flow
 
+![Suggestion Algorithm](../diagrams/images/suggestion-algorithm.png)
+
+*Algorithm distributes days evenly across weeks based on user preferences*
+
+<details>
+<summary>📄 View PlantUML source</summary>
+
 ```plantuml
 @startuml suggestion-algorithm
 !theme plain
@@ -117,6 +133,8 @@ stop
 
 @enduml
 ```
+
+</details>
 
 ### Example Scenario
 
@@ -183,6 +201,13 @@ W3 -[hidden]down-> W4
 
 **Business Rule**: Only hours between 7 AM and 7 PM count
 
+![Work Hours Window](../diagrams/images/work-hours-window.png)
+
+*Hour tracking rules with 7am-7pm window and 10h daily cap*
+
+<details>
+<summary>📄 View PlantUML source</summary>
+
 ```plantuml
 @startuml work-hours-window
 !theme plain
@@ -225,6 +250,8 @@ stop
 @enduml
 ```
 
+</details>
+
 ### Examples
 
 | Entry | Exit | Clamped Entry | Clamped Exit | Hours |
@@ -240,6 +267,13 @@ stop
 ## Session Aggregation
 
 **Business Rule**: Multiple office visits in one day are combined
+
+![Session Aggregation](../diagrams/images/session-aggregation.png)
+
+*Multiple sessions aggregated into single daily entry with 10h cap*
+
+<details>
+<summary>📄 View PlantUML source</summary>
 
 ```plantuml
 @startuml session-aggregation
@@ -284,11 +318,20 @@ end note
 @enduml
 ```
 
+</details>
+
 ---
 
 ## Holiday & Vacation Handling
 
 ### Exclusion Rules
+
+![Exclusion Rules](../diagrams/images/exclusion-rules.png)
+
+*Decision flowchart for including/excluding days from requirements*
+
+<details>
+<summary>📄 View PlantUML source</summary>
 
 ```plantuml
 @startuml exclusion-rules
@@ -322,7 +365,16 @@ stop
 @enduml
 ```
 
+</details>
+
 ### Impact on Requirements
+
+![Holiday Impact](../diagrams/images/holiday-impact.png)
+
+*How holidays and vacations reduce monthly requirements*
+
+<details>
+<summary>📄 View PlantUML source</summary>
 
 ```plantuml
 @startuml holiday-impact
@@ -352,11 +404,20 @@ WithHolidays -down-> WithVacation : Apply\nvacations
 @enduml
 ```
 
+</details>
+
 ---
 
 ## Progress Tracking
 
 ### Completion Calculation
+
+![Progress Tracking](../diagrams/images/progress-tracking.png)
+
+*Progress calculation algorithm with status indicators*
+
+<details>
+<summary>📄 View PlantUML source</summary>
 
 ```plantuml
 @startuml progress-tracking
@@ -399,11 +460,20 @@ stop
 @enduml
 ```
 
+</details>
+
 ---
 
 ## Edge Cases
 
 ### Case 1: Insufficient Remaining Days
+
+![Insufficient Days](../diagrams/images/insufficient-days.png)
+
+*Handling scenario when not enough days remain to meet requirement*
+
+<details>
+<summary>📄 View PlantUML source</summary>
 
 ```plantuml
 @startuml insufficient-days
@@ -425,6 +495,8 @@ stop
 
 @enduml
 ```
+
+</details>
 
 ### Case 2: Mid-Month Settings Change
 
@@ -467,6 +539,13 @@ Suggestions: 2 more days to meet day requirement
 
 ### Settings Validation
 
+![Settings Validation](../diagrams/images/settings-validation.png)
+
+*Validation rules for user settings input*
+
+<details>
+<summary>📄 View PlantUML source</summary>
+
 ```plantuml
 @startuml settings-validation
 !theme plain
@@ -495,11 +574,20 @@ stop
 @enduml
 ```
 
+</details>
+
 ---
 
 ## Business Metrics
 
 ### Key Performance Indicators
+
+![KPIs](../diagrams/images/kpis.png)
+
+*Key metrics for measuring app success and user compliance*
+
+<details>
+<summary>📄 View PlantUML source</summary>
 
 ```plantuml
 @startuml kpis
@@ -525,6 +613,8 @@ rectangle "Compliance Metrics" {
 
 @enduml
 ```
+
+</details>
 
 ---
 

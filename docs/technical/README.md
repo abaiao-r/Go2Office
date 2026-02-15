@@ -106,6 +106,13 @@ dependencies {
 
 ## Architecture Overview
 
+![Tech Stack](../diagrams/images/tech-stack.png)
+
+*Technology stack showing presentation, business logic, data, and framework layers*
+
+<details>
+<summary>📄 View PlantUML source</summary>
+
 ```plantuml
 @startuml tech-stack
 !theme plain
@@ -144,6 +151,8 @@ package "Framework" {
 
 @enduml
 ```
+
+</details>
 
 ---
 
