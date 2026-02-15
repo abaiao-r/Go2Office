@@ -1,23 +1,20 @@
 @startuml state-management
 !theme plain
 
-package "Unidirectional Data Flow" {
-    state "UI State" as UIState
-    state "User Event" as Event
-    state "ViewModel" as VM
-    state "Use Cases" as UC
-    state "Repository" as Repo
+:UI State] as UIState
+:User Event] as Event
+:ViewModel] as VM
+:Use Cases] as UC
+:Repository] as Repo
 
-    [*] --> UIState
-    UIState --> Event : User\nInteraction
-    Event --> VM : Handle\nEvent
-    VM --> UC : Execute
-    UC --> Repo : Query/Mutate
-    Repo --> UC : Result
-    UC --> VM : Success/Error
-    VM --> UIState : Update\nState
-    UIState --> UIState : UI\nRecomposes
-}
+UIState --> Event : User\nInteraction
+Event --> VM : Handle\nEvent
+VM --> UC : Execute
+UC --> Repo : Query/Mutate
+Repo --> UC : Result
+UC --> VM : Success/Error
+VM --> UIState : Update\nState
+UIState --> UIState : UI\nRecomposes
 
 note right of UIState
   Immutable data class
