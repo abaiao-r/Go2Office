@@ -602,14 +602,46 @@ private fun AutoDetectionStep(
         )
     }
 }
+private fun parseDmsToDecimal(dms: String): Double? {
+    val cleanDms = dms.trim().uppercase()
+    val dmsRegex = """(\d+)[°]\s*(\d+)[′']\s*(\d+(?:\.\d+)?)[″"]\s*([NSEW])""".toRegex()
+    val match = dmsRegex.find(cleanDms)
+    if (match != null) {
+        val (deg, min, sec, dir) = match.destructured
+        val decimal = deg.toDouble() + min.toDouble() / 60 + sec.toDouble() / 3600
+        return if (dir == "S" || dir == "W") -decimal else decimal
+    }
+    return cleanDms.toDoubleOrNull()
+}
+
+private fun parseCoordinates(input: String): Pair<Double, Double>? {
+    val trimmed = input.trim()
+    val dmsPattern = """(\d+[°]\s*\d+[′']\s*\d+(?:\.\d+)?[″"]\s*[NS])\s*[,\s]\s*(\d+[°]\s*\d+[′']\s*\d+(?:\.\d+)?[″"]\s*[EW])""".toRegex(RegexOption.IGNORE_CASE)
+    val dmsMatch = dmsPattern.find(trimmed)
+    if (dmsMatch != null) {
+        val lat = parseDmsToDecimal(dmsMatch.groupValues[1])
+        val lon = parseDmsToDecimal(dmsMatch.groupValues[2])
+        if (lat != null && lon != null) return Pair(lat, lon)
+    }
+    val decimalPattern = """(-?\d+\.?\d*)\s*[,\s]\s*(-?\d+\.?\d*)""".toRegex()
+    val decimalMatch = decimalPattern.find(trimmed)
+    if (decimalMatch != null) {
+        val lat = decimalMatch.groupValues[1].toDoubleOrNull()
+        val lon = decimalMatch.groupValues[2].toDoubleOrNull()
+        if (lat != null && lon != null) return Pair(lat, lon)
+    }
+    return null
+}
+
 @Composable
 private fun SetLocationDialog(
     onDismiss: () -> Unit,
     onConfirm: (Double, Double, String) -> Unit
 ) {
-    var latitude by remember { mutableStateOf("") }
-    var longitude by remember { mutableStateOf("") }
+    var coordinates by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("Main Office") }
+    var parseError by remember { mutableStateOf(false) }
+    val parsedCoords = remember(coordinates) { parseCoordinates(coordinates) }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Set Office Location") },
@@ -622,21 +654,32 @@ private fun SetLocationDialog(
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
-                    value = latitude,
-                    onValueChange = { latitude = it },
-                    label = { Text("Latitude") },
-                    placeholder = { Text("37.7749") },
+                    value = coordinates,
+                    onValueChange = {
+                        coordinates = it
+                        parseError = false
+                    },
+                    label = { Text("Coordinates") },
+                    placeholder = { Text("38.7707, -9.0972") },
+                    isError = parseError,
+                    supportingText = if (parseError) {{ Text("Invalid format", color = MaterialTheme.colorScheme.error) }} else null,
                     modifier = Modifier.fillMaxWidth()
                 )
-                OutlinedTextField(
-                    value = longitude,
-                    onValueChange = { longitude = it },
-                    label = { Text("Longitude") },
-                    placeholder = { Text("-122.4194") },
-                    modifier = Modifier.fillMaxWidth()
+                if (parsedCoords != null) {
+                    Text(
+                        text = "✓ Parsed: ${String.format("%.6f", parsedCoords.first)}, ${String.format("%.6f", parsedCoords.second)}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+                Text(
+                    text = "Supported formats:",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "💡 Tip: Long-press location in Google Maps to get coordinates",
+                    text = "• Decimal: 38.7707, -9.0972\n• DMS: 38°46'14.52\"N 9°05'49.89\"W",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -645,9 +688,12 @@ private fun SetLocationDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    val lat = latitude.toDoubleOrNull() ?: 0.0
-                    val lon = longitude.toDoubleOrNull() ?: 0.0
-                    onConfirm(lat, lon, name)
+                    val parsed = parseCoordinates(coordinates)
+                    if (parsed != null) {
+                        onConfirm(parsed.first, parsed.second, name)
+                    } else {
+                        parseError = true
+                    }
                 }
             ) {
                 Text("Set")
