@@ -11,10 +11,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.go2office.R
 import com.example.go2office.domain.model.DailyEntry
 import com.example.go2office.domain.model.MonthProgress
 import com.example.go2office.domain.model.OfficePresence
@@ -43,10 +45,10 @@ fun DashboardScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Go2Office") },
+                title = { Text(stringResource(R.string.app_name)) },
                 actions = {
                     IconButton(onClick = onNavigateToSettings) {
-                        Icon(Icons.Default.Settings, "Settings")
+                        Icon(Icons.Default.Settings, stringResource(R.string.settings_title))
                     }
                 }
             )
@@ -55,7 +57,7 @@ fun DashboardScreen(
             FloatingActionButton(
                 onClick = { onNavigateToDayEntry(LocalDate.now()) }
             ) {
-                Icon(Icons.Default.Add, "Add entry")
+                Icon(Icons.Default.Add, stringResource(R.string.add_entry))
             }
         }
     ) { padding ->
@@ -140,7 +142,7 @@ private fun MonthSelectorCard(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = { onMonthChanged(selectedMonth.minusMonths(1)) }) {
-                Text("◀")
+                Text(stringResource(R.string.nav_previous))
             }
             Text(
                 text = selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
@@ -150,7 +152,7 @@ private fun MonthSelectorCard(
                 onClick = { onMonthChanged(selectedMonth.plusMonths(1)) },
                 enabled = !selectedMonth.isAfter(YearMonth.now())
             ) {
-                Text("▶")
+                Text(stringResource(R.string.nav_next))
             }
         }
     }
@@ -178,21 +180,21 @@ private fun HistoryButton(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text("📊", style = MaterialTheme.typography.headlineSmall)
+                Text(stringResource(R.string.stats_icon), style = MaterialTheme.typography.headlineSmall)
                 Column {
                     Text(
-                        text = "Monthly History",
+                        text = stringResource(R.string.monthly_history),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "View daily breakdown and totals",
+                        text = stringResource(R.string.view_daily_breakdown),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 }
             }
-            Text("›", style = MaterialTheme.typography.headlineMedium)
+            Text(stringResource(R.string.arrow_right), style = MaterialTheme.typography.headlineMedium)
         }
     }
 }
@@ -257,7 +259,7 @@ private fun TodayStatusCard(
                 )
                 Column {
                     Text(
-                        text = if (isAtOffice) "🟢 At Office" else "⚪ Not at Office",
+                        text = if (isAtOffice) stringResource(R.string.at_office) else stringResource(R.string.not_at_office),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -265,7 +267,7 @@ private fun TodayStatusCard(
                         val sessionHours = currentSessionMinutes / 60
                         val sessionMins = currentSessionMinutes % 60
                         Text(
-                            text = "Current session: ${sessionHours}h ${sessionMins}m",
+                            text = stringResource(R.string.current_session_format, sessionHours, sessionMins),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -282,7 +284,7 @@ private fun TodayStatusCard(
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "today",
+                    text = stringResource(R.string.today_label),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -304,7 +306,7 @@ private fun ProgressOverviewCard(progress: MonthProgress) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "Monthly Progress",
+                text = stringResource(R.string.monthly_progress),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
@@ -314,7 +316,7 @@ private fun ProgressOverviewCard(progress: MonthProgress) {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Office Days",
+                        text = stringResource(R.string.office_days),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )

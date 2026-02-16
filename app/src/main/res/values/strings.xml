@@ -26,18 +26,40 @@
 
     <!-- Dashboard -->
     <string name="dashboard_title">Go2Office</string>
+    <string name="add_entry">Add entry</string>
     <string name="monthly_history">Monthly History</string>
+    <string name="view_daily_breakdown">View daily breakdown and totals</string>
     <string name="stats_icon">📊</string>
     <string name="celebration_icon">🎉</string>
+    <string name="at_office">🟢 At Office</string>
+    <string name="not_at_office">⚪ Not at Office</string>
+    <string name="current_session_format">Current session: %dh %dm</string>
+    <string name="time_format">%dh %dm</string>
+    <string name="today_label">today</string>
+    <string name="monthly_progress">Monthly Progress</string>
+    <string name="office_days">Office Days</string>
+    <string name="office_hours">Office Hours</string>
+    <string name="days_remaining">%d days remaining</string>
+    <string name="hours_remaining">%.1fh remaining</string>
+    <string name="no_data_available">No data available for this month</string>
+    <string name="refresh">Refresh</string>
+    <string name="suggested_days">Suggested Days</string>
+    <string name="recent_entries">Recent Entries</string>
+    <string name="goal_complete">🎉 Goal Complete!</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
     <string name="office_requirements">Office Requirements</string>
+    <string name="auto_detection_card_title">🤖 Auto-Detection</string>
     <string name="auto_track_office_hours">Automatically track office hours</string>
+    <string name="annual_calendar_card_title">📅 Annual Calendar</string>
     <string name="manage_holidays_vacations">Manage holidays and vacations</string>
+    <string name="permissions_card_title">🔐 Permissions</string>
     <string name="manage_permissions">Manage location and notification permissions</string>
     <string name="required_days_per_week">Required Days Per Week</string>
+    <string name="days_count">%d days</string>
     <string name="hours_per_day">Hours Per Day</string>
+    <string name="hours_value">%.1f hours</string>
     <string name="weekly_total_format">Weekly total: %.1fh (%.1fh × %d days)</string>
     <string name="current_preferences">Current Preferences</string>
     <string name="error_no_settings">No settings to save</string>
