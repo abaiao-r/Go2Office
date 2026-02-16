@@ -125,6 +125,16 @@
 
     <!-- Calendar / Holidays -->
     <string name="holidays_vacation_title">Holidays &amp; Vacation %d</string>
+    <string name="holidays_vacation_year">Holidays &amp; Vacation %d</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
+    <string name="previous_day">Previous day</string>
+    <string name="next_day">Next day</string>
+    <string name="vacation">Vacation</string>
+    <string name="holiday">Holiday</string>
+    <string name="holiday_placeholder">e.g., Christmas Day</string>
+    <string name="country">Country</string>
+    <string name="remove">Remove</string>
     <string name="add_vacation">Add Vacation</string>
     <string name="add_holiday">Add Holiday</string>
     <string name="load_country">Load Country</string>
@@ -142,6 +152,7 @@
     <string name="start_date">Start Date:</string>
     <string name="end_date">End Date:</string>
     <string name="duration">Duration</string>
+    <string name="workdays_count">%d workdays</string>
     <string name="days_total_format">(%d total)</string>
     <string name="annual_summary">Annual Summary</string>
     <string name="public_holidays">🎉 Public</string>
