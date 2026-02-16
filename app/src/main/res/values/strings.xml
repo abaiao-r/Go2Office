@@ -33,6 +33,7 @@
     <string name="celebration_icon">🎉</string>
     <string name="at_office">🟢 At Office</string>
     <string name="not_at_office">⚪ Not at Office</string>
+    <string name="not_in_office">Not in office</string>
     <string name="current_session_format">Current session: %dh %dm</string>
     <string name="time_format">%dh %dm</string>
     <string name="today_label">today</string>
@@ -44,7 +45,11 @@
     <string name="no_data_available">No data available for this month</string>
     <string name="refresh">Refresh</string>
     <string name="suggested_days">Suggested Days</string>
+    <string name="complete_days_to_meet">Complete these %d days to meet requirements</string>
+    <string name="no_more_days_needed">No more days needed - requirements met!</string>
     <string name="recent_entries">Recent Entries</string>
+    <string name="hours_in_office">%.1fh in office</string>
+    <string name="monthly_requirement_met">You\'ve met your monthly requirement!</string>
     <string name="goal_complete">🎉 Goal Complete!</string>
 
     <!-- Settings -->
@@ -77,6 +82,13 @@
     <string name="permission_notifications">Notifications</string>
     <string name="office_location">Office Location</string>
     <string name="location_format">Lat: %.4f, Lon: %.4f</string>
+    <string name="location_pin_format">📍 %s</string>
+    <string name="location_coords_format">Lat: %.4f, Lon: %.4f</string>
+    <string name="free_no_api_costs">✅ Free - No API costs</string>
+    <string name="work_hours_counted">Hours counted: %d AM - %d PM</string>
+    <string name="daily_cap">Daily cap: %d hours maximum</string>
+    <string name="time_outside_not_counted">Time outside these hours is not counted</string>
+    <string name="currently_at_office">🟢 Currently at Office</string>
     <string name="not_set">Not set</string>
     <string name="use_current_gps">Use Current GPS</string>
     <string name="enter_manually">Enter Manually</string>

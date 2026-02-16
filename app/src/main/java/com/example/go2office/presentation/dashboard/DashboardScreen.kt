@@ -374,9 +374,9 @@ private fun ProgressOverviewCard(progress: MonthProgress) {
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("🎉", style = MaterialTheme.typography.titleLarge)
+                        Text(stringResource(R.string.celebration_icon), style = MaterialTheme.typography.titleLarge)
                         Text(
-                            text = "You've met your monthly requirement!",
+                            text = stringResource(R.string.monthly_requirement_met),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onTertiary
                         )
@@ -401,15 +401,15 @@ private fun SuggestedDaysSection(
         ) {
             Column {
                 Text(
-                    text = "Suggested Days",
+                    text = stringResource(R.string.suggested_days),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = if (suggestions.isNotEmpty()) {
-                        "Complete these ${suggestions.size} days to meet requirements"
+                        stringResource(R.string.complete_days_to_meet, suggestions.size)
                     } else {
-                        "No more days needed - requirements met!"
+                        stringResource(R.string.no_more_days_needed)
                     },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -527,7 +527,7 @@ private fun RecentEntriesSection(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = "Recent Entries",
+            text = stringResource(R.string.recent_entries),
             style = MaterialTheme.typography.titleLarge
         )
         Column(
@@ -567,13 +567,13 @@ private fun RecentEntryCard(
                 )
                 if (entry.wasInOffice) {
                     Text(
-                        text = "%.1fh in office".format(entry.hoursWorked),
+                        text = stringResource(R.string.hours_in_office, entry.hoursWorked),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 } else {
                     Text(
-                        text = "Not in office",
+                        text = stringResource(R.string.not_in_office),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
