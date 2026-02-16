@@ -138,3 +138,34 @@ jobs:
         name: debug-apk
         path: app/build/outputs/apk/debug/app-debug.apk
 
+  merge-check:
+    name: Ready to Merge
+    runs-on: ubuntu-latest
+    needs: [unit-tests, ui-tests, lint, build]
+    if: github.event_name == 'pull_request'
+
+    steps:
+    - name: Check for merge label
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const labels = context.payload.pull_request.labels.map(l => l.name);
+          const hasMergeLabel = labels.includes('ready-to-merge');
+          
+          if (!hasMergeLabel) {
+            core.setFailed('PR must have the "ready-to-merge" label to be merged. Add the label when ready.');
+          } else {
+            console.log('✅ All checks passed and "ready-to-merge" label is present!');
+          }
+
+    - name: Merge readiness summary
+      run: |
+        echo "## ✅ Merge Checklist Complete" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Unit Tests passed" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ UI Tests passed" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Lint Check passed" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ Build APK succeeded" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ 'ready-to-merge' label present" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**This PR is ready to be merged!** 🚀" >> $GITHUB_STEP_SUMMARY
