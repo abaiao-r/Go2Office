@@ -1,3 +1,152 @@
 <resources>
     <string name="app_name">Go2Office</string>
+
+    <!-- Common -->
+    <string name="back">Back</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="set">Set</string>
+    <string name="add">Add</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="manage">Manage</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="error">Error</string>
+    <string name="loading">Loading…</string>
+    <string name="unload">Unload</string>
+    <string name="grant_permission">Grant Permission</string>
+    <string name="change_in_settings">Change in Settings</string>
+
+    <!-- Navigation Icons -->
+    <string name="nav_previous">◀</string>
+    <string name="nav_next">▶</string>
+    <string name="arrow_up">↑</string>
+    <string name="arrow_down">↓</string>
+    <string name="arrow_right">›</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">Go2Office</string>
+    <string name="monthly_history">Monthly History</string>
+    <string name="stats_icon">📊</string>
+    <string name="celebration_icon">🎉</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="office_requirements">Office Requirements</string>
+    <string name="auto_track_office_hours">Automatically track office hours</string>
+    <string name="manage_holidays_vacations">Manage holidays and vacations</string>
+    <string name="manage_permissions">Manage location and notification permissions</string>
+    <string name="required_days_per_week">Required Days Per Week</string>
+    <string name="hours_per_day">Hours Per Day</string>
+    <string name="weekly_total_format">Weekly total: %.1fh (%.1fh × %d days)</string>
+    <string name="current_preferences">Current Preferences</string>
+    <string name="error_no_settings">No settings to save</string>
+    <string name="error_save_settings">Failed to save settings</string>
+
+    <!-- Auto Detection -->
+    <string name="auto_detection_title">Auto-Detection</string>
+    <string name="auto_detection">Auto-Detection</string>
+    <string name="status_active">Active - Monitoring location</string>
+    <string name="status_inactive">Inactive</string>
+    <string name="permissions">Permissions</string>
+    <string name="grant_permissions">Grant Permissions</string>
+    <string name="permission_location">Location</string>
+    <string name="permission_background_location">Background Location</string>
+    <string name="permission_notifications">Notifications</string>
+    <string name="office_location">Office Location</string>
+    <string name="location_format">Lat: %.4f, Lon: %.4f</string>
+    <string name="not_set">Not set</string>
+    <string name="use_current_gps">Use Current GPS</string>
+    <string name="enter_manually">Enter Manually</string>
+    <string name="set_office_location">Set Office Location</string>
+    <string name="location_name">Location Name</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="latitude_placeholder">37.7749</string>
+    <string name="longitude_placeholder">-122.4194</string>
+    <string name="default_office_name">Main Office</string>
+    <string name="current_location">Current Location</string>
+    <string name="geofence_radius">Geofence Radius</string>
+    <string name="meters_format">%dm</string>
+    <string name="work_hours_tracking">Work Hours Tracking</string>
+    <string name="since_format">Since: %s</string>
+
+    <!-- Auto Detection Errors -->
+    <string name="error_load_settings">Failed to load settings: %s</string>
+    <string name="error_set_location_first">Please set office location first</string>
+    <string name="error_location_permission_required">Location permissions required</string>
+    <string name="error_location_not_granted">Location permission not granted. Please grant permission first.</string>
+    <string name="error_get_location">Could not get current location. Please try again or enter manually.</string>
+    <string name="error_get_location_detail">Failed to get location: %s</string>
+    <string name="error_save_location">Failed to save location: %s</string>
+    <string name="error_no_office_location">No office location configured</string>
+    <string name="error_start_geofencing">Failed to start geofencing: %s</string>
+    <string name="error_geofencing">Error starting geofencing: %s</string>
+
+    <!-- Day Entry -->
+    <string name="hours_min">0h</string>
+    <string name="hours_max">24h</string>
+    <string name="hours_format">%dh</string>
+    <string name="notes_placeholder">Add any notes about this day…</string>
+
+    <!-- Calendar / Holidays -->
+    <string name="holidays_vacation_title">Holidays &amp; Vacation %d</string>
+    <string name="add_vacation">Add Vacation</string>
+    <string name="add_holiday">Add Holiday</string>
+    <string name="load_country">Load Country</string>
+    <string name="load_country_holidays">Load Country Holidays</string>
+    <string name="popular">Popular:</string>
+    <string name="all_countries">All countries:</string>
+    <string name="no_countries_available">No countries available. Check internet connection.</string>
+    <string name="loading_holidays">Loading Holidays…</string>
+    <string name="add_vacation_title">Add Vacation</string>
+    <string name="add_holiday_title">Add Holiday</string>
+    <string name="add_vacation_period">Add Vacation Period</string>
+    <string name="date_label">Date:</string>
+    <string name="description">Description</string>
+    <string name="vacation_placeholder">e.g., Summer Vacation</string>
+    <string name="start_date">Start Date:</string>
+    <string name="end_date">End Date:</string>
+    <string name="duration">Duration</string>
+    <string name="days_total_format">(%d total)</string>
+    <string name="annual_summary">Annual Summary</string>
+    <string name="public_holidays">🎉 Public</string>
+    <string name="vacation_days">🏖️ Vacation</string>
+    <string name="total">Total</string>
+    <string name="country_loaded">Country Loaded:</string>
+    <string name="country_format">📍 %s</string>
+    <string name="days_count_format">%d days</string>
+    <string name="no_holidays_this_month">No holidays this month</string>
+
+    <!-- Permissions Setup -->
+    <string name="setup_permissions">Setup Permissions</string>
+
+    <!-- Monthly History -->
+    <string name="monthly_history_title">Monthly History</string>
+    <string name="days_progress">Days Progress</string>
+    <string name="hours_progress">Hours Progress</string>
+    <string name="progress_percent_format">%d%%</string>
+
+    <!-- Onboarding -->
+    <string name="setup_title">Setup Go2Office</string>
+    <string name="days_min">1</string>
+    <string name="days_max">5</string>
+    <string name="hours_min_label">1h</string>
+    <string name="hours_max_label">12h</string>
+    <string name="office_name_format">📍 %s</string>
+    <string name="tip_icon">💡</string>
+    <string name="coordinates">Coordinates</string>
+    <string name="coordinates_placeholder">38.7707, -9.0972</string>
+    <string name="invalid_format">Invalid format</string>
+    <string name="example">Example:</string>
+    <string name="load_country_holidays_full">🌍 Load Country Holidays (100+ countries)</string>
+    <string name="add_single_holiday_vacation">Add Single Holiday or Vacation</string>
+
+    <!-- Notifications -->
+    <string name="notification_channel_office">Office Tracking</string>
+    <string name="notification_channel_description">Notifications for office attendance tracking</string>
+    <string name="notification_arrived_title">Arrived at Office</string>
+    <string name="notification_arrived_text">Started tracking your office hours.</string>
+    <string name="notification_left_title">Left Office</string>
+    <string name="notification_left_text">You spent %s at the office today.</string>
 </resources>
