@@ -1,10 +1,13 @@
 package com.example.go2office.ui
 
+import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
+import com.example.go2office.R
 import com.example.go2office.domain.model.OfficeSettings
 import com.example.go2office.presentation.settings.SettingsScreen
 import com.example.go2office.presentation.settings.SettingsUiState
@@ -26,6 +29,8 @@ class SettingsScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    private val context: Context get() = ApplicationProvider.getApplicationContext()
+
     private val testSettings = OfficeSettings(
         requiredDaysPerWeek = 3,
         requiredHoursPerWeek = 24f,
@@ -37,7 +42,7 @@ class SettingsScreenTest {
         val viewModel = mockk<SettingsViewModel>(relaxed = true)
         every { viewModel.uiState } returns MutableStateFlow(SettingsUiState(isLoading = false, settings = testSettings))
         composeTestRule.setContent { SettingsScreen(viewModel = viewModel, onNavigateBack = {}) }
-        composeTestRule.onNodeWithText("Settings").assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.settings_title)).assertIsDisplayed()
     }
 
     @Test
@@ -46,7 +51,7 @@ class SettingsScreenTest {
         every { viewModel.uiState } returns MutableStateFlow(SettingsUiState(isLoading = false, settings = testSettings))
         var navigatedBack = false
         composeTestRule.setContent { SettingsScreen(viewModel = viewModel, onNavigateBack = { navigatedBack = true }) }
-        composeTestRule.onNode(hasContentDescription("Back")).performClick()
+        composeTestRule.onNode(hasContentDescription(context.getString(R.string.back))).performClick()
         assert(navigatedBack)
     }
 
@@ -55,7 +60,7 @@ class SettingsScreenTest {
         val viewModel = mockk<SettingsViewModel>(relaxed = true)
         every { viewModel.uiState } returns MutableStateFlow(SettingsUiState(isLoading = false, settings = testSettings))
         composeTestRule.setContent { SettingsScreen(viewModel = viewModel, onNavigateBack = {}) }
-        composeTestRule.onNodeWithText("Office Requirements").assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.office_requirements)).assertIsDisplayed()
     }
 
     @Test
@@ -66,7 +71,7 @@ class SettingsScreenTest {
         composeTestRule.setContent {
             SettingsScreen(viewModel = viewModel, onNavigateBack = {}, onNavigateToAutoDetection = { navigated = true })
         }
-        composeTestRule.onNodeWithText("Auto-Detection", substring = true).performClick()
+        composeTestRule.onNodeWithText(context.getString(R.string.auto_detection), substring = true).performClick()
         assert(navigated)
     }
 }

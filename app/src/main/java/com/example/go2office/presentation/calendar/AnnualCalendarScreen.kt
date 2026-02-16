@@ -10,9 +10,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.go2office.R
 import com.example.go2office.domain.model.Holiday
 import com.example.go2office.domain.model.HolidayType
 import java.time.LocalDate
@@ -32,19 +34,19 @@ fun AnnualCalendarScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Holidays & Vacation ${uiState.selectedYear}") },
+                title = { Text(stringResource(R.string.holidays_vacation_year, uiState.selectedYear)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { viewModel.changeYear(uiState.selectedYear - 1) }) {
-                        Icon(Icons.Default.KeyboardArrowLeft, "Previous")
+                        Icon(Icons.Default.KeyboardArrowLeft, stringResource(R.string.previous))
                     }
                     Text(uiState.selectedYear.toString(), style = MaterialTheme.typography.titleMedium)
                     IconButton(onClick = { viewModel.changeYear(uiState.selectedYear + 1) }) {
-                        Icon(Icons.Default.KeyboardArrowRight, "Next")
+                        Icon(Icons.Default.KeyboardArrowRight, stringResource(R.string.next))
                     }
                 }
             )
@@ -59,27 +61,27 @@ fun AnnualCalendarScreen(
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                     contentColor = MaterialTheme.colorScheme.onTertiaryContainer
                 ) {
-                    Icon(Icons.Default.DateRange, "Vacation")
+                    Icon(Icons.Default.DateRange, stringResource(R.string.vacation))
                     Spacer(Modifier.width(8.dp))
-                    Text("Add Vacation")
+                    Text(stringResource(R.string.add_vacation))
                 }
                 ExtendedFloatingActionButton(
                     onClick = { showAddDialog = true },
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 ) {
-                    Icon(Icons.Default.Add, "Holiday")
+                    Icon(Icons.Default.Add, stringResource(R.string.holiday))
                     Spacer(Modifier.width(8.dp))
-                    Text("Add Holiday")
+                    Text(stringResource(R.string.add_holiday))
                 }
                 ExtendedFloatingActionButton(
                     onClick = { showCountryDialog = true },
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 ) {
-                    Icon(Icons.Default.Place, "Country")
+                    Icon(Icons.Default.Place, stringResource(R.string.country))
                     Spacer(Modifier.width(8.dp))
-                    Text("Load Country")
+                    Text(stringResource(R.string.load_country))
                 }
             }
         }
@@ -116,7 +118,7 @@ fun AnnualCalendarScreen(
     if (showCountryDialog) {
         AlertDialog(
             onDismissRequest = { showCountryDialog = false },
-            title = { Text("Load Country Holidays") },
+            title = { Text(stringResource(R.string.load_country_holidays)) },
             text = {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     if (uiState.isLoadingCountries) {
@@ -128,7 +130,7 @@ fun AnnualCalendarScreen(
                         val popularCountries = uiState.availableCountries.filter { it.countryCode in popularCodes }
                         val otherCountries = uiState.availableCountries.filter { it.countryCode !in popularCodes }
                         if (popularCountries.isNotEmpty()) {
-                            Text("Popular:", style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(vertical = 8.dp))
+                            Text(stringResource(R.string.popular), style = MaterialTheme.typography.labelMedium, modifier = Modifier.padding(vertical = 8.dp))
                             popularCountries.forEach { country ->
                                 TextButton(
                                     onClick = {
@@ -145,7 +147,7 @@ fun AnnualCalendarScreen(
                             }
                             if (otherCountries.isNotEmpty()) {
                                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                                Text("All countries:", style = MaterialTheme.typography.labelMedium)
+                                Text(stringResource(R.string.all_countries), style = MaterialTheme.typography.labelMedium)
                             }
                         }
                         LazyColumn(modifier = Modifier.heightIn(max = 300.dp)) {
@@ -165,18 +167,18 @@ fun AnnualCalendarScreen(
                             }
                         }
                     } else {
-                        Text("No countries available. Check internet connection.", color = MaterialTheme.colorScheme.error)
+                        Text(stringResource(R.string.no_countries_available), color = MaterialTheme.colorScheme.error)
                     }
                 }
             },
             confirmButton = {},
-            dismissButton = { TextButton(onClick = { showCountryDialog = false }) { Text("Cancel") } }
+            dismissButton = { TextButton(onClick = { showCountryDialog = false }) { Text(stringResource(R.string.cancel)) } }
         )
     }
     if (uiState.isLoadingHolidays) {
         AlertDialog(
             onDismissRequest = {},
-            title = { Text("Loading Holidays...") },
+            title = { Text(stringResource(R.string.loading_holidays)) },
             text = {
                 Box(modifier = Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
@@ -188,9 +190,9 @@ fun AnnualCalendarScreen(
     uiState.error?.let { error ->
         AlertDialog(
             onDismissRequest = { viewModel.clearError() },
-            title = { Text("Error") },
+            title = { Text(stringResource(R.string.error)) },
             text = { Text(error) },
-            confirmButton = { TextButton(onClick = { viewModel.clearError() }) { Text("OK") } }
+            confirmButton = { TextButton(onClick = { viewModel.clearError() }) { Text(stringResource(R.string.ok)) } }
         )
     }
     if (showAddDialog) {
@@ -199,17 +201,17 @@ fun AnnualCalendarScreen(
         var pickedDate by remember { mutableStateOf(selectedDate ?: LocalDate.now()) }
         AlertDialog(
             onDismissRequest = { showAddDialog = false },
-            title = { Text("Add ${if (isVacation) "Vacation" else "Holiday"}") },
+            title = { Text(stringResource(if (isVacation) R.string.add_vacation_title else R.string.add_holiday_title)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text("Date:", style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(R.string.date_label), style = MaterialTheme.typography.labelMedium)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(onClick = { pickedDate = pickedDate.minusDays(1) }) {
-                            Icon(Icons.Default.KeyboardArrowLeft, "Previous day")
+                            Icon(Icons.Default.KeyboardArrowLeft, stringResource(R.string.previous_day))
                         }
                         Text(
                             text = pickedDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")),
@@ -217,7 +219,7 @@ fun AnnualCalendarScreen(
                             fontWeight = FontWeight.Bold
                         )
                         IconButton(onClick = { pickedDate = pickedDate.plusDays(1) }) {
-                            Icon(Icons.Default.KeyboardArrowRight, "Next day")
+                            Icon(Icons.Default.KeyboardArrowRight, stringResource(R.string.next_day))
                         }
                     }
                     Row(
@@ -227,24 +229,24 @@ fun AnnualCalendarScreen(
                         OutlinedButton(
                             onClick = { pickedDate = LocalDate.now() },
                             modifier = Modifier.weight(1f)
-                        ) { Text("Today", style = MaterialTheme.typography.labelSmall) }
+                        ) { Text(stringResource(R.string.today), style = MaterialTheme.typography.labelSmall) }
                         OutlinedButton(
                             onClick = { pickedDate = LocalDate.now().plusDays(1) },
                             modifier = Modifier.weight(1f)
-                        ) { Text("Tomorrow", style = MaterialTheme.typography.labelSmall) }
+                        ) { Text(stringResource(R.string.tomorrow), style = MaterialTheme.typography.labelSmall) }
                     }
                     HorizontalDivider()
                     OutlinedTextField(
                         value = description,
                         onValueChange = { description = it },
-                        label = { Text("Description") },
-                        placeholder = { Text(if (isVacation) "e.g., Summer Vacation" else "e.g., Christmas") },
+                        label = { Text(stringResource(R.string.description)) },
+                        placeholder = { Text(stringResource(if (isVacation) R.string.vacation_placeholder else R.string.holiday_placeholder)) },
                         modifier = Modifier.fillMaxWidth()
                     )
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Switch(checked = isVacation, onCheckedChange = { isVacation = it })
                         Spacer(Modifier.width(8.dp))
-                        Text(if (isVacation) "🏖️ Vacation" else "🎉 Public Holiday")
+                        Text(stringResource(if (isVacation) R.string.vacation_days else R.string.public_holidays))
                     }
                 }
             },
@@ -256,35 +258,36 @@ fun AnnualCalendarScreen(
                         selectedDate = null
                     },
                     enabled = description.isNotBlank()
-                ) { Text("Add") }
+                ) { Text(stringResource(R.string.add)) }
             },
-            dismissButton = { TextButton(onClick = { showAddDialog = false; selectedDate = null }) { Text("Cancel") } }
+            dismissButton = { TextButton(onClick = { showAddDialog = false; selectedDate = null }) { Text(stringResource(R.string.cancel)) } }
         )
     }
     if (showAddVacationDialog) {
         var startDate by remember { mutableStateOf(LocalDate.now()) }
         var endDate by remember { mutableStateOf(LocalDate.now().plusDays(4)) }
-        var description by remember { mutableStateOf("Vacation") }
+        val defaultDescription = stringResource(R.string.vacation)
+        var description by remember { mutableStateOf(defaultDescription) }
         AlertDialog(
             onDismissRequest = { showAddVacationDialog = false },
-            title = { Text("Add Vacation Period") },
+            title = { Text(stringResource(R.string.add_vacation_period)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     OutlinedTextField(
                         value = description,
                         onValueChange = { description = it },
-                        label = { Text("Description") },
-                        placeholder = { Text("e.g., Summer Vacation") },
+                        label = { Text(stringResource(R.string.description)) },
+                        placeholder = { Text(stringResource(R.string.vacation_placeholder)) },
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Text("Start Date:", style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(R.string.start_date), style = MaterialTheme.typography.labelMedium)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(onClick = { startDate = startDate.minusDays(1) }) {
-                            Icon(Icons.Default.KeyboardArrowLeft, "Previous")
+                            Icon(Icons.Default.KeyboardArrowLeft, stringResource(R.string.previous))
                         }
                         Text(
                             text = startDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
@@ -292,17 +295,17 @@ fun AnnualCalendarScreen(
                             fontWeight = FontWeight.Bold
                         )
                         IconButton(onClick = { startDate = startDate.plusDays(1) }) {
-                            Icon(Icons.Default.KeyboardArrowRight, "Next")
+                            Icon(Icons.Default.KeyboardArrowRight, stringResource(R.string.next))
                         }
                     }
-                    Text("End Date:", style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(R.string.end_date), style = MaterialTheme.typography.labelMedium)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(onClick = { endDate = endDate.minusDays(1) }) {
-                            Icon(Icons.Default.KeyboardArrowLeft, "Previous")
+                            Icon(Icons.Default.KeyboardArrowLeft, stringResource(R.string.previous))
                         }
                         Text(
                             text = endDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
@@ -310,7 +313,7 @@ fun AnnualCalendarScreen(
                             fontWeight = FontWeight.Bold
                         )
                         IconButton(onClick = { endDate = endDate.plusDays(1) }) {
-                            Icon(Icons.Default.KeyboardArrowRight, "Next")
+                            Icon(Icons.Default.KeyboardArrowRight, stringResource(R.string.next))
                         }
                     }
                     HorizontalDivider()
@@ -326,13 +329,13 @@ fun AnnualCalendarScreen(
                             modifier = Modifier.fillMaxWidth().padding(12.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text("Duration", style = MaterialTheme.typography.labelSmall)
+                            Text(stringResource(R.string.duration), style = MaterialTheme.typography.labelSmall)
                             Text(
-                                text = "$workDays workdays",
+                                text = stringResource(R.string.workdays_count, workDays),
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold
                             )
-                            Text("($days total)", style = MaterialTheme.typography.bodySmall)
+                            Text(stringResource(R.string.days_total_format, days), style = MaterialTheme.typography.bodySmall)
                         }
                     }
                 }
@@ -344,9 +347,9 @@ fun AnnualCalendarScreen(
                         showAddVacationDialog = false
                     },
                     enabled = description.isNotBlank() && !startDate.isAfter(endDate)
-                ) { Text("Add") }
+                ) { Text(stringResource(R.string.add)) }
             },
-            dismissButton = { TextButton(onClick = { showAddVacationDialog = false }) { Text("Cancel") } }
+            dismissButton = { TextButton(onClick = { showAddVacationDialog = false }) { Text(stringResource(R.string.cancel)) } }
         )
     }
 }
@@ -357,19 +360,19 @@ private fun SummaryCard(publicHolidays: Int, vacationDays: Int, country: String,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
     ) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text("Annual Summary", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.annual_summary), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(publicHolidays.toString(), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-                    Text("🎉 Public", style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.public_holidays), style = MaterialTheme.typography.bodySmall)
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(vacationDays.toString(), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-                    Text("🏖️ Vacation", style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.vacation_days), style = MaterialTheme.typography.bodySmall)
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text((publicHolidays + vacationDays).toString(), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
-                    Text("Total", style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.total), style = MaterialTheme.typography.bodySmall)
                 }
             }
             if (country.isNotBlank()) {
@@ -380,8 +383,8 @@ private fun SummaryCard(publicHolidays: Int, vacationDays: Int, country: String,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Country Loaded:", style = MaterialTheme.typography.labelMedium)
-                        Text("📍 $country", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.country_loaded), style = MaterialTheme.typography.labelMedium)
+                        Text(stringResource(R.string.country_format, country), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                     }
                     OutlinedButton(
                         onClick = onUnloadCountry,
@@ -389,9 +392,9 @@ private fun SummaryCard(publicHolidays: Int, vacationDays: Int, country: String,
                             contentColor = MaterialTheme.colorScheme.error
                         )
                     ) {
-                        Icon(Icons.Default.Delete, "Remove", tint = MaterialTheme.colorScheme.error)
+                        Icon(Icons.Default.Delete, stringResource(R.string.remove), tint = MaterialTheme.colorScheme.error)
                         Spacer(Modifier.width(4.dp))
-                        Text("Unload")
+                        Text(stringResource(R.string.unload))
                     }
                 }
             }
@@ -406,7 +409,7 @@ private fun MonthCard(yearMonth: YearMonth, holidays: List<Holiday>, onDateClick
                 Text(yearMonth.format(DateTimeFormatter.ofPattern("MMMM")), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 if (holidays.isNotEmpty()) {
                     Surface(shape = MaterialTheme.shapes.small, color = MaterialTheme.colorScheme.secondaryContainer) {
-                        Text("${holidays.size} days", modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), style = MaterialTheme.typography.labelSmall)
+                        Text(stringResource(R.string.days_count_format, holidays.size), modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), style = MaterialTheme.typography.labelSmall)
                     }
                 }
             }
@@ -419,12 +422,12 @@ private fun MonthCard(yearMonth: YearMonth, holidays: List<Holiday>, onDateClick
                         Text(holiday.date.format(DateTimeFormatter.ofPattern("dd")), fontWeight = FontWeight.Bold, modifier = Modifier.width(30.dp))
                         Text(holiday.description, modifier = Modifier.weight(1f))
                         IconButton(onClick = { onDateClick(holiday.date) }, modifier = Modifier.size(24.dp)) {
-                            Icon(Icons.Default.Close, "Remove", tint = MaterialTheme.colorScheme.error)
+                            Icon(Icons.Default.Close, stringResource(R.string.remove), tint = MaterialTheme.colorScheme.error)
                         }
                     }
                 }
             } else {
-                Text("No holidays this month", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.no_holidays_this_month), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
     }

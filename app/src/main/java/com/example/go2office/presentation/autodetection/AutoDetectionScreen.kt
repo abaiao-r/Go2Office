@@ -11,8 +11,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.go2office.R
 import com.example.go2office.presentation.components.ErrorDialog
 import com.example.go2office.presentation.components.LoadingIndicator
 import com.example.go2office.util.Constants
@@ -32,10 +34,10 @@ fun AutoDetectionScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Auto-Detection") },
+                title = { Text(stringResource(R.string.auto_detection_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                     }
                 }
             )
@@ -119,11 +121,11 @@ private fun EnableToggleCard(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Auto-Detection",
+                    text = stringResource(R.string.auto_detection),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = if (isActive) "Active - Monitoring location" else "Inactive",
+                    text = if (isActive) stringResource(R.string.status_active) else stringResource(R.string.status_inactive),
                     style = MaterialTheme.typography.bodySmall,
                     color = if (isActive) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -163,22 +165,22 @@ private fun PermissionsCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Permissions",
+                    text = stringResource(R.string.permissions),
                     style = MaterialTheme.typography.titleMedium
                 )
                 TextButton(onClick = onManagePermissions) {
-                    Text("Manage")
+                    Text(stringResource(R.string.manage))
                 }
             }
-            PermissionItem("Location", hasLocation)
-            PermissionItem("Background Location", hasBackground)
-            PermissionItem("Notifications", hasNotification)
+            PermissionItem(stringResource(R.string.permission_location), hasLocation)
+            PermissionItem(stringResource(R.string.permission_background_location), hasBackground)
+            PermissionItem(stringResource(R.string.permission_notifications), hasNotification)
             if (!allGranted) {
                 Button(
                     onClick = onRequestPermissions,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Grant Permissions")
+                    Text(stringResource(R.string.grant_permissions))
                 }
             }
         }
@@ -215,22 +217,22 @@ private fun OfficeLocationCard(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = "Office Location",
+                text = stringResource(R.string.office_location),
                 style = MaterialTheme.typography.titleMedium
             )
             if (location != null) {
                 Text(
-                    text = "📍 ${location.name}",
+                    text = stringResource(R.string.location_pin_format, location.name),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Text(
-                    text = "Lat: ${"%.4f".format(location.latitude)}, Lon: ${"%.4f".format(location.longitude)}",
+                    text = stringResource(R.string.location_coords_format, location.latitude, location.longitude),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             } else {
                 Text(
-                    text = "Not set",
+                    text = stringResource(R.string.not_set),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -243,17 +245,17 @@ private fun OfficeLocationCard(
                     onClick = onUseCurrentLocation,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("Use Current GPS")
+                    Text(stringResource(R.string.use_current_gps))
                 }
                 Button(
                     onClick = { showLocationDialog = true },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text("Enter Manually")
+                    Text(stringResource(R.string.enter_manually))
                 }
             }
             Text(
-                text = "💡 100% FREE - No API costs!",
+                text = stringResource(R.string.free_no_api_costs),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(top = 4.dp)
@@ -275,32 +277,33 @@ private fun SetLocationDialog(
     onDismiss: () -> Unit,
     onConfirm: (Double, Double, String) -> Unit
 ) {
+    val defaultOfficeName = stringResource(R.string.default_office_name)
     var latitude by remember { mutableStateOf("") }
     var longitude by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("Main Office") }
+    var name by remember { mutableStateOf(defaultOfficeName) }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Set Office Location") },
+        title = { Text(stringResource(R.string.set_office_location)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Location Name") },
+                    label = { Text(stringResource(R.string.location_name)) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = latitude,
                     onValueChange = { latitude = it },
-                    label = { Text("Latitude") },
-                    placeholder = { Text("37.7749") },
+                    label = { Text(stringResource(R.string.latitude)) },
+                    placeholder = { Text(stringResource(R.string.latitude_placeholder)) },
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = longitude,
                     onValueChange = { longitude = it },
-                    label = { Text("Longitude") },
-                    placeholder = { Text("-122.4194") },
+                    label = { Text(stringResource(R.string.longitude)) },
+                    placeholder = { Text(stringResource(R.string.longitude_placeholder)) },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -313,12 +316,12 @@ private fun SetLocationDialog(
                     onConfirm(lat, lon, name)
                 }
             ) {
-                Text("Set")
+                Text(stringResource(R.string.set))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )
@@ -336,11 +339,11 @@ private fun GeofenceRadiusCard(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = "Geofence Radius",
+                text = stringResource(R.string.geofence_radius),
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "${radiusMeters.toInt()} meters",
+                text = stringResource(R.string.meters_format, radiusMeters.toInt()),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -354,8 +357,8 @@ private fun GeofenceRadiusCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("${Constants.MIN_GEOFENCE_RADIUS_METERS.toInt()}m", style = MaterialTheme.typography.labelSmall)
-                Text("${Constants.MAX_GEOFENCE_RADIUS_METERS.toInt()}m", style = MaterialTheme.typography.labelSmall)
+                Text(stringResource(R.string.meters_format, Constants.MIN_GEOFENCE_RADIUS_METERS.toInt()), style = MaterialTheme.typography.labelSmall)
+                Text(stringResource(R.string.meters_format, Constants.MAX_GEOFENCE_RADIUS_METERS.toInt()), style = MaterialTheme.typography.labelSmall)
             }
         }
     }
@@ -373,19 +376,19 @@ private fun WorkHoursInfoCard() {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = "Work Hours Tracking",
+                text = stringResource(R.string.work_hours_tracking),
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "⏰ Counted: ${Constants.WORK_START_HOUR}:00 AM - ${Constants.WORK_END_HOUR % 12}:00 PM",
+                text = stringResource(R.string.work_hours_counted, Constants.WORK_START_HOUR, Constants.WORK_END_HOUR % 12),
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "📊 Daily Cap: ${Constants.MAX_DAILY_HOURS.toInt()} hours maximum",
+                text = stringResource(R.string.daily_cap, Constants.MAX_DAILY_HOURS.toInt()),
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "ℹ️ Time outside this window is not counted",
+                text = stringResource(R.string.time_outside_not_counted),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer
             )
@@ -405,11 +408,11 @@ private fun CurrentSessionCard(startTime: String) {
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = "🤖 Currently at Office",
+                text = stringResource(R.string.currently_at_office),
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "Since: $startTime",
+                text = stringResource(R.string.since_format, startTime),
                 style = MaterialTheme.typography.bodyMedium
             )
         }

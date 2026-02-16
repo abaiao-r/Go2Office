@@ -1,10 +1,13 @@
 package com.example.go2office.ui
 
+import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
+import com.example.go2office.R
 import com.example.go2office.presentation.dayentry.DayEntryScreen
 import com.example.go2office.presentation.dayentry.DayEntryUiState
 import com.example.go2office.presentation.dayentry.DayEntryViewModel
@@ -25,6 +28,8 @@ class DayEntryScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    private val context: Context get() = ApplicationProvider.getApplicationContext()
+
     private val testDate = LocalDate.of(2026, 2, 16)
 
     @Test
@@ -41,7 +46,7 @@ class DayEntryScreenTest {
         every { viewModel.uiState } returns MutableStateFlow(DayEntryUiState(selectedDate = testDate, isLoading = false))
         var navigatedBack = false
         composeTestRule.setContent { DayEntryScreen(date = testDate, viewModel = viewModel, onNavigateBack = { navigatedBack = true }) }
-        composeTestRule.onNode(hasContentDescription("Back")).performClick()
+        composeTestRule.onNode(hasContentDescription(context.getString(R.string.back))).performClick()
         assert(navigatedBack)
     }
 
@@ -50,6 +55,6 @@ class DayEntryScreenTest {
         val viewModel = mockk<DayEntryViewModel>(relaxed = true)
         every { viewModel.uiState } returns MutableStateFlow(DayEntryUiState(selectedDate = testDate, isLoading = false, isExistingEntry = true))
         composeTestRule.setContent { DayEntryScreen(date = testDate, viewModel = viewModel, onNavigateBack = {}) }
-        composeTestRule.onNode(hasContentDescription("Delete")).assertIsDisplayed()
+        composeTestRule.onNode(hasContentDescription(context.getString(R.string.remove))).assertIsDisplayed()
     }
 }

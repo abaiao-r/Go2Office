@@ -1,10 +1,13 @@
 package com.example.go2office.ui
 
+import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
+import com.example.go2office.R
 import com.example.go2office.domain.model.OfficeLocation
 import com.example.go2office.presentation.autodetection.AutoDetectionScreen
 import com.example.go2office.presentation.autodetection.AutoDetectionUiState
@@ -24,6 +27,8 @@ class AutoDetectionScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    private val context: Context get() = ApplicationProvider.getApplicationContext()
 
     private val testLocation = OfficeLocation(
         latitude = 38.7223,
@@ -46,7 +51,7 @@ class AutoDetectionScreenTest {
         every { viewModel.uiState } returns MutableStateFlow(AutoDetectionUiState(isLoading = false))
         var navigatedBack = false
         composeTestRule.setContent { AutoDetectionScreen(viewModel = viewModel, onNavigateBack = { navigatedBack = true }) }
-        composeTestRule.onNode(hasContentDescription("Back")).performClick()
+        composeTestRule.onNode(hasContentDescription(context.getString(R.string.back))).performClick()
         assert(navigatedBack)
     }
 }

@@ -8,8 +8,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.go2office.R
 import com.example.go2office.presentation.components.ErrorDialog
 import com.example.go2office.presentation.components.LoadingIndicator
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,10 +32,10 @@ fun SettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Settings") },
+                title = { Text(stringResource(R.string.settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                     }
                 }
             )
@@ -56,7 +58,7 @@ fun SettingsScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "Office Requirements",
+                    text = stringResource(R.string.office_requirements),
                     style = MaterialTheme.typography.headlineSmall
                 )
                 Card(
@@ -75,15 +77,15 @@ fun SettingsScreen(
                     ) {
                         Column {
                             Text(
-                                text = "🤖 Auto-Detection",
+                                text = stringResource(R.string.auto_detection_card_title),
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
-                                text = "Automatically track office hours",
+                                text = stringResource(R.string.auto_track_office_hours),
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
-                        Text("›", style = MaterialTheme.typography.headlineMedium)
+                        Text(stringResource(R.string.arrow_right), style = MaterialTheme.typography.headlineMedium)
                     }
                 }
                 Card(
@@ -102,15 +104,15 @@ fun SettingsScreen(
                     ) {
                         Column {
                             Text(
-                                text = "📅 Annual Calendar",
+                                text = stringResource(R.string.annual_calendar_card_title),
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
-                                text = "Manage holidays and vacations",
+                                text = stringResource(R.string.manage_holidays_vacations),
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
-                        Text("›", style = MaterialTheme.typography.headlineMedium)
+                        Text(stringResource(R.string.arrow_right), style = MaterialTheme.typography.headlineMedium)
                     }
                 }
                 Card(
@@ -129,15 +131,15 @@ fun SettingsScreen(
                     ) {
                         Column {
                             Text(
-                                text = "🔐 Permissions",
+                                text = stringResource(R.string.permissions_card_title),
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
-                                text = "Manage location and notification permissions",
+                                text = stringResource(R.string.manage_permissions),
                                 style = MaterialTheme.typography.bodySmall
                             )
                         }
-                        Text("›", style = MaterialTheme.typography.headlineMedium)
+                        Text(stringResource(R.string.arrow_right), style = MaterialTheme.typography.headlineMedium)
                     }
                 }
                 Card(
@@ -148,11 +150,11 @@ fun SettingsScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Text(
-                            text = "Required Days Per Week",
+                            text = stringResource(R.string.required_days_per_week),
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text(
-                            text = "$requiredDays days",
+                            text = stringResource(R.string.days_count, requiredDays),
                             style = MaterialTheme.typography.displaySmall,
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -173,11 +175,11 @@ fun SettingsScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Text(
-                            text = "Hours Per Day",
+                            text = stringResource(R.string.hours_per_day),
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text(
-                            text = "%.1f hours".format(hoursPerDay),
+                            text = stringResource(R.string.hours_value, hoursPerDay),
                             style = MaterialTheme.typography.displaySmall,
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -190,7 +192,7 @@ fun SettingsScreen(
                         HorizontalDivider()
                         val weeklyHours = hoursPerDay * requiredDays
                         Text(
-                            text = "Weekly total: %.1fh (%.1fh × %d days)".format(weeklyHours, hoursPerDay, requiredDays),
+                            text = stringResource(R.string.weekly_total_format, weeklyHours, hoursPerDay, requiredDays),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -207,7 +209,7 @@ fun SettingsScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
-                            text = "Current Preferences",
+                            text = stringResource(R.string.current_preferences),
                             style = MaterialTheme.typography.titleMedium
                         )
                         settings.weekdayPreferences.forEachIndexed { index, day ->
@@ -251,7 +253,7 @@ fun SettingsScreen(
                     },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Save Changes")
+                    Text(stringResource(R.string.save_changes))
                 }
             }
         }

@@ -9,8 +9,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.go2office.R
 import com.example.go2office.presentation.components.ConfirmationDialog
 import com.example.go2office.presentation.components.ErrorDialog
 import com.example.go2office.presentation.components.LoadingIndicator
@@ -41,13 +43,13 @@ fun DayEntryScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                     }
                 },
                 actions = {
                     if (uiState.isExistingEntry) {
                         IconButton(onClick = { showDeleteDialog = true }) {
-                            Icon(Icons.Default.Delete, "Delete")
+                            Icon(Icons.Default.Delete, stringResource(R.string.remove))
                         }
                     }
                 }
@@ -77,11 +79,11 @@ fun DayEntryScreen(
                     ) {
                         Column {
                             Text(
-                                text = "Was in office?",
+                                text = stringResource(R.string.was_in_office),
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
-                                text = "Toggle to mark this day",
+                                text = stringResource(R.string.toggle_to_mark),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -103,11 +105,11 @@ fun DayEntryScreen(
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             Text(
-                                text = "Hours Worked",
+                                text = stringResource(R.string.hours_worked),
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
-                                text = "%.1f hours".format(uiState.hoursWorked),
+                                text = stringResource(R.string.hours_value, uiState.hoursWorked),
                                 style = MaterialTheme.typography.displayMedium,
                                 color = MaterialTheme.colorScheme.primary
                             )
@@ -124,8 +126,8 @@ fun DayEntryScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("0h", style = MaterialTheme.typography.labelSmall)
-                                Text("24h", style = MaterialTheme.typography.labelSmall)
+                                Text(stringResource(R.string.hours_min), style = MaterialTheme.typography.labelSmall)
+                                Text(stringResource(R.string.hours_max), style = MaterialTheme.typography.labelSmall)
                             }
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -137,7 +139,7 @@ fun DayEntryScreen(
                                         onClick = {
                                             viewModel.onEvent(DayEntryEvent.UpdateHours(hours))
                                         },
-                                        label = { Text("${hours.roundToInt()}h") },
+                                        label = { Text(stringResource(R.string.hours_format, hours.roundToInt())) },
                                         modifier = Modifier.weight(1f)
                                     )
                                 }
@@ -152,7 +154,7 @@ fun DayEntryScreen(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(
-                                text = "Notes (optional)",
+                                text = stringResource(R.string.notes_optional),
                                 style = MaterialTheme.typography.titleMedium
                             )
                             OutlinedTextField(
@@ -160,7 +162,7 @@ fun DayEntryScreen(
                                 onValueChange = {
                                     viewModel.onEvent(DayEntryEvent.UpdateNotes(it))
                                 },
-                                placeholder = { Text("Add any notes about this day...") },
+                                placeholder = { Text(stringResource(R.string.notes_placeholder)) },
                                 modifier = Modifier.fillMaxWidth(),
                                 minLines = 3,
                                 maxLines = 5
@@ -173,21 +175,21 @@ fun DayEntryScreen(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !uiState.isLoading
                 ) {
-                    Text(if (uiState.isExistingEntry) "Update Entry" else "Save Entry")
+                    Text(stringResource(if (uiState.isExistingEntry) R.string.update_entry else R.string.save_entry))
                 }
             }
         }
         if (showDeleteDialog) {
             ConfirmationDialog(
-                title = "Delete Entry",
-                message = "Are you sure you want to delete this entry?",
+                title = stringResource(R.string.delete_entry),
+                message = stringResource(R.string.delete_entry_confirm),
                 onConfirm = {
                     showDeleteDialog = false
                     viewModel.onEvent(DayEntryEvent.Delete)
                 },
                 onDismiss = { showDeleteDialog = false },
-                confirmText = "Delete",
-                dismissText = "Cancel"
+                confirmText = stringResource(R.string.delete),
+                dismissText = stringResource(R.string.cancel)
             )
         }
         if (uiState.errorMessage != null) {
