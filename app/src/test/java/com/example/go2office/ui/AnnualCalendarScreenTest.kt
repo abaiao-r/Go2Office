@@ -5,6 +5,8 @@ import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
+import com.example.go2office.R
 import com.example.go2office.domain.model.Holiday
 import com.example.go2office.domain.model.HolidayType
 import com.example.go2office.presentation.calendar.AnnualCalendarScreen
@@ -19,6 +21,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import java.time.LocalDate
+import android.content.Context
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
@@ -26,6 +29,8 @@ class AnnualCalendarScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    private val context: Context get() = ApplicationProvider.getApplicationContext()
 
     private val testHolidays = listOf(
         Holiday(id = 1, date = LocalDate.of(2026, 1, 1), description = "New Year", type = HolidayType.PUBLIC_HOLIDAY),
@@ -37,7 +42,8 @@ class AnnualCalendarScreenTest {
         val viewModel = mockk<AnnualCalendarViewModel>(relaxed = true)
         every { viewModel.uiState } returns MutableStateFlow(AnnualCalendarUiState(selectedYear = 2026, holidays = testHolidays))
         composeTestRule.setContent { AnnualCalendarScreen(viewModel = viewModel, onNavigateBack = {}) }
-        composeTestRule.onNodeWithText("Holidays & Vacation 2026").assertIsDisplayed()
+        val expectedTitle = context.getString(R.string.holidays_vacation_year, 2026)
+        composeTestRule.onNodeWithText(expectedTitle).assertIsDisplayed()
     }
 
     @Test
@@ -46,7 +52,7 @@ class AnnualCalendarScreenTest {
         every { viewModel.uiState } returns MutableStateFlow(AnnualCalendarUiState(selectedYear = 2026))
         var navigatedBack = false
         composeTestRule.setContent { AnnualCalendarScreen(viewModel = viewModel, onNavigateBack = { navigatedBack = true }) }
-        composeTestRule.onNode(hasContentDescription("Back")).performClick()
+        composeTestRule.onNode(hasContentDescription(context.getString(R.string.back))).performClick()
         assert(navigatedBack)
     }
 
@@ -55,7 +61,7 @@ class AnnualCalendarScreenTest {
         val viewModel = mockk<AnnualCalendarViewModel>(relaxed = true)
         every { viewModel.uiState } returns MutableStateFlow(AnnualCalendarUiState(selectedYear = 2026))
         composeTestRule.setContent { AnnualCalendarScreen(viewModel = viewModel, onNavigateBack = {}) }
-        composeTestRule.onNodeWithText("Add Vacation").assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.add_vacation)).assertIsDisplayed()
     }
 
     @Test
@@ -63,7 +69,7 @@ class AnnualCalendarScreenTest {
         val viewModel = mockk<AnnualCalendarViewModel>(relaxed = true)
         every { viewModel.uiState } returns MutableStateFlow(AnnualCalendarUiState(selectedYear = 2026))
         composeTestRule.setContent { AnnualCalendarScreen(viewModel = viewModel, onNavigateBack = {}) }
-        composeTestRule.onNodeWithText("Add Holiday").assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.add_holiday)).assertIsDisplayed()
     }
 
     @Test

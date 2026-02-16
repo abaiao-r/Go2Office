@@ -1,9 +1,12 @@
 package com.example.go2office.ui
 
+import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.test.core.app.ApplicationProvider
+import com.example.go2office.R
 import com.example.go2office.presentation.onboarding.OnboardingScreen
 import com.example.go2office.presentation.onboarding.OnboardingUiState
 import com.example.go2office.presentation.onboarding.OnboardingViewModel
@@ -24,6 +27,8 @@ class OnboardingScreenTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
+    private val context: Context get() = ApplicationProvider.getApplicationContext()
+
     private val defaultWeekdays = listOf(
         DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY,
         DayOfWeek.THURSDAY, DayOfWeek.FRIDAY
@@ -34,7 +39,7 @@ class OnboardingScreenTest {
         val viewModel = mockk<OnboardingViewModel>(relaxed = true)
         every { viewModel.uiState } returns MutableStateFlow(OnboardingUiState(currentStep = 0, weekdayPreferences = defaultWeekdays))
         composeTestRule.setContent { OnboardingScreen(viewModel = viewModel, onComplete = {}) }
-        composeTestRule.onNodeWithText("Setup Go2Office").assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.setup_title)).assertIsDisplayed()
     }
 
     @Test
@@ -66,6 +71,6 @@ class OnboardingScreenTest {
         val viewModel = mockk<OnboardingViewModel>(relaxed = true)
         every { viewModel.uiState } returns MutableStateFlow(OnboardingUiState(currentStep = 1, weekdayPreferences = defaultWeekdays))
         composeTestRule.setContent { OnboardingScreen(viewModel = viewModel, onComplete = {}) }
-        composeTestRule.onNode(hasContentDescription("Back")).assertIsDisplayed()
+        composeTestRule.onNode(hasContentDescription(context.getString(R.string.back))).assertIsDisplayed()
     }
 }

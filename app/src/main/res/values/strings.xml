@@ -122,6 +122,15 @@
     <string name="hours_max">24h</string>
     <string name="hours_format">%dh</string>
     <string name="notes_placeholder">Add any notes about this day…</string>
+    <string name="was_in_office">Was in office?</string>
+    <string name="toggle_to_mark">Toggle to mark this day</string>
+    <string name="hours_worked">Hours Worked</string>
+    <string name="notes_optional">Notes (optional)</string>
+    <string name="save_entry">Save Entry</string>
+    <string name="update_entry">Update Entry</string>
+    <string name="delete_entry">Delete Entry</string>
+    <string name="delete_entry_confirm">Are you sure you want to delete this entry?</string>
+    <string name="delete">Delete</string>
 
     <!-- Calendar / Holidays -->
     <string name="holidays_vacation_title">Holidays &amp; Vacation %d</string>

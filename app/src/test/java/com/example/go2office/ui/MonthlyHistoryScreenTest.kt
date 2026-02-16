@@ -1,10 +1,13 @@
 package com.example.go2office.ui
 
+import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
+import com.example.go2office.R
 import com.example.go2office.domain.model.DailyEntry
 import com.example.go2office.presentation.history.MonthlyHistoryScreen
 import com.example.go2office.presentation.history.MonthlyHistoryUiState
@@ -26,6 +29,8 @@ class MonthlyHistoryScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    private val context: Context get() = ApplicationProvider.getApplicationContext()
 
     private val testEntries = listOf(
         DailyEntry(date = LocalDate.of(2026, 2, 10), wasInOffice = true, hoursWorked = 8f),
@@ -53,7 +58,7 @@ class MonthlyHistoryScreenTest {
         composeTestRule.setContent {
             MonthlyHistoryScreen(viewModel = viewModel, onNavigateBack = {}, onNavigateToDayEntry = {})
         }
-        composeTestRule.onNodeWithText("Monthly History").assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(R.string.monthly_history_title)).assertIsDisplayed()
     }
 
     @Test
@@ -66,7 +71,7 @@ class MonthlyHistoryScreenTest {
         composeTestRule.setContent {
             MonthlyHistoryScreen(viewModel = viewModel, onNavigateBack = { navigatedBack = true }, onNavigateToDayEntry = {})
         }
-        composeTestRule.onNode(hasContentDescription("Back")).performClick()
+        composeTestRule.onNode(hasContentDescription(context.getString(R.string.back))).performClick()
         assert(navigatedBack) { "Should have navigated back" }
     }
 }
