@@ -81,7 +81,7 @@ test(viewmodel): add dashboard unit tests
 Before pushing, ensure all tests pass:
 
 ```bash
-# Unit tests
+# Unit tests & UI tests (Robolectric)
 ./gradlew testDebugUnitTest
 
 # Lint checks
