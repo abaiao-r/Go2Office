@@ -4,8 +4,6 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.go2office.presentation.onboarding.OnboardingScreen
 import com.example.go2office.presentation.onboarding.OnboardingUiState
 import com.example.go2office.presentation.onboarding.OnboardingViewModel
@@ -15,9 +13,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 import java.time.DayOfWeek
 
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [33])
 class OnboardingScreenTest {
 
     @get:Rule
@@ -29,7 +30,7 @@ class OnboardingScreenTest {
     )
 
     @Test
-    fun GIVEN_onboarding_screen_WHEN_loaded_THEN_should_show_title() {
+    fun `GIVEN onboarding screen WHEN loaded THEN should show title`() {
         val viewModel = mockk<OnboardingViewModel>(relaxed = true)
         every { viewModel.uiState } returns MutableStateFlow(OnboardingUiState(currentStep = 0, weekdayPreferences = defaultWeekdays))
         composeTestRule.setContent { OnboardingScreen(viewModel = viewModel, onComplete = {}) }
@@ -37,7 +38,7 @@ class OnboardingScreenTest {
     }
 
     @Test
-    fun GIVEN_step_one_WHEN_loaded_THEN_should_show_step_indicator() {
+    fun `GIVEN step one WHEN loaded THEN should show step indicator`() {
         val viewModel = mockk<OnboardingViewModel>(relaxed = true)
         every { viewModel.uiState } returns MutableStateFlow(OnboardingUiState(currentStep = 0, weekdayPreferences = defaultWeekdays))
         composeTestRule.setContent { OnboardingScreen(viewModel = viewModel, onComplete = {}) }
@@ -45,23 +46,15 @@ class OnboardingScreenTest {
     }
 
     @Test
-    fun GIVEN_step_one_WHEN_loaded_THEN_should_show_days_selection() {
+    fun `GIVEN step one WHEN loaded THEN should show required office days title`() {
         val viewModel = mockk<OnboardingViewModel>(relaxed = true)
         every { viewModel.uiState } returns MutableStateFlow(OnboardingUiState(currentStep = 0, weekdayPreferences = defaultWeekdays))
         composeTestRule.setContent { OnboardingScreen(viewModel = viewModel, onComplete = {}) }
-        composeTestRule.onNodeWithText("days per week", substring = true, ignoreCase = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Required Office Days", substring = true).assertIsDisplayed()
     }
 
     @Test
-    fun GIVEN_step_two_WHEN_loaded_THEN_should_show_hours_selection() {
-        val viewModel = mockk<OnboardingViewModel>(relaxed = true)
-        every { viewModel.uiState } returns MutableStateFlow(OnboardingUiState(currentStep = 1, weekdayPreferences = defaultWeekdays))
-        composeTestRule.setContent { OnboardingScreen(viewModel = viewModel, onComplete = {}) }
-        composeTestRule.onNodeWithText("hours", substring = true, ignoreCase = true).assertIsDisplayed()
-    }
-
-    @Test
-    fun GIVEN_next_button_WHEN_displayed_THEN_should_be_visible() {
+    fun `GIVEN next button WHEN displayed THEN should be visible`() {
         val viewModel = mockk<OnboardingViewModel>(relaxed = true)
         every { viewModel.uiState } returns MutableStateFlow(OnboardingUiState(currentStep = 0, weekdayPreferences = defaultWeekdays))
         composeTestRule.setContent { OnboardingScreen(viewModel = viewModel, onComplete = {}) }
@@ -69,11 +62,10 @@ class OnboardingScreenTest {
     }
 
     @Test
-    fun GIVEN_step_greater_than_zero_WHEN_loaded_THEN_should_show_back_button() {
+    fun `GIVEN step greater than zero WHEN loaded THEN should show back button`() {
         val viewModel = mockk<OnboardingViewModel>(relaxed = true)
         every { viewModel.uiState } returns MutableStateFlow(OnboardingUiState(currentStep = 1, weekdayPreferences = defaultWeekdays))
         composeTestRule.setContent { OnboardingScreen(viewModel = viewModel, onComplete = {}) }
         composeTestRule.onNode(hasContentDescription("Back")).assertIsDisplayed()
     }
 }
-

@@ -135,6 +135,58 @@ Dashboard shows at a glance:
 
 ---
 
+## 🤝 Contributing
+
+### Branch Strategy
+
+- `master` - Production-ready code
+- `feature/*` - New features
+- `bugfix/*` - Bug fixes
+- `hotfix/*` - Urgent production fixes
+
+### Pull Request Workflow
+
+1. **Create a branch** from `master`:
+   ```bash
+   git checkout master
+   git pull origin master
+   git checkout -b feature/your-feature-name
+   ```
+
+2. **Make your changes** and commit:
+   ```bash
+   git add .
+   git commit -m "feat: your feature description"
+   ```
+
+3. **Push and create PR**:
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+   Then create a Pull Request on GitHub targeting `master`.
+
+4. **CI checks run automatically**:
+   - ✅ Unit tests must pass
+   - ✅ Lint checks must pass
+   - ✅ Build must succeed
+
+5. **Merge** after approval and all checks pass.
+
+### Running Tests Locally
+
+```bash
+# Run all unit tests
+./gradlew testDebugUnitTest
+
+# Run lint checks
+./gradlew lintDebug
+
+# Build debug APK
+./gradlew assembleDebug
+```
+
+---
+
 ## 📚 Documentation
 
 | Document | Description |

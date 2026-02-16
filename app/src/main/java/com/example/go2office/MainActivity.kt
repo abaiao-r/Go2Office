@@ -6,8 +6,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.go2office.domain.usecase.GetOfficeSettingsUseCase
@@ -31,18 +34,32 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    val settings by getSettings().collectAsState(initial = null)
 
-                    val startDestination = if (settings == null) {
-                        Screen.Onboarding.route
-                    } else {
-                        Screen.Dashboard.route
-                    }
-                    NavGraph(
-                        navController = navController,
-                        startDestination = startDestination,
+                    // Track if we've determined the initial destination
+                    var hasCheckedSettings by remember { mutableStateOf(false) }
+                    var onboardingComplete by remember { mutableStateOf(false) }
+
+                    // Check settings once on startup
+                    LaunchedEffect(Unit) {
+                        val settings = getSettings.once()
                         onboardingComplete = settings != null
-                    )
+                        hasCheckedSettings = true
+                    }
+
+                    val startDestination = if (onboardingComplete) {
+                        Screen.Dashboard.route
+                    } else {
+                        Screen.Onboarding.route
+                    }
+
+                    // Only show NavGraph after we've checked settings
+                    if (hasCheckedSettings) {
+                        NavGraph(
+                            navController = navController,
+                            startDestination = startDestination,
+                            onboardingComplete = onboardingComplete
+                        )
+                    }
                 }
             }
         }
