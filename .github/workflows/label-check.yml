@@ -2,7 +2,7 @@ name: PR Label Check
 
 on:
   pull_request:
-    types: [labeled, unlabeled]
+    types: [labeled, unlabeled, opened, synchronize, reopened]
 
 permissions:
   checks: write
@@ -19,12 +19,12 @@ jobs:
       with:
         script: |
           const labels = context.payload.pull_request.labels.map(l => l.name);
-          const hasMergeLabel = labels.includes('ready-to-merge');
+          const hasMergeLabel = labels.includes('merge');
           
           if (!hasMergeLabel) {
-            core.setFailed('PR must have the "ready-to-merge" label to be merged.');
+            core.setFailed('PR must have the "merge" label to be merged. Add the label when you are ready to merge.');
           } else {
-            console.log('✅ "ready-to-merge" label is present!');
-            console.log('Note: All CI checks must also pass before merging.');
+            console.log('✅ "merge" label is present!');
+            console.log('PR is ready to merge once all CI checks pass.');
           }
 

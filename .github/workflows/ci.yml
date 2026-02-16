@@ -150,12 +150,12 @@ jobs:
       with:
         script: |
           const labels = context.payload.pull_request.labels.map(l => l.name);
-          const hasMergeLabel = labels.includes('ready-to-merge');
+          const hasMergeLabel = labels.includes('merge');
           
           if (!hasMergeLabel) {
-            core.setFailed('PR must have the "ready-to-merge" label to be merged. Add the label when ready.');
+            core.setFailed('PR must have the "merge" label to be merged. Add the label when ready.');
           } else {
-            console.log('✅ All checks passed and "ready-to-merge" label is present!');
+            console.log('✅ All checks passed and "merge" label is present!');
           }
 
     - name: Merge readiness summary
@@ -166,6 +166,6 @@ jobs:
         echo "- ✅ UI Tests passed" >> $GITHUB_STEP_SUMMARY
         echo "- ✅ Lint Check passed" >> $GITHUB_STEP_SUMMARY
         echo "- ✅ Build APK succeeded" >> $GITHUB_STEP_SUMMARY
-        echo "- ✅ 'ready-to-merge' label present" >> $GITHUB_STEP_SUMMARY
+        echo "- ✅ 'merge' label present" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "**This PR is ready to be merged!** 🚀" >> $GITHUB_STEP_SUMMARY
