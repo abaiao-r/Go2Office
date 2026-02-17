@@ -27,4 +27,6 @@ interface OfficeRepository {
     suspend fun deleteHoliday(date: LocalDate): Result<Unit>
     fun getActiveOfficeSession(): Flow<OfficePresence?>
     fun getTodayTotalHours(): Flow<Float>
+    suspend fun getSessionsForDate(date: LocalDate): List<OfficeSession>
+    fun getSessionsInRange(startDate: LocalDate, endDate: LocalDate): Flow<List<OfficeSession>>
 }

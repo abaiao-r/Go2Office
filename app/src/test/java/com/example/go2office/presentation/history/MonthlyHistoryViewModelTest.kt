@@ -2,6 +2,7 @@ package com.example.go2office.presentation.history
 
 import com.example.go2office.domain.model.DailyEntry
 import com.example.go2office.domain.model.MonthProgress
+import com.example.go2office.domain.model.OfficeSession
 import com.example.go2office.domain.repository.OfficeRepository
 import com.example.go2office.domain.usecase.GetDailyEntriesUseCase
 import com.example.go2office.domain.usecase.GetMonthProgressUseCase
@@ -20,6 +21,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.YearMonth
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -40,6 +42,15 @@ class MonthlyHistoryViewModelTest {
         DailyEntry(date = LocalDate.of(2026, 2, 13), wasInOffice = true, hoursWorked = 9f)
     )
 
+    private val testSessions = listOf(
+        OfficeSession(
+            id = 1,
+            entryTime = LocalDateTime.of(2026, 2, 10, 9, 0),
+            exitTime = LocalDateTime.of(2026, 2, 10, 17, 0),
+            isAutoDetected = true
+        )
+    )
+
     private val testProgress = MonthProgress(
         yearMonth = testMonth,
         requiredDays = 8,
@@ -57,6 +68,7 @@ class MonthlyHistoryViewModelTest {
 
         every { getDailyEntries.forMonth(any()) } returns flowOf(testEntries)
         coEvery { getMonthProgress(any(), any()) } returns Result.success(testProgress)
+        every { repository.getSessionsInRange(any(), any()) } returns flowOf(testSessions)
     }
 
     @After
@@ -138,6 +150,7 @@ class MonthlyHistoryViewModelTest {
     @Test
     fun `GIVEN no entries WHEN viewModel initializes THEN totals should be zero`() = runTest {
         every { getDailyEntries.forMonth(any()) } returns flowOf(emptyList())
+        every { repository.getSessionsInRange(any(), any()) } returns flowOf(emptyList())
 
         createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
@@ -149,6 +162,7 @@ class MonthlyHistoryViewModelTest {
     @Test
     fun `GIVEN progress fetch fails WHEN viewModel initializes THEN required values should be zero`() = runTest {
         coEvery { getMonthProgress(any(), any()) } returns Result.failure(Exception("Error"))
+        every { repository.getSessionsInRange(any(), any()) } returns flowOf(testSessions)
 
         createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
@@ -159,7 +173,7 @@ class MonthlyHistoryViewModelTest {
 
     @Test
     fun `GIVEN exception thrown WHEN loading data THEN should show error message`() = runTest {
-        every { getDailyEntries.forMonth(any()) } throws RuntimeException("Database error")
+        every { repository.getSessionsInRange(any(), any()) } throws RuntimeException("Database error")
 
         createViewModel()
         testDispatcher.scheduler.advanceUntilIdle()

@@ -1,17 +1,25 @@
 package com.example.go2office.presentation.history
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.go2office.R
+import com.example.go2office.domain.model.OfficeSession
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -28,10 +36,10 @@ fun MonthlyHistoryScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Monthly History") },
+                title = { Text(stringResource(R.string.monthly_history_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Back")
+                        Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
                     }
                 }
             )
@@ -62,7 +70,7 @@ fun MonthlyHistoryScreen(
 
             item {
                 Text(
-                    text = "Daily Breakdown",
+                    text = stringResource(R.string.daily_breakdown),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -83,7 +91,7 @@ fun MonthlyHistoryScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "No office days recorded this month",
+                                text = stringResource(R.string.no_office_days),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -96,6 +104,9 @@ fun MonthlyHistoryScreen(
                         date = entry.date,
                         hours = entry.hoursWorked,
                         wasInOffice = entry.wasInOffice,
+                        sessions = entry.sessions,
+                        isExpanded = uiState.expandedDate == entry.date,
+                        onToggleExpand = { viewModel.onEvent(MonthlyHistoryEvent.ToggleExpanded(entry.date)) },
                         onClick = { onNavigateToDayEntry(entry.date) }
                     )
                 }
@@ -256,10 +267,12 @@ private fun DailyHistoryCard(
     date: LocalDate,
     hours: Float,
     wasInOffice: Boolean,
+    sessions: List<OfficeSession>,
+    isExpanded: Boolean,
+    onToggleExpand: () -> Unit,
     onClick: () -> Unit
 ) {
     Card(
-        onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = if (wasInOffice) {
@@ -269,51 +282,153 @@ private fun DailyHistoryCard(
             }
         )
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Text(
-                    text = date.format(DateTimeFormatter.ofPattern("EEEE")),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            if (wasInOffice) {
-                val totalMinutes = (hours * 60).toInt()
-                val h = totalMinutes / 60
-                val m = totalMinutes % 60
-                Column(horizontalAlignment = Alignment.End) {
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "${h}h ${m}m",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                        text = date.format(DateTimeFormatter.ofPattern("EEEE")),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "✓ In Office",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary
+                        text = date.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-            } else {
-                Text(
-                    text = "—",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+
+                if (wasInOffice) {
+                    val totalMinutes = (hours * 60).toInt()
+                    val h = totalMinutes / 60
+                    val m = totalMinutes % 60
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text(
+                            text = "${h}h ${m}m",
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        if (sessions.isNotEmpty()) {
+                            Text(
+                                text = "${sessions.size} ${if (sessions.size == 1) "session" else "sessions"}",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        } else {
+                            Text(
+                                text = "✓ In Office",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+
+                    if (sessions.isNotEmpty()) {
+                        IconButton(onClick = onToggleExpand) {
+                            Icon(
+                                imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                                contentDescription = if (isExpanded) "Collapse" else "Expand"
+                            )
+                        }
+                    }
+                } else {
+                    Text(
+                        text = "—",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            AnimatedVisibility(
+                visible = isExpanded && sessions.isNotEmpty(),
+                enter = expandVertically(),
+                exit = shrinkVertically()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    HorizontalDivider()
+                    Text(
+                        text = "Sessions",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    sessions.forEachIndexed { index, session ->
+                        SessionRow(session = session, index = index + 1)
+                    }
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun SessionRow(session: OfficeSession, index: Int) {
+    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    val entryTimeStr = session.entryTime.format(timeFormatter)
+    val exitTimeStr = session.exitTime?.format(timeFormatter) ?: "Active"
+
+    val durationMinutes = session.durationMinutes
+    val durationH = durationMinutes / 60
+    val durationM = durationMinutes % 60
+    val durationStr = if (session.isActive) {
+        "ongoing"
+    } else {
+        "${durationH}h ${durationM}m"
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Surface(
+                shape = MaterialTheme.shapes.small,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+            ) {
+                Text(
+                    text = "#$index",
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            Column {
+                Text(
+                    text = "$entryTimeStr → $exitTimeStr",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                if (session.isAutoDetected) {
+                    Text(
+                        text = "Auto-detected",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+        Text(
+            text = durationStr,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium,
+            color = if (session.isActive) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 

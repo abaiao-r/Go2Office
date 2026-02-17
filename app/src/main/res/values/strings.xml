@@ -177,6 +177,8 @@
 
     <!-- Monthly History -->
     <string name="monthly_history_title">Monthly History</string>
+    <string name="daily_breakdown">Daily Breakdown</string>
+    <string name="no_office_days">No office days recorded this month</string>
     <string name="days_progress">Days Progress</string>
     <string name="hours_progress">Hours Progress</string>
     <string name="progress_percent_format">%d%%</string>
