@@ -41,14 +41,14 @@
     <string name="office_days">Office Days</string>
     <string name="office_hours">Office Hours</string>
     <string name="days_remaining">%d days remaining</string>
-    <string name="hours_remaining">%.1fh remaining</string>
+    <string name="hours_remaining">%s remaining</string>
     <string name="no_data_available">No data available for this month</string>
     <string name="refresh">Refresh</string>
     <string name="suggested_days">Suggested Days</string>
     <string name="complete_days_to_meet">Complete these %d days to meet requirements</string>
     <string name="no_more_days_needed">No more days needed - requirements met!</string>
     <string name="recent_entries">Recent Entries</string>
-    <string name="hours_in_office">%.1fh in office</string>
+    <string name="hours_in_office">%s in office</string>
     <string name="monthly_requirement_met">You\'ve met your monthly requirement!</string>
     <string name="goal_complete">🎉 Goal Complete!</string>
 
@@ -64,8 +64,8 @@
     <string name="required_days_per_week">Required Days Per Week</string>
     <string name="days_count">%d days</string>
     <string name="hours_per_day">Hours Per Day</string>
-    <string name="hours_value">%.1f hours</string>
-    <string name="weekly_total_format">Weekly total: %.1fh (%.1fh × %d days)</string>
+    <string name="hours_value">%d hours</string>
+    <string name="weekly_total_format">Weekly total: %s (%dh × %d days)</string>
     <string name="current_preferences">Current Preferences</string>
     <string name="error_no_settings">No settings to save</string>
     <string name="error_save_settings">Failed to save settings</string>
