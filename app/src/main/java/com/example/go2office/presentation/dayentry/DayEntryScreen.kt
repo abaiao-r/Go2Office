@@ -16,6 +16,7 @@ import com.example.go2office.R
 import com.example.go2office.presentation.components.ConfirmationDialog
 import com.example.go2office.presentation.components.ErrorDialog
 import com.example.go2office.presentation.components.LoadingIndicator
+import com.example.go2office.util.WorkHoursCalculator
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
@@ -109,7 +110,7 @@ fun DayEntryScreen(
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
-                                text = stringResource(R.string.hours_value, uiState.hoursWorked),
+                                text = WorkHoursCalculator.formatHoursMinutes(uiState.hoursWorked),
                                 style = MaterialTheme.typography.displayMedium,
                                 color = MaterialTheme.colorScheme.primary
                             )

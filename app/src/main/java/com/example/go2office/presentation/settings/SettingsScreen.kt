@@ -14,6 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.go2office.R
 import com.example.go2office.presentation.components.ErrorDialog
 import com.example.go2office.presentation.components.LoadingIndicator
+import com.example.go2office.util.WorkHoursCalculator
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -179,7 +180,7 @@ fun SettingsScreen(
                             style = MaterialTheme.typography.titleMedium
                         )
                         Text(
-                            text = stringResource(R.string.hours_value, hoursPerDay),
+                            text = WorkHoursCalculator.formatHoursMinutes(hoursPerDay),
                             style = MaterialTheme.typography.displaySmall,
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -192,7 +193,7 @@ fun SettingsScreen(
                         HorizontalDivider()
                         val weeklyHours = hoursPerDay * requiredDays
                         Text(
-                            text = stringResource(R.string.weekly_total_format, weeklyHours, hoursPerDay, requiredDays),
+                            text = "Weekly total: ${WorkHoursCalculator.formatHoursMinutes(weeklyHours)} (${hoursPerDay.toInt()}h × $requiredDays days)",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
