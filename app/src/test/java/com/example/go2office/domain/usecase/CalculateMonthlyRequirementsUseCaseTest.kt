@@ -148,4 +148,36 @@ class CalculateMonthlyRequirementsUseCaseTest {
         val requirements = result.getOrNull()!!
         assertEquals(64f, requirements.requiredHours, 0.01f)
     }
+
+    @Test
+    fun `GIVEN holidays reducing weekdays WHEN calculating hours THEN should use raw days not ceiling`() = runTest {
+        val settings = OfficeSettings(
+            requiredDaysPerWeek = 2,
+            requiredHoursPerWeek = 16f,
+            weekdayPreferences = allWeekdays
+        )
+        val holidays = listOf(
+            Holiday(date = LocalDate.of(2026, 2, 16), description = "Holiday 1", type = HolidayType.PUBLIC_HOLIDAY),
+            Holiday(date = LocalDate.of(2026, 2, 17), description = "Holiday 2", type = HolidayType.PUBLIC_HOLIDAY),
+            Holiday(date = LocalDate.of(2026, 2, 18), description = "Holiday 3", type = HolidayType.PUBLIC_HOLIDAY),
+            Holiday(date = LocalDate.of(2026, 2, 19), description = "Holiday 4", type = HolidayType.PUBLIC_HOLIDAY),
+            Holiday(date = LocalDate.of(2026, 2, 20), description = "Holiday 5", type = HolidayType.PUBLIC_HOLIDAY),
+            Holiday(date = LocalDate.of(2026, 2, 23), description = "Holiday 6", type = HolidayType.PUBLIC_HOLIDAY),
+            Holiday(date = LocalDate.of(2026, 2, 24), description = "Holiday 7", type = HolidayType.PUBLIC_HOLIDAY),
+            Holiday(date = LocalDate.of(2026, 2, 25), description = "Holiday 8", type = HolidayType.PUBLIC_HOLIDAY),
+            Holiday(date = LocalDate.of(2026, 2, 26), description = "Holiday 9", type = HolidayType.PUBLIC_HOLIDAY),
+            Holiday(date = LocalDate.of(2026, 2, 27), description = "Holiday 10", type = HolidayType.PUBLIC_HOLIDAY),
+            Holiday(date = LocalDate.of(2026, 2, 2), description = "Holiday 11", type = HolidayType.PUBLIC_HOLIDAY)
+        )
+        coEvery { repository.getSettingsOnce() } returns settings
+        coEvery { repository.getHolidaysInRangeOnce(any(), any()) } returns holidays
+
+        val result = useCase(YearMonth.of(2026, 2))
+
+        assertTrue(result.isSuccess)
+        val requirements = result.getOrNull()!!
+        assertEquals(9, requirements.totalWeekdaysInMonth)
+        assertEquals(4, requirements.requiredDays)
+        assertEquals(28.8f, requirements.requiredHours, 0.01f)
+    }
 }
