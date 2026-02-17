@@ -25,6 +25,7 @@ import com.example.go2office.presentation.components.EmptyState
 import com.example.go2office.presentation.components.ErrorDialog
 import com.example.go2office.presentation.components.LoadingIndicator
 import com.example.go2office.util.DateUtils
+import com.example.go2office.util.WorkHoursCalculator
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -348,7 +349,7 @@ private fun ProgressOverviewCard(progress: MonthProgress) {
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     Text(
-                        text = "%.1fh / %.1fh".format(progress.completedHours, progress.requiredHours),
+                        text = "${WorkHoursCalculator.formatHoursMinutes(progress.completedHours)} / ${WorkHoursCalculator.formatHoursMinutes(progress.requiredHours)}",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -358,7 +359,7 @@ private fun ProgressOverviewCard(progress: MonthProgress) {
                     modifier = Modifier.fillMaxWidth()
                 )
                 Text(
-                    text = "%.1fh remaining".format(progress.remainingHours),
+                    text = "${WorkHoursCalculator.formatHoursMinutes(progress.remainingHours)} remaining",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )

@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.go2office.presentation.components.ErrorDialog
 import com.example.go2office.presentation.components.LoadingIndicator
+import com.example.go2office.util.WorkHoursCalculator
 import java.time.DayOfWeek
 import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class)
@@ -252,7 +253,7 @@ private fun RequiredHoursStep(
                 HorizontalDivider()
                 val weeklyHours = selectedHours * requiredDays
                 Text(
-                    text = "Weekly total: %.1fh (%.1fh × %d days)".format(weeklyHours, selectedHours, requiredDays),
+                    text = "Weekly total: ${WorkHoursCalculator.formatHoursMinutes(weeklyHours)} (${selectedHours.toInt()}h × $requiredDays days)",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

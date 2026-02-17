@@ -40,8 +40,14 @@ object WorkHoursCalculator {
         }.toFloat()
         return totalHours.coerceAtMost(MAX_DAILY_HOURS)
     }
+    fun formatHoursMinutes(hours: Float): String {
+        val totalMinutes = (hours * 60).toInt()
+        val h = totalMinutes / 60
+        val m = totalMinutes % 60
+        return if (m == 0) "${h}h" else "${h}h ${m}m"
+    }
     fun formatHours(hours: Float, isCapped: Boolean = false): String {
-        val formatted = "%.1fh".format(hours)
+        val formatted = formatHoursMinutes(hours)
         return if (isCapped) "$formatted (capped)" else formatted
     }
     fun isWithinWorkHours(time: LocalDateTime): Boolean {
