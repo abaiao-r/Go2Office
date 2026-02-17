@@ -44,7 +44,12 @@ fun NavGraph(
                 }
             )
         }
-        composable(Screen.Onboarding.route) {
+        composable(Screen.Onboarding.route) { backStackEntry ->
+            val savedStateHandle = backStackEntry.savedStateHandle
+            val selectedLat = savedStateHandle.get<Double>("selected_lat")
+            val selectedLon = savedStateHandle.get<Double>("selected_lon")
+            val selectedName = savedStateHandle.get<String>("selected_name")
+
             OnboardingScreen(
                 onComplete = {
                     navController.navigate(Screen.Dashboard.route) {
@@ -53,6 +58,17 @@ fun NavGraph(
                 },
                 onNavigateToPermissions = {
                     navController.navigate(Screen.PermissionsSetup.route)
+                },
+                onNavigateToMapPicker = { lat, lon ->
+                    navController.navigate(Screen.MapLocationPicker.createRoute(lat, lon))
+                },
+                selectedMapLocation = if (selectedLat != null && selectedLon != null) {
+                    Triple(selectedLat, selectedLon, selectedName ?: "Selected Location")
+                } else null,
+                onMapLocationConsumed = {
+                    savedStateHandle.remove<Double>("selected_lat")
+                    savedStateHandle.remove<Double>("selected_lon")
+                    savedStateHandle.remove<String>("selected_name")
                 }
             )
         }
