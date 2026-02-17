@@ -25,7 +25,7 @@ class CalculateMonthlyRequirementsUseCase @Inject constructor(
             val requiredDaysRaw = weekdaysInMonth * (settings.requiredDaysPerWeek / 5.0)
             val requiredDays = ceil(requiredDaysRaw).toInt()
             val hoursPerDay = settings.requiredHoursPerWeek / settings.requiredDaysPerWeek
-            val requiredHours = requiredDays * hoursPerDay
+            val requiredHours = (requiredDaysRaw * hoursPerDay).toFloat()
             val requirements = MonthlyRequirements(
                 yearMonth = yearMonth,
                 requiredDays = requiredDays,
