@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.example.go2office.R
 import com.example.go2office.presentation.components.ErrorDialog
 import com.example.go2office.presentation.components.LoadingIndicator
@@ -23,7 +25,10 @@ import com.example.go2office.util.Constants
 fun AutoDetectionScreen(
     viewModel: AutoDetectionViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    onNavigateToPermissions: () -> Unit = {}
+    onNavigateToPermissions: () -> Unit = {},
+    onNavigateToMapPicker: (Double?, Double?) -> Unit = { _, _ -> },
+    selectedMapLocation: Triple<Double, Double, String>? = null,
+    onMapLocationConsumed: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -31,13 +36,25 @@ fun AutoDetectionScreen(
     ) { permissions ->
         viewModel.checkPermissions()
     }
+
+    LaunchedEffect(selectedMapLocation) {
+        if (selectedMapLocation != null) {
+            viewModel.onEvent(AutoDetectionEvent.SetCustomLocation(
+                selectedMapLocation.first,
+                selectedMapLocation.second,
+                selectedMapLocation.third
+            ))
+            onMapLocationConsumed()
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.auto_detection_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, stringResource(R.string.back))
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back))
                     }
                 }
             )
@@ -83,6 +100,12 @@ fun AutoDetectionScreen(
                     onUseCurrentLocation = { viewModel.onEvent(AutoDetectionEvent.UseCurrentLocation) },
                     onSetCustomLocation = { lat, lon, name ->
                         viewModel.onEvent(AutoDetectionEvent.SetCustomLocation(lat, lon, name))
+                    },
+                    onPickOnMap = {
+                        onNavigateToMapPicker(
+                            uiState.officeLocation?.latitude,
+                            uiState.officeLocation?.longitude
+                        )
                     }
                 )
                 GeofenceRadiusCard(
@@ -206,7 +229,8 @@ private fun PermissionItem(name: String, granted: Boolean) {
 private fun OfficeLocationCard(
     location: com.example.go2office.domain.model.OfficeLocation?,
     onUseCurrentLocation: () -> Unit,
-    onSetCustomLocation: (Double, Double, String) -> Unit
+    onSetCustomLocation: (Double, Double, String) -> Unit,
+    onPickOnMap: () -> Unit
 ) {
     var showLocationDialog by remember { mutableStateOf(false) }
     Card(
@@ -247,12 +271,18 @@ private fun OfficeLocationCard(
                 ) {
                     Text(stringResource(R.string.use_current_gps))
                 }
-                Button(
+                OutlinedButton(
                     onClick = { showLocationDialog = true },
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(stringResource(R.string.enter_manually))
                 }
+            }
+            Button(
+                onClick = onPickOnMap,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.pick_on_map))
             }
             Text(
                 text = stringResource(R.string.free_no_api_costs),

@@ -103,6 +103,9 @@ dependencies {
     // Google Play Services (GPS only - 100% FREE)
     implementation(libs.play.services.location)
 
+    // OpenStreetMap - 100% FREE, no API key needed!
+    implementation(libs.osmdroid.android)
+
     // Unit Testing
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
