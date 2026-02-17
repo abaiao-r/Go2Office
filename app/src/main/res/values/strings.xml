@@ -205,4 +205,15 @@
     <string name="notification_arrived_text">Started tracking your office hours.</string>
     <string name="notification_left_title">Left Office</string>
     <string name="notification_left_text">You spent %s at the office today.</string>
+
+    <!-- Map Location Picker -->
+    <string name="pick_location_on_map">Pick Location on Map</string>
+    <string name="pick_on_map">🗺️ Pick on Map</string>
+    <string name="confirm">Confirm</string>
+    <string name="search">Search</string>
+    <string name="search_place_hint">Search for a place…</string>
+    <string name="zoom_in">Zoom in</string>
+    <string name="zoom_out">Zoom out</string>
+    <string name="selected_location">Selected Location</string>
+    <string name="unknown_location">Unknown Location</string>
 </resources>

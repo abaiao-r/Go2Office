@@ -73,4 +73,49 @@ class OnboardingScreenTest {
         composeTestRule.setContent { OnboardingScreen(viewModel = viewModel, onComplete = {}) }
         composeTestRule.onNode(hasContentDescription(context.getString(R.string.back))).assertIsDisplayed()
     }
+
+    @Test
+    fun `GIVEN auto detection step with auto detection enabled WHEN loaded THEN should show pick on map button`() {
+        val viewModel = mockk<OnboardingViewModel>(relaxed = true)
+        every { viewModel.uiState } returns MutableStateFlow(
+            OnboardingUiState(
+                currentStep = 3,
+                weekdayPreferences = defaultWeekdays,
+                enableAutoDetection = true
+            )
+        )
+        composeTestRule.setContent { OnboardingScreen(viewModel = viewModel, onComplete = {}) }
+        composeTestRule.onNodeWithText("Pick on Map", substring = true, useUnmergedTree = true).assertExists()
+    }
+
+    @Test
+    fun `GIVEN auto detection step with location set WHEN loaded THEN should show location name`() {
+        val viewModel = mockk<OnboardingViewModel>(relaxed = true)
+        every { viewModel.uiState } returns MutableStateFlow(
+            OnboardingUiState(
+                currentStep = 3,
+                weekdayPreferences = defaultWeekdays,
+                enableAutoDetection = true,
+                officeLatitude = 38.7223,
+                officeLongitude = -9.1393,
+                officeName = "My Office"
+            )
+        )
+        composeTestRule.setContent { OnboardingScreen(viewModel = viewModel, onComplete = {}) }
+        composeTestRule.onNodeWithText("My Office", substring = true, useUnmergedTree = true).assertExists()
+    }
+
+    @Test
+    fun `GIVEN auto detection disabled WHEN loaded THEN should not show pick on map button`() {
+        val viewModel = mockk<OnboardingViewModel>(relaxed = true)
+        every { viewModel.uiState } returns MutableStateFlow(
+            OnboardingUiState(
+                currentStep = 3,
+                weekdayPreferences = defaultWeekdays,
+                enableAutoDetection = false
+            )
+        )
+        composeTestRule.setContent { OnboardingScreen(viewModel = viewModel, onComplete = {}) }
+        composeTestRule.onNodeWithText("Pick on Map", substring = true, useUnmergedTree = true).assertDoesNotExist()
+    }
 }

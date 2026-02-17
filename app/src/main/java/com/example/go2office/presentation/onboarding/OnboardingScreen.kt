@@ -24,9 +24,24 @@ import java.time.LocalDate
 fun OnboardingScreen(
     viewModel: OnboardingViewModel = hiltViewModel(),
     onComplete: () -> Unit,
-    onNavigateToPermissions: () -> Unit = {}
+    onNavigateToPermissions: () -> Unit = {},
+    onNavigateToMapPicker: (Double?, Double?) -> Unit = { _, _ -> },
+    selectedMapLocation: Triple<Double, Double, String>? = null,
+    onMapLocationConsumed: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(selectedMapLocation) {
+        if (selectedMapLocation != null) {
+            viewModel.onEvent(OnboardingEvent.SetOfficeLocation(
+                selectedMapLocation.first,
+                selectedMapLocation.second,
+                selectedMapLocation.third
+            ))
+            onMapLocationConsumed()
+        }
+    }
+
     LaunchedEffect(uiState.isComplete) {
         if (uiState.isComplete) {
             onComplete()
@@ -87,7 +102,10 @@ fun OnboardingScreen(
                         3 -> AutoDetectionStep(
                             viewModel = viewModel,
                             uiState = uiState,
-                            onNavigateToPermissions = onNavigateToPermissions
+                            onNavigateToPermissions = onNavigateToPermissions,
+                            onNavigateToMapPicker = {
+                                onNavigateToMapPicker(uiState.officeLatitude, uiState.officeLongitude)
+                            }
                         )
                         4 -> HolidaysSetupStep(
                             viewModel = viewModel,
@@ -382,7 +400,8 @@ private fun WeekdayPreferenceItem(
 private fun AutoDetectionStep(
     viewModel: OnboardingViewModel,
     uiState: OnboardingUiState,
-    onNavigateToPermissions: () -> Unit
+    onNavigateToPermissions: () -> Unit,
+    onNavigateToMapPicker: () -> Unit
 ) {
     LaunchedEffect(uiState.currentStep) {
         if (uiState.currentStep == 3) { 
@@ -529,12 +548,18 @@ private fun AutoDetectionStep(
                         ) {
                             Text("Use Current GPS")
                         }
-                        Button(
+                        OutlinedButton(
                             onClick = { showLocationDialog = true },
                             modifier = Modifier.weight(1f)
                         ) {
                             Text("Enter Manually")
                         }
+                    }
+                    Button(
+                        onClick = onNavigateToMapPicker,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("🗺️ Pick on Map")
                     }
                     Text(
                         text = "💡 100% FREE - No API costs!",

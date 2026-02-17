@@ -12,4 +12,13 @@ sealed class Screen(val route: String) {
     object PermissionsSetup : Screen("permissionsSetup")
     object AnnualCalendar : Screen("annualCalendar")
     object MonthlyHistory : Screen("monthlyHistory")
+    object MapLocationPicker : Screen("mapLocationPicker?lat={lat}&lon={lon}") {
+        fun createRoute(latitude: Double? = null, longitude: Double? = null): String {
+            return if (latitude != null && longitude != null) {
+                "mapLocationPicker?lat=$latitude&lon=$longitude"
+            } else {
+                "mapLocationPicker"
+            }
+        }
+    }
 }
