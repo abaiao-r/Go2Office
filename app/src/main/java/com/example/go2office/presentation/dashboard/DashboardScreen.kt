@@ -224,8 +224,6 @@ private fun TodayStatusCard(
 
     val totalMinutesCompleted = (todayTotalHours * 60).toLong()
     val totalMinutesToday = totalMinutesCompleted + currentSessionMinutes
-    val totalHours = totalMinutesToday / 60
-    val totalMins = totalMinutesToday % 60
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -265,10 +263,8 @@ private fun TodayStatusCard(
                         fontWeight = FontWeight.Bold
                     )
                     if (isAtOffice && activeSession != null) {
-                        val sessionHours = currentSessionMinutes / 60
-                        val sessionMins = currentSessionMinutes % 60
                         Text(
-                            text = stringResource(R.string.current_session_format, sessionHours, sessionMins),
+                            text = "Current session: ${WorkHoursCalculator.formatHoursMinutes(currentSessionMinutes / 60f)}",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -279,7 +275,7 @@ private fun TodayStatusCard(
                 horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    text = "${totalHours}h ${totalMins}m",
+                    text = WorkHoursCalculator.formatHoursMinutes(totalMinutesToday / 60f),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
