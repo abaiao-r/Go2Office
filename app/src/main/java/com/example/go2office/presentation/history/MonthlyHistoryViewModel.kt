@@ -3,6 +3,7 @@ package com.example.go2office.presentation.history
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.go2office.domain.model.DailyEntry
+import com.example.go2office.domain.model.OfficeSession
 import com.example.go2office.domain.repository.OfficeRepository
 import com.example.go2office.domain.usecase.GetDailyEntriesUseCase
 import com.example.go2office.domain.usecase.GetMonthProgressUseCase
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.YearMonth
 import javax.inject.Inject
 
@@ -32,8 +34,13 @@ class MonthlyHistoryViewModel @Inject constructor(
     fun onEvent(event: MonthlyHistoryEvent) {
         when (event) {
             is MonthlyHistoryEvent.SelectMonth -> {
-                _uiState.update { it.copy(selectedMonth = event.yearMonth) }
+                _uiState.update { it.copy(selectedMonth = event.yearMonth, expandedDate = null) }
                 loadHistoryData()
+            }
+            is MonthlyHistoryEvent.ToggleExpanded -> {
+                val currentExpanded = _uiState.value.expandedDate
+                val newExpanded = if (currentExpanded == event.date) null else event.date
+                _uiState.update { it.copy(expandedDate = newExpanded) }
             }
             MonthlyHistoryEvent.Refresh -> loadHistoryData()
         }
@@ -46,20 +53,34 @@ class MonthlyHistoryViewModel @Inject constructor(
             try {
                 val progressResult = getMonthProgress(yearMonth)
                 val progress = progressResult.getOrNull()
-                getDailyEntries.forMonth(yearMonth).collect { entries ->
-                    val workedEntries = entries.filter { entry -> entry.wasInOffice }
-                    val totalDays = workedEntries.size
-                    val totalHours = workedEntries.sumOf { entry -> entry.hoursWorked.toDouble() }.toFloat()
-                    val sortedEntries = entries.sortedByDescending { entry -> entry.date }
-                    _uiState.update { state ->
-                        state.copy(
-                            dailyEntries = sortedEntries,
-                            totalDaysWorked = totalDays,
-                            totalHoursWorked = totalHours,
-                            requiredDays = progress?.requiredDays ?: 0,
-                            requiredHours = progress?.requiredHours ?: 0f,
-                            isLoading = false
-                        )
+
+                val startDate = yearMonth.atDay(1)
+                val endDate = yearMonth.atEndOfMonth()
+
+                repository.getSessionsInRange(startDate, endDate).collect { sessions ->
+                    val sessionsByDate = sessions.groupBy { it.entryTime.toLocalDate() }
+
+                    getDailyEntries.forMonth(yearMonth).collect { entries ->
+                        val workedEntries = entries.filter { entry -> entry.wasInOffice }
+                        val totalDays = workedEntries.size
+                        val totalHours = workedEntries.sumOf { entry -> entry.hoursWorked.toDouble() }.toFloat()
+                        val sortedEntries = entries.sortedByDescending { entry -> entry.date }
+
+                        val entriesWithSessions = sortedEntries.map { entry ->
+                            entry.copy(sessions = sessionsByDate[entry.date] ?: emptyList())
+                        }
+
+                        _uiState.update { state ->
+                            state.copy(
+                                dailyEntries = entriesWithSessions,
+                                sessionsByDate = sessionsByDate,
+                                totalDaysWorked = totalDays,
+                                totalHoursWorked = totalHours,
+                                requiredDays = progress?.requiredDays ?: 0,
+                                requiredHours = progress?.requiredHours ?: 0f,
+                                isLoading = false
+                            )
+                        }
                     }
                 }
             } catch (e: Exception) {

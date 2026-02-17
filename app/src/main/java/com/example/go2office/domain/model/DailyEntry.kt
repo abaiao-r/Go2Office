@@ -1,11 +1,13 @@
 package com.example.go2office.domain.model
 import java.time.LocalDate
+
 data class DailyEntry(
     val id: Long = 0,
     val date: LocalDate,
     val wasInOffice: Boolean,
     val hoursWorked: Float,
-    val notes: String? = null
+    val notes: String? = null,
+    val sessions: List<OfficeSession> = emptyList()
 ) {
     init {
         require(hoursWorked >= 0 && hoursWorked <= 24) { "Hours worked must be between 0 and 24" }

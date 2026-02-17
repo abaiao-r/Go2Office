@@ -169,4 +169,29 @@ class OfficeRepositoryImpl @Inject constructor(
             }.toFloat()
         }
     }
+
+    override suspend fun getSessionsForDate(date: java.time.LocalDate): List<OfficeSession> {
+        val sessions = officePresenceDao.getSessionsForDate(date.toString())
+        return sessions.map { entity ->
+            OfficeSession(
+                id = entity.id,
+                entryTime = entity.entryTime,
+                exitTime = entity.exitTime,
+                isAutoDetected = entity.isAutoDetected
+            )
+        }
+    }
+
+    override fun getSessionsInRange(startDate: java.time.LocalDate, endDate: java.time.LocalDate): Flow<List<OfficeSession>> {
+        return officePresenceDao.getSessionsInRange(startDate.toString(), endDate.toString()).map { entities ->
+            entities.map { entity ->
+                OfficeSession(
+                    id = entity.id,
+                    entryTime = entity.entryTime,
+                    exitTime = entity.exitTime,
+                    isAutoDetected = entity.isAutoDetected
+                )
+            }
+        }
+    }
 }
