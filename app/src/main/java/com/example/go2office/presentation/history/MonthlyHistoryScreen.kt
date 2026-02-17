@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.go2office.R
 import com.example.go2office.domain.model.OfficeSession
+import com.example.go2office.util.WorkHoursCalculator
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -152,17 +153,7 @@ private fun MonthlySummaryCard(
     requiredDays: Int,
     requiredHours: Float
 ) {
-    val totalMinutes = (totalHours * 60).toInt()
-    val totalH = totalMinutes / 60
-    val totalM = totalMinutes % 60
-
-    val requiredMinutes = (requiredHours * 60).toInt()
-    val reqH = requiredMinutes / 60
-    val reqM = requiredMinutes % 60
-
-    val avgMinutes = if (totalDays > 0) totalMinutes / totalDays else 0
-    val avgH = avgMinutes / 60
-    val avgM = avgMinutes % 60
+    val avgHours = if (totalDays > 0) totalHours / totalDays else 0f
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -192,12 +183,12 @@ private fun MonthlySummaryCard(
                 )
                 SummaryItem(
                     label = "Hours",
-                    value = "${totalH}h ${totalM}m",
-                    subtitle = "of ${reqH}h ${reqM}m required"
+                    value = WorkHoursCalculator.formatHoursMinutes(totalHours),
+                    subtitle = "of ${WorkHoursCalculator.formatHoursMinutes(requiredHours)} required"
                 )
                 SummaryItem(
                     label = "Avg/Day",
-                    value = "${avgH}h ${avgM}m",
+                    value = WorkHoursCalculator.formatHoursMinutes(avgHours),
                     subtitle = "per day"
                 )
             }
@@ -304,12 +295,9 @@ private fun DailyHistoryCard(
                 }
 
                 if (wasInOffice) {
-                    val totalMinutes = (hours * 60).toInt()
-                    val h = totalMinutes / 60
-                    val m = totalMinutes % 60
                     Column(horizontalAlignment = Alignment.End) {
                         Text(
-                            text = "${h}h ${m}m",
+                            text = WorkHoursCalculator.formatHoursMinutes(hours),
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
@@ -378,13 +366,10 @@ private fun SessionRow(session: OfficeSession, index: Int) {
     val entryTimeStr = session.entryTime.format(timeFormatter)
     val exitTimeStr = session.exitTime?.format(timeFormatter) ?: "Active"
 
-    val durationMinutes = session.durationMinutes
-    val durationH = durationMinutes / 60
-    val durationM = durationMinutes % 60
     val durationStr = if (session.isActive) {
         "ongoing"
     } else {
-        "${durationH}h ${durationM}m"
+        WorkHoursCalculator.formatHoursMinutes(session.durationMinutes / 60f)
     }
 
     Row(
