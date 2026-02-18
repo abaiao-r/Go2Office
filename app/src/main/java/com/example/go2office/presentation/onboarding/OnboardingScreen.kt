@@ -527,25 +527,73 @@ private fun AutoDetectionStep(
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(
                     modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
                         text = "Office Location",
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
                     )
                     if (uiState.officeLatitude != null && uiState.officeLongitude != null) {
-                        Text("📍 ${uiState.officeName}")
-                        Text(
-                            text = "Lat: %.4f, Lon: %.4f".format(uiState.officeLatitude, uiState.officeLongitude),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer
+                            )
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text(
+                                    text = "📍 ${uiState.officeName}",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "Lat: %.4f, Lon: %.4f".format(uiState.officeLatitude, uiState.officeLongitude),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
                     } else {
-                        Text(
-                            text = "Not set",
-                            color = MaterialTheme.colorScheme.error
-                        )
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer
+                            )
+                        ) {
+                            Text(
+                                text = "⚠️ Location not set - please select below",
+                                modifier = Modifier.padding(12.dp),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onErrorContainer
+                            )
+                        }
                     }
+                    Button(
+                        onClick = onNavigateToMapPicker,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        Icon(Icons.Default.Place, contentDescription = null, modifier = Modifier.size(24.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text("🗺️ Pick on Map", style = MaterialTheme.typography.titleMedium)
+                    }
+                    Text(
+                        text = "💡 100% FREE - Uses OpenStreetMap",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                    HorizontalDivider()
+                    Text(
+                        text = "Or use other methods:",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -554,34 +602,18 @@ private fun AutoDetectionStep(
                             onClick = { viewModel.onEvent(OnboardingEvent.UseCurrentLocation) },
                             modifier = Modifier.weight(1f),
                             enabled = uiState.hasLocationPermission,
-                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
                         ) {
-                            Text("📍 Current GPS", style = MaterialTheme.typography.labelMedium)
+                            Text("📍 GPS", style = MaterialTheme.typography.labelMedium)
                         }
                         OutlinedButton(
                             onClick = { showLocationDialog = true },
                             modifier = Modifier.weight(1f),
-                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
                         ) {
                             Text("✏️ Manual", style = MaterialTheme.typography.labelMedium)
                         }
                     }
-                    Button(
-                        onClick = onNavigateToMapPicker,
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary
-                        )
-                    ) {
-                        Icon(Icons.Default.Place, contentDescription = null, modifier = Modifier.size(20.dp))
-                        Spacer(Modifier.width(8.dp))
-                        Text("🗺️ Pick on Map")
-                    }
-                    Text(
-                        text = "💡 100% FREE - Uses OpenStreetMap",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary
-                    )
                 }
             }
             Card(
