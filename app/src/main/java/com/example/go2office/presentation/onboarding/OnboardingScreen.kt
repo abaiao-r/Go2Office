@@ -60,85 +60,93 @@ fun OnboardingScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            if (!uiState.isLoading) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shadowElevation = 8.dp
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        if (uiState.currentStep > 0) {
+                            OutlinedButton(
+                                onClick = { viewModel.onEvent(OnboardingEvent.PreviousStep) },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("Back")
+                            }
+                        }
+                        Button(
+                            onClick = {
+                                if (uiState.currentStep == uiState.totalSteps - 1) {
+                                    viewModel.onEvent(OnboardingEvent.Complete)
+                                } else {
+                                    viewModel.onEvent(OnboardingEvent.NextStep)
+                                }
+                            },
+                            enabled = uiState.canGoNext,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(if (uiState.currentStep == uiState.totalSteps - 1) "Complete" else "Next")
+                        }
+                    }
+                }
+            }
         }
     ) { padding ->
         if (uiState.isLoading) {
             LoadingIndicator(message = "Saving settings...")
         } else {
+            val scrollState = rememberScrollState()
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.SpaceBetween
+                    .imePadding()
+                    .verticalScroll(scrollState)
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
-                ) {
-                    LinearProgressIndicator(
-                        progress = { (uiState.currentStep + 1).toFloat() / uiState.totalSteps },
-                        modifier = Modifier.fillMaxWidth()
+                LinearProgressIndicator(
+                    progress = { (uiState.currentStep + 1).toFloat() / uiState.totalSteps },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    text = "Step ${uiState.currentStep + 1} of ${uiState.totalSteps}",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                when (uiState.currentStep) {
+                    0 -> RequiredDaysStep(
+                        selectedDays = uiState.requiredDaysPerWeek,
+                        onDaysSelected = { viewModel.onEvent(OnboardingEvent.UpdateRequiredDays(it)) }
                     )
-                    Text(
-                        text = "Step ${uiState.currentStep + 1} of ${uiState.totalSteps}",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    1 -> RequiredHoursStep(
+                        selectedHours = uiState.hoursPerDay,
+                        requiredDays = uiState.requiredDaysPerWeek,
+                        onHoursChanged = { viewModel.onEvent(OnboardingEvent.UpdateHoursPerDay(it)) }
                     )
-                    when (uiState.currentStep) {
-                        0 -> RequiredDaysStep(
-                            selectedDays = uiState.requiredDaysPerWeek,
-                            onDaysSelected = { viewModel.onEvent(OnboardingEvent.UpdateRequiredDays(it)) }
-                        )
-                        1 -> RequiredHoursStep(
-                            selectedHours = uiState.hoursPerDay,  
-                            requiredDays = uiState.requiredDaysPerWeek,  
-                            onHoursChanged = { viewModel.onEvent(OnboardingEvent.UpdateHoursPerDay(it)) }  
-                        )
-                        2 -> WeekdayPreferencesStep(
-                            preferences = uiState.weekdayPreferences,
-                            onPreferencesChanged = { viewModel.onEvent(OnboardingEvent.UpdateWeekdayPreferences(it)) }
-                        )
-                        3 -> AutoDetectionStep(
-                            viewModel = viewModel,
-                            uiState = uiState,
-                            onNavigateToPermissions = onNavigateToPermissions,
-                            onNavigateToMapPicker = {
-                                onNavigateToMapPicker(uiState.officeLatitude, uiState.officeLongitude)
-                            }
-                        )
-                        4 -> HolidaysSetupStep(
-                            viewModel = viewModel,
-                            uiState = uiState
-                        )
-                    }
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    if (uiState.currentStep > 0) {
-                        OutlinedButton(
-                            onClick = { viewModel.onEvent(OnboardingEvent.PreviousStep) },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("Back")
+                    2 -> WeekdayPreferencesStep(
+                        preferences = uiState.weekdayPreferences,
+                        onPreferencesChanged = { viewModel.onEvent(OnboardingEvent.UpdateWeekdayPreferences(it)) }
+                    )
+                    3 -> AutoDetectionStep(
+                        viewModel = viewModel,
+                        uiState = uiState,
+                        onNavigateToPermissions = onNavigateToPermissions,
+                        onNavigateToMapPicker = {
+                            onNavigateToMapPicker(uiState.officeLatitude, uiState.officeLongitude)
                         }
-                    }
-                    Button(
-                        onClick = {
-                            if (uiState.currentStep == uiState.totalSteps - 1) {
-                                viewModel.onEvent(OnboardingEvent.Complete)
-                            } else {
-                                viewModel.onEvent(OnboardingEvent.NextStep)
-                            }
-                        },
-                        enabled = uiState.canGoNext,
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(if (uiState.currentStep == uiState.totalSteps - 1) "Complete" else "Next")
-                    }
+                    )
+                    4 -> HolidaysSetupStep(
+                        viewModel = viewModel,
+                        uiState = uiState
+                    )
                 }
             }
         }
@@ -519,25 +527,73 @@ private fun AutoDetectionStep(
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(
                     modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
                         text = "Office Location",
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
                     )
                     if (uiState.officeLatitude != null && uiState.officeLongitude != null) {
-                        Text("📍 ${uiState.officeName}")
-                        Text(
-                            text = "Lat: %.4f, Lon: %.4f".format(uiState.officeLatitude, uiState.officeLongitude),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer
+                            )
+                        ) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Text(
+                                    text = "📍 ${uiState.officeName}",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "Lat: %.4f, Lon: %.4f".format(uiState.officeLatitude, uiState.officeLongitude),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
                     } else {
-                        Text(
-                            text = "Not set",
-                            color = MaterialTheme.colorScheme.error
-                        )
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer
+                            )
+                        ) {
+                            Text(
+                                text = "⚠️ Location not set - please select below",
+                                modifier = Modifier.padding(12.dp),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onErrorContainer
+                            )
+                        }
                     }
+                    Button(
+                        onClick = onNavigateToMapPicker,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        Icon(Icons.Default.Place, contentDescription = null, modifier = Modifier.size(24.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text("🗺️ Pick on Map", style = MaterialTheme.typography.titleMedium)
+                    }
+                    Text(
+                        text = "💡 100% FREE - Uses OpenStreetMap",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                    HorizontalDivider()
+                    Text(
+                        text = "Or use other methods:",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -545,29 +601,19 @@ private fun AutoDetectionStep(
                         OutlinedButton(
                             onClick = { viewModel.onEvent(OnboardingEvent.UseCurrentLocation) },
                             modifier = Modifier.weight(1f),
-                            enabled = uiState.hasLocationPermission
+                            enabled = uiState.hasLocationPermission,
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
                         ) {
-                            Text("Use Current GPS")
+                            Text("📍 GPS", style = MaterialTheme.typography.labelMedium)
                         }
                         OutlinedButton(
                             onClick = { showLocationDialog = true },
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
                         ) {
-                            Text("Enter Manually")
+                            Text("✏️ Manual", style = MaterialTheme.typography.labelMedium)
                         }
                     }
-                    Button(
-                        onClick = onNavigateToMapPicker,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("🗺️ Pick on Map")
-                    }
-                    Text(
-                        text = "💡 100% FREE - No API costs!",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
                 }
             }
             Card(
