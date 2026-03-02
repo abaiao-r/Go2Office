@@ -43,7 +43,15 @@ The algorithm:
 
 ![Hour Tracking](../diagrams/hour-tracking.png)
 
-### Rules
+### Time Calculation Logic
+
+For any given day, the app calculates worked hours using:
+- **First Entry**: The earliest entry time of the day
+- **Last Exit**: The latest exit time of the day (or 7 PM if no exit)
+
+Multiple sessions during the day are **aggregated** - only the first entry and last exit matter.
+
+### Work Window Rules
 
 | Rule | Value |
 |------|-------|
@@ -51,13 +59,38 @@ The algorithm:
 | Work window end | 7:00 PM |
 | Daily maximum | 10 hours |
 
+### Time Adjustments
+
+| Condition | Adjustment |
+|-----------|------------|
+| Entry before 7 AM | Adjusted to 7:00 AM |
+| Entry after 7 PM | Adjusted to 7:00 PM |
+| Exit before 7 AM | Adjusted to 7:00 AM |
+| Exit after 7 PM | Adjusted to 7:00 PM |
+| No exit recorded | Defaults to 7:00 PM |
+
+### Special Case
+
+**Entry AND exit both before 7 AM** → Counts as a day present with **0 hours** worked.
+
+### Formula
+
+```
+adjustedFirstEntry = clamp(firstEntry, 7AM, 7PM)
+adjustedLastExit = clamp(lastExit ?? 7PM, 7AM, 7PM)
+workedHours = min(adjustedLastExit - adjustedFirstEntry, 10h)
+```
+
 ### Examples
 
-| Entry | Exit | Calculated Hours |
-|-------|------|------------------|
-| 8:30 AM | 5:45 PM | 9.25h |
-| 6:00 AM | 3:00 PM | 8.0h (entry clamped to 7 AM) |
-| 9:00 AM | 9:00 PM | 10.0h (exit clamped + capped) |
+| Sessions | First Entry | Last Exit | Adjusted Entry | Adjusted Exit | Hours |
+|----------|-------------|-----------|----------------|---------------|-------|
+| 9AM-5PM | 9:00 AM | 5:00 PM | 9:00 AM | 5:00 PM | 8h |
+| 6AM-8AM, 9AM-5PM | 6:00 AM | 5:00 PM | 7:00 AM | 5:00 PM | 10h (capped) |
+| 6AM-6:30AM | 6:00 AM | 6:30 AM | - | - | 0h (counts as day) |
+| 8AM-9PM | 8:00 AM | 9:00 PM | 8:00 AM | 7:00 PM | 10h (capped) |
+| 10AM (no exit) | 10:00 AM | - | 10:00 AM | 7:00 PM | 9h |
+| 8PM-9PM | 8:00 PM | 9:00 PM | 7:00 PM | 7:00 PM | 0h |
 
 ## Progress Status
 

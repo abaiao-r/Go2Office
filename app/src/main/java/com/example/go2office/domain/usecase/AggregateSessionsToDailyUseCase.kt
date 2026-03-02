@@ -6,6 +6,7 @@ import com.example.go2office.domain.model.DailyEntry
 import com.example.go2office.util.Constants
 import com.example.go2office.util.WorkHoursCalculator
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 class AggregateSessionsToDailyUseCase @Inject constructor(
     private val officePresenceDao: OfficePresenceDao,
@@ -14,8 +15,8 @@ class AggregateSessionsToDailyUseCase @Inject constructor(
     suspend operator fun invoke(date: LocalDate): Result<Unit> {
         return try {
             val sessions = officePresenceDao.getSessionsForDate(date.toString())
-            val completedSessions = sessions.filter { it.exitTime != null }
-            if (completedSessions.isEmpty()) {
+
+            if (sessions.isEmpty()) {
                 val entry = DailyEntry(
                     date = date,
                     wasInOffice = false,
@@ -25,26 +26,31 @@ class AggregateSessionsToDailyUseCase @Inject constructor(
                 dailyEntryDao.insert(DailyEntryMapper.toEntity(entry))
                 return Result.success(Unit)
             }
-            val sessionPairs = completedSessions.map { session ->
-                session.entryTime to session.exitTime
-            }
-            val totalHours = WorkHoursCalculator.calculateDailyHours(sessionPairs)
-            val rawHours = completedSessions.sumOf { session ->
-                WorkHoursCalculator.calculateSessionHours(session.entryTime, session.exitTime!!).toDouble()
-            }.toFloat()
-            val isCapped = WorkHoursCalculator.wouldBeCapped(rawHours)
+
+            val entries = sessions.map { it.entryTime }
+            val exits = sessions.map { it.exitTime }
+
+            val result = WorkHoursCalculator.calculateDailyTimeFromSessions(entries, exits)
+
+            val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
             val notes = buildString {
-                append("Auto-detected (${completedSessions.size} session(s))")
-                if (isCapped) {
-                    append("\nRaw: ${"%.1f".format(rawHours)}h, Counted: ${"%.1f".format(totalHours)}h (capped at ${Constants.MAX_DAILY_HOURS.toInt()}h)")
+                append("Auto-detected (${sessions.size} session(s))")
+                if (result.adjustedFirstEntry != null && result.adjustedLastExit != null) {
+                    append("\nFirst entry: ${result.adjustedFirstEntry.format(timeFormatter)}")
+                    append(", Last exit: ${result.adjustedLastExit.format(timeFormatter)}")
+                }
+                if (result.isCapped) {
+                    append("\nCapped at ${Constants.MAX_DAILY_HOURS.toInt()}h")
                 }
             }
+
             val entry = DailyEntry(
                 date = date,
-                wasInOffice = true,
-                hoursWorked = totalHours,
+                wasInOffice = result.countsAsDay,
+                hoursWorked = result.workedHours,
                 notes = notes
             )
+
             val existing = dailyEntryDao.getByDate(date)
             if (existing != null) {
                 val updated = DailyEntryMapper.toEntity(entry).copy(id = existing.id)

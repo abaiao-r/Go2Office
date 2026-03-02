@@ -78,7 +78,7 @@ class GetSuggestedOfficeDaysUseCaseTest {
             weekdayPreferences = allWeekdays
         )
         val progress = com.example.go2office.domain.model.MonthProgress(
-            yearMonth = YearMonth.of(2026, 2),
+            yearMonth = YearMonth.of(2026, 3),
             requiredDays = 12,
             completedDays = 0,
             requiredHours = 96f,
@@ -89,7 +89,7 @@ class GetSuggestedOfficeDaysUseCaseTest {
         coEvery { repository.getOfficeDaysInRange(any(), any()) } returns emptyList()
         coEvery { repository.getHolidaysInRangeOnce(any(), any()) } returns emptyList()
 
-        val result = useCase(YearMonth.of(2026, 2))
+        val result = useCase(YearMonth.of(2026, 3))
 
         assertTrue(result.isSuccess)
         val suggestions = result.getOrNull()!!

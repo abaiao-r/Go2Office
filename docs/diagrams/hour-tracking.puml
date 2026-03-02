@@ -1,32 +1,59 @@
 @startuml hour-tracking
 !theme plain
 skinparam backgroundColor #FEFEFE
-title Work Hours Calculation (7AM-7PM Window)
+title Daily Work Hours Calculation (First Entry / Last Exit)
+
 start
-:Receive entry/exit times;
+
+:Collect all sessions for the day;
 note right
-  entry = 6:00 AM
-  exit = 8:30 PM
+  Session 1: 6:00 AM - 6:30 AM
+  Session 2: 9:00 AM - 5:00 PM
 end note
-if (entry < 7AM?) then (yes)
-  :Clamp entry to 7:00 AM;
-else (no)
-  :Keep original entry;
-endif
-if (exit > 7PM?) then (yes)
-  :Clamp exit to 7:00 PM;
-else (no)
-  :Keep original exit;
-endif
-:Calculate duration;
+
+:Find First Entry (earliest);
+:Find Last Exit (latest or 7PM if none);
 note right
-  7AM to 7PM = 12 hours
+  First Entry = 6:00 AM
+  Last Exit = 5:00 PM
 end note
+
+if (Both entry & exit before 7AM?) then (yes)
+  :Return 0h (counts as day);
+  stop
+else (no)
+endif
+
+if (First Entry < 7AM?) then (yes)
+  :Clamp to 7:00 AM;
+else (no)
+  if (First Entry > 7PM?) then (yes)
+    :Clamp to 7:00 PM;
+  endif
+endif
+
+if (Last Exit > 7PM?) then (yes)
+  :Clamp to 7:00 PM;
+else (no)
+  if (Last Exit < 7AM?) then (yes)
+    :Clamp to 7:00 AM;
+  endif
+endif
+
+:Calculate: Last Exit - First Entry;
+note right
+  7AM to 5PM = 10 hours
+end note
+
 if (duration > 10h?) then (yes)
   :Cap at 10 hours;
-else (no)
-  :Keep calculated hours;
+  :Mark as capped;
 endif
-:Return hours = 10.0;
+
+:Return worked hours;
+note right
+  hours = 10.0 (capped)
+end note
+
 stop
 @enduml
