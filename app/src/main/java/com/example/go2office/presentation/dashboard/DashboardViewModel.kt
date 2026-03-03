@@ -31,6 +31,7 @@ class DashboardViewModel @Inject constructor(
         observeActiveSession()
         observeHolidayChanges()
         observeSettingsChanges()
+        observeRecentEntries()
     }
     private fun observeActiveSession() {
         viewModelScope.launch {
@@ -51,7 +52,7 @@ class DashboardViewModel @Inject constructor(
     }
     private fun observeSettingsChanges() {
         viewModelScope.launch {
-            repository.getSettings().collect { settings ->
+            repository.getSettings().collect { _ ->
                 if (_uiState.value.monthProgress != null) {
                     loadDashboardData()
                 }
@@ -60,7 +61,7 @@ class DashboardViewModel @Inject constructor(
     }
     private fun observeHolidayChanges() {
         viewModelScope.launch {
-            repository.getAllHolidays().collect { holidays ->
+            repository.getAllHolidays().collect { _ ->
                 if (_uiState.value.monthProgress != null) {
                     loadDashboardData()
                 }
@@ -85,9 +86,17 @@ class DashboardViewModel @Inject constructor(
             else -> {  }
         }
     }
+    private var recentEntriesJob: kotlinx.coroutines.Job? = null
+
     private fun loadDashboardData() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            // Only show loading indicator on initial load when we have no data
+            val showLoading = _uiState.value.monthProgress == null
+            if (showLoading) {
+                _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            } else {
+                _uiState.update { it.copy(errorMessage = null) }
+            }
             val yearMonth = _uiState.value.selectedMonth
             try {
                 val progressResult = getMonthProgress(yearMonth)
@@ -106,17 +115,15 @@ class DashboardViewModel @Inject constructor(
                     count = 20 
                 )
                 val suggested = suggestedResult.getOrNull() ?: emptyList()
-                getDailyEntries.recent(Constants.DEFAULT_RECENT_ENTRIES_LIMIT)
-                    .collect { entries ->
-                        _uiState.update {
-                            it.copy(
-                                monthProgress = progress,
-                                suggestedDays = suggested,
-                                recentEntries = entries,
-                                isLoading = false
-                            )
-                        }
-                    }
+
+                // Update progress and suggestions immediately
+                _uiState.update {
+                    it.copy(
+                        monthProgress = progress,
+                        suggestedDays = suggested,
+                        isLoading = false
+                    )
+                }
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
@@ -125,6 +132,16 @@ class DashboardViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    private fun observeRecentEntries() {
+        recentEntriesJob?.cancel()
+        recentEntriesJob = viewModelScope.launch {
+            getDailyEntries.recent(Constants.DEFAULT_RECENT_ENTRIES_LIMIT)
+                .collect { entries ->
+                    _uiState.update { it.copy(recentEntries = entries) }
+                }
         }
     }
     private fun quickMarkDay(date: java.time.LocalDate, hours: Float) {
