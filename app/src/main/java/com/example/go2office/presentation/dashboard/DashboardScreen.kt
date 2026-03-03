@@ -149,10 +149,7 @@ private fun MonthSelectorCard(
                 text = selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
                 style = MaterialTheme.typography.titleLarge
             )
-            IconButton(
-                onClick = { onMonthChanged(selectedMonth.plusMonths(1)) },
-                enabled = !selectedMonth.isAfter(YearMonth.now())
-            ) {
+            IconButton(onClick = { onMonthChanged(selectedMonth.plusMonths(1)) }) {
                 Text(stringResource(R.string.nav_next))
             }
         }

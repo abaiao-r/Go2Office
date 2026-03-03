@@ -136,10 +136,7 @@ private fun MonthSelector(
                 text = selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy")),
                 style = MaterialTheme.typography.titleLarge
             )
-            IconButton(
-                onClick = { onMonthChanged(selectedMonth.plusMonths(1)) },
-                enabled = !selectedMonth.isAfter(YearMonth.now())
-            ) {
+            IconButton(onClick = { onMonthChanged(selectedMonth.plusMonths(1)) }) {
                 Text("▶", style = MaterialTheme.typography.titleLarge)
             }
         }
